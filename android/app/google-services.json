@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "408198024504",
+    "project_id": "hostel-management-4cb90",
+    "storage_bucket": "hostel-management-4cb90.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:408198024504:android:04390ba25a667d1556c5cd",
+        "android_client_info": {
+          "package_name": "com.example.minipro"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB4SewxkUCL13L9-GzPfV3lls-AAZa0ffI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
