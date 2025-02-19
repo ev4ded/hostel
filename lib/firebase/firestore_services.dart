@@ -43,4 +43,23 @@ class FirestoreServices {
       print("signOut: $e");
     }
   }
+
+  Future<String> getUserRole() async {
+    Map<String, dynamic>? user = await getCachedUserData();
+    String role = "";
+    try {
+      if (user != null) {
+        role = user["role"];
+      } else {
+        await getUserData();
+        user = await getCachedUserData();
+        role = user!["role"];
+      }
+      //SharedPreferences prefs = await SharedPreferences.getInstance();
+      //prefs.setString("role", role);
+    } catch (e) {
+      print("error :$e");
+    }
+    return role;
+  }
 }

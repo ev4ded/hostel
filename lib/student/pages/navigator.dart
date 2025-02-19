@@ -22,44 +22,41 @@ class _MainNavigatorState extends State<MainNavigator> {
   ];
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      canPop: false,
-      child: Scaffold(
-        body: Center(child: _pages.elementAt(_selectedIndex)),
-        bottomNavigationBar: Padding(
-          padding: const EdgeInsets.all(2.0),
-          child: GNav(
-            //activeColor: Colors.deepPurple,
-            duration: Duration(milliseconds: 500),
-            curve: Curves.easeInOutQuint,
-            tabActiveBorder: Border.all(color: Colors.grey, width: 1),
-            gap: 8,
-            //rippleColor: Colors.grey,
-            haptic: true,
-            tabs: const [
-              GButton(
-                icon: Ionicons.home_outline,
-                iconActiveColor: Color.fromRGBO(255, 179, 0, 1),
-                text: "home",
-              ),
-              GButton(
-                icon: LucideIcons.utensilsCrossed,
-                text: "menu",
-                iconActiveColor: Color.fromRGBO(255, 179, 0, 1),
-              ),
-              GButton(
-                icon: Ionicons.person_sharp,
-                text: "profile",
-                iconActiveColor: Color.fromRGBO(255, 179, 0, 1),
-              ),
-            ],
-            selectedIndex: _selectedIndex,
-            onTabChange: (index) {
-              setState(() {
-                _selectedIndex = index;
-              });
-            },
-          ),
+    return Scaffold(
+      body: Center(child: _pages.elementAt(_selectedIndex)),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.all(2.0),
+        child: GNav(
+          //activeColor: Colors.deepPurple,
+          duration: Duration(milliseconds: 500),
+          curve: Curves.easeInOutQuint,
+          tabActiveBorder: Border.all(color: Colors.grey, width: 1),
+          gap: 8,
+          //rippleColor: Colors.grey,
+          haptic: true,
+          tabs: const [
+            GButton(
+              icon: Ionicons.home_outline,
+              iconActiveColor: Color.fromRGBO(255, 179, 0, 1),
+              text: "home",
+            ),
+            GButton(
+              icon: LucideIcons.utensilsCrossed,
+              text: "menu",
+              iconActiveColor: Color.fromRGBO(255, 179, 0, 1),
+            ),
+            GButton(
+              icon: Ionicons.person_sharp,
+              text: "profile",
+              iconActiveColor: Color.fromRGBO(255, 179, 0, 1),
+            ),
+          ],
+          selectedIndex: _selectedIndex,
+          onTabChange: (index) {
+            setState(() {
+              _selectedIndex = index;
+            });
+          },
         ),
       ),
     );

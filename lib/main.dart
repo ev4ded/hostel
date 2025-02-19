@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 //import 'package:flutter/rendering.dart'; // debug
 import 'package:firebase_core/firebase_core.dart';
 import 'package:minipro/student/Theme/theme.dart';
-import 'package:minipro/student/pages/splashscreen.dart';
+import 'package:minipro/splashscreen.dart';
 import 'firebase/firebase_options.dart';
 
 void main() async {

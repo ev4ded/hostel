@@ -7,10 +7,10 @@ import 'package:minipro/student/components/myclipper.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:minipro/student/components/mysnackbar.dart';
 import 'package:minipro/student/components/mytextfield.dart';
-import 'package:minipro/student/authentication/loginpage.dart';
+import 'package:minipro/authentication/loginpage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:minipro/student/pages/splashscreen.dart';
+import 'package:minipro/splashscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SignupPage extends StatefulWidget {

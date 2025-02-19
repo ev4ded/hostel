@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:minipro/firebase/firestore_services.dart';
-import 'package:minipro/student/authentication/signuppage.dart';
+import 'package:minipro/authentication/signuppage.dart';
 import 'package:minipro/student/components/custom_route.dart';
 import 'package:minipro/student/components/emailtextfield.dart';
 import 'package:minipro/student/components/myclipper.dart';
@@ -9,7 +9,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:minipro/student/components/mysnackbar.dart';
 //import 'package:minipro/components/mytextfield.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:minipro/student/pages/splashscreen.dart';
+import 'package:minipro/splashscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
@@ -65,7 +65,7 @@ class LoginPageState extends State<LoginPage> {
     final Color mainboxColor = Color.fromRGBO(203, 178, 182, 1);
     final Color inputtextColor = Color.fromRGBO(240, 237, 235, 1);
     final Color buttonColor = Color.fromRGBO(230, 128, 78, 1);
-    BorderRadius borderRadius = BorderRadius.circular(20);
+    //BorderRadius borderRadius = BorderRadius.circular(20);
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
     return Scaffold(
@@ -251,6 +251,7 @@ class LoginPageState extends State<LoginPage> {
       final UserCredential user = await _auth.signInWithEmailAndPassword(
           email: email, password: password);
       await FirestoreServices().getUserData();
+      await FirestoreServices().getUserRole();
       if (!mounted) return;
       saveLoginState(true);
       _showSnackBar("login successful!!");

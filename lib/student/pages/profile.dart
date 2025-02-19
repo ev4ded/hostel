@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:minipro/firebase/firestore_services.dart';
-import 'package:minipro/student/authentication/loginpage.dart';
+import 'package:minipro/authentication/loginpage.dart';
 import 'package:minipro/student/components/custom_route.dart';
 import 'package:minipro/student/components/customnotification.dart';
 import 'package:shared_preferences/shared_preferences.dart';
