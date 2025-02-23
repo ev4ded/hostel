@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:minipro/warden/pages/settingspage.dart';
 import 'homepage.dart';
 import 'profile.dart';
@@ -31,22 +32,22 @@ class _MyNavigationState extends State<MyNavigation> {
             curve: Curves.easeInOutQuint,
             duration: Duration(milliseconds: 200),
             backgroundColor: Colors.black,
-            color: Colors.white,
+            color: const Color.fromARGB(255, 255, 255, 255),
             activeColor: Colors.white,
             tabBackgroundColor: const Color.fromARGB(255, 74, 72, 72),
             padding: EdgeInsets.all(16),
             gap: 8,
             tabs: const [
               GButton(
-                icon: Icons.home,
+                icon: Ionicons.home_outline,
                 text: 'Home',
               ),
               GButton(
-                icon: Icons.person,
+                icon: Ionicons.person_outline,
                 text: 'Profile',
               ),
               GButton(
-                icon: Icons.settings,
+                icon: Ionicons.settings_outline,
                 text: 'Settings',
               ),
             ],

@@ -11,7 +11,7 @@ class MyProfile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('P r o f i l e'),
+          title: const Text('Profile'),
         ),
         body: Center(
           child: ElevatedButton(
