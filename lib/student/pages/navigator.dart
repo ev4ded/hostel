@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'HomePage.dart';
+import 'homepage.dart';
 import 'menu.dart';
 import 'profile.dart';
 import 'package:ionicons/ionicons.dart';

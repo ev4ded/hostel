@@ -72,6 +72,7 @@ class _SignupPageState extends State<SignupPage> {
     final Color mainboxColor = Color.fromRGBO(203, 178, 182, 1);
     final Color inputtextColor = Color.fromRGBO(240, 237, 235, 1);
     final Color buttonColor = Color.fromRGBO(230, 128, 78, 1);
+    final Color hintColor = Color.fromRGBO(139, 139, 139, 0.5);
     List<String> roleList = ['student', 'warden', 'admin'];
 
     double height = MediaQuery.of(context).size.height;
@@ -135,6 +136,7 @@ class _SignupPageState extends State<SignupPage> {
                             padding: const EdgeInsets.only(
                                 left: 8, right: 8, bottom: 8),
                             child: Mytextfield(
+                              hintColor: hintColor,
                               hasError: _errors['hostelId'] ??
                                   false, //to ensure notnull
                               hinttext: 'HOSTEl ID',
@@ -166,7 +168,7 @@ class _SignupPageState extends State<SignupPage> {
                                         ),
                                         hint: Text(
                                           'SELECT ROLE',
-                                          style: TextStyle(
+                                          style: GoogleFonts.inter(
                                             color: Colors.grey[400],
                                           ),
                                         ),
@@ -200,12 +202,12 @@ class _SignupPageState extends State<SignupPage> {
                                           });
                                         },
                                         value: role,
-                                        validator: (value) {
+                                        /*validator: (value) {
                                           if (value == null) {
                                             return 'Please select a role';
                                           }
                                           return null;
-                                        },
+                                        },*/
                                         dropdownStyleData: DropdownStyleData(
                                           decoration: BoxDecoration(
                                             borderRadius:
@@ -223,6 +225,7 @@ class _SignupPageState extends State<SignupPage> {
                           Padding(
                             padding: const EdgeInsets.all(8),
                             child: Mytextfield(
+                                hintColor: hintColor,
                                 hasError: _errors['username'] ?? false,
                                 hinttext: 'USERNAME',
                                 controller: _controllers["username"],
@@ -231,6 +234,7 @@ class _SignupPageState extends State<SignupPage> {
                           Padding(
                             padding: const EdgeInsets.all(8),
                             child: Emailtextfield(
+                                hintColor: hintColor,
                                 hasError: _errors['email'] ?? false,
                                 hinttext: 'EMAIL-ID',
                                 controller: _controllers["email"],
@@ -239,6 +243,7 @@ class _SignupPageState extends State<SignupPage> {
                           Padding(
                             padding: const EdgeInsets.all(8),
                             child: Mytextfield(
+                              hintColor: hintColor,
                               hasError: _errors['password'] ?? false,
                               hinttext: 'PASSWORD',
                               controller: _controllers["password"],
@@ -249,6 +254,7 @@ class _SignupPageState extends State<SignupPage> {
                           Padding(
                             padding: const EdgeInsets.all(8),
                             child: Mytextfield(
+                                hintColor: hintColor,
                                 hasError: _errors['confirmpassword'] ?? false,
                                 hinttext: 'CONFIRM PASSWORD',
                                 controller: _controllers["confirmpassword"],
@@ -325,6 +331,7 @@ class _SignupPageState extends State<SignupPage> {
     _controllers["confirmpassword"]!.clear();
   }
 
+  void deleteTextField() {}
   void createUser() async {
     String username = _controllers["username"]!.text.trim();
     String email = _controllers["email"]!.text.trim();
@@ -343,15 +350,6 @@ class _SignupPageState extends State<SignupPage> {
       _showSnackBar('Please select a role', isError: true);
       return;
     }
-    Future<bool> isUserIdAvailable(String userId) async {
-      QuerySnapshot query = await FirebaseFirestore.instance
-          .collection('users')
-          .where('username', isEqualTo: username)
-          .limit(1)
-          .get();
-      return query.docs.isEmpty; //doc(userId).get();
-    }
-
     try {
       if (password != confirmPassword) {
         _showSnackBar('Passwords do not match', isError: true);
@@ -360,27 +358,22 @@ class _SignupPageState extends State<SignupPage> {
       /*if(user.user!.emailVerified == false){
         await user.user!.sendEmailVerification();
       }*/
-      //final String uid = user.user!.uid;
-      if (await isUserIdAvailable(username)) {
-        await _auth.createUserWithEmailAndPassword(
-            email: email, password: password);
-        await FirestoreServices().getUserData();
-        User? user = _auth.currentUser;
-        if (user != null) {
-          await _firestore.collection("users").doc(user.uid).set({
-            'username': username,
-            'email': email,
-            'role': role,
-            'hostelId': hostelId,
-            'roomId': '',
-            'isApproved': true,
-          });
-        }
-      } else {
-        _errors['username'] = true;
-        _showSnackBar('Username already exists', isError: true);
-        return;
-      }
+      UserCredential userCredential = await _auth
+          .createUserWithEmailAndPassword(email: email, password: password);
+      //await FirestoreServices().getUserData();
+      await _auth.currentUser?.reload();
+      //User? user = _auth.currentUser;
+      String uid = userCredential.user!.uid;
+      await _firestore.collection("users").doc(uid).set(
+        {
+          'username': username,
+          'email': email,
+          'role': role,
+          'hostelId': hostelId,
+          'roomId': '',
+          'isApproved': true,
+        },
+      );
       await FirestoreServices().getUserData();
       if (!mounted) return;
       _showSnackBar("Signup successful!!");

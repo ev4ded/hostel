@@ -55,8 +55,6 @@ class FirestoreServices {
         user = await getCachedUserData();
         role = user!["role"];
       }
-      //SharedPreferences prefs = await SharedPreferences.getInstance();
-      //prefs.setString("role", role);
     } catch (e) {
       print("error :$e");
     }

@@ -7,9 +7,9 @@ import 'package:minipro/student/Theme/fonts.dart';
 import 'package:minipro/student/components/custom_route.dart';
 import 'package:minipro/student/components/customnotification.dart';
 import 'package:minipro/student/components/myContainer.dart';
-import 'package:minipro/student/pages/home/Maintainance.dart';
-import 'package:minipro/student/pages/home/complaint.dart';
-import 'package:minipro/student/pages/home/leaveApplication.dart';
+import 'package:minipro/student/pages/home/complaint/complaint.dart';
+import 'package:minipro/student/pages/home/maintenance/maintenance.dart';
+import 'package:minipro/student/pages/home/leave_application/leaveApplication.dart';
 import 'package:minipro/student/pages/home/payment.dart';
 import 'package:minipro/student/pages/home/vacate.dart';
 
@@ -22,11 +22,11 @@ class Homepage extends StatefulWidget {
 
 class _HomepageState extends State<Homepage> {
   Color containerColor = Color.fromRGBO(40, 40, 40, 1);
-  Color iconC = Color.fromRGBO(159, 147, 228, 1);
+  Color iconC = Color.fromRGBO(255, 189, 109, 1);
   @override
   Widget build(BuildContext context) {
-    double height = MediaQuery.of(context).size.height;
-    double cheight = height * 0.08;
+    //double height = MediaQuery.of(context).size.height;
+    double cheight = 65;
     String wish;
     void popfuction() {
       Navigator.of(context).pop();
@@ -98,7 +98,7 @@ class _HomepageState extends State<Homepage> {
           ),
           GestureDetector(
             onTap: () {
-              Navigator.push(context, myRoute(Maintainance()));
+              Navigator.push(context, myRoute(Maintenance()));
             },
             child: Mycontainer(
               height: cheight,
@@ -107,7 +107,7 @@ class _HomepageState extends State<Homepage> {
                 Padding(
                   padding: const EdgeInsets.only(left: 10),
                   child: Text(
-                    "Maintainance Request",
+                    "Maintenance Request",
                     style: AppFonts.body,
                   ),
                 ),
@@ -123,9 +123,10 @@ class _HomepageState extends State<Homepage> {
               Navigator.push(context, myRoute(Leaveapplication()));
             },
             child: Mycontainer(
-                height: cheight,
-                color: containerColor,
-                child: Row(children: [
+              height: cheight,
+              color: containerColor,
+              child: Row(
+                children: [
                   Padding(
                     padding: const EdgeInsets.only(left: 10),
                     child: Text(
@@ -137,7 +138,9 @@ class _HomepageState extends State<Homepage> {
                     padding: const EdgeInsets.only(left: 30),
                     child: Icon(Ionicons.calendar_outline),
                   )
-                ])),
+                ],
+              ),
+            ),
           ),
           GestureDetector(
             onTap: () {
@@ -161,13 +164,11 @@ class _HomepageState extends State<Homepage> {
                 ])),
           ),
           GestureDetector(
-            onTap: () {
-              Navigator.push(context, myRoute(Complaint()));
-            },
             child: Mycontainer(
-                height: cheight,
-                color: containerColor,
-                child: Row(children: [
+              height: cheight,
+              color: containerColor,
+              child: Row(
+                children: [
                   Padding(
                     padding: const EdgeInsets.only(left: 10),
                     child: Text(
@@ -179,7 +180,12 @@ class _HomepageState extends State<Homepage> {
                     padding: const EdgeInsets.only(left: 30),
                     child: Icon(Ionicons.flag_outline),
                   )
-                ])),
+                ],
+              ),
+            ),
+            onTap: () {
+              Navigator.push(context, myRoute(Complaint()));
+            },
           ),
           GestureDetector(
             onTap: () {
@@ -212,8 +218,12 @@ class _HomepageState extends State<Homepage> {
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
           tooltip: "scanner",
-          backgroundColor: Color.fromRGBO(138, 127, 223, 0.8),
-          child: Icon(LucideIcons.qrCode, size: 45),
+          backgroundColor: iconC,
+          child: Icon(
+            LucideIcons.qrCode,
+            size: 45,
+            color: Colors.black,
+          ),
         ),
       ),
     );

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 //import 'package:flutter/rendering.dart'; // debug
 import 'package:firebase_core/firebase_core.dart';
+import 'package:minipro/authentication/authprovider.dart';
 import 'package:minipro/student/Theme/theme.dart';
 import 'package:minipro/splashscreen.dart';
-import 'firebase/firebase_options.dart';
+import 'package:provider/provider.dart';
 
 void main() async {
   // debugPaintSizeEnabled = true;
@@ -11,8 +12,8 @@ void main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+      //options: DefaultFirebaseOptions.currentPlatform,
+      );
   runApp(MyApp());
 }
 
@@ -21,12 +22,18 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Splashscreen(),
-      debugShowCheckedModeBanner: false,
-      theme: AppThemes.lightTheme, // Light Theme
-      darkTheme: AppThemes.darkTheme, // Dark Theme
-      themeMode: ThemeMode.system,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => Authprovider()),
+      ],
+      child: MaterialApp(
+        home: Splashscreen(),
+        debugShowCheckedModeBanner: false,
+        //
+        theme: AppThemes.lightTheme, // Light Theme
+        darkTheme: AppThemes.darkTheme, // Dark Theme
+        themeMode: ThemeMode.system,
+      ),
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class Mytextfield extends StatelessWidget {
   final String? labelText;
@@ -9,10 +10,14 @@ class Mytextfield extends StatelessWidget {
   final bool isHidden;
   final bool hasError;
   final Color? bgColor;
+  final Color hintColor;
+  final Color textColor;
   final TextEditingController? controller;
   const Mytextfield({
     super.key,
     this.labelText,
+    this.textColor = Colors.black,
+    this.hintColor = Colors.blueGrey,
     this.hasError = false,
     this.hinttext,
     this.bgColor,
@@ -26,7 +31,8 @@ class Mytextfield extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextField(
-      style: TextStyle(color: Colors.black),
+      cursorColor: Colors.lightBlueAccent,
+      style: GoogleFonts.inter(color: textColor),
       controller: controller,
       obscureText: isHidden,
       decoration: InputDecoration(
@@ -36,6 +42,7 @@ class Mytextfield extends StatelessWidget {
         fillColor: bgColor,
         labelText: labelText,
         hintText: hinttext,
+        hintStyle: TextStyle(color: hintColor),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(borderRadius),
           borderSide: BorderSide(

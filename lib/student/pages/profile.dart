@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:minipro/firebase/firestore_services.dart';
@@ -68,6 +69,7 @@ class _ProfileState extends State<Profile> {
                           children: [
                             GestureDetector(
                               onLongPress: () async {
+                                HapticFeedback.vibrate();
                                 String? imagename =
                                     await customImageSuggest(context);
                                 if (imagename != null) {
@@ -142,34 +144,38 @@ class _ProfileState extends State<Profile> {
                                   height: 10,
                                 ),
                                 Container(
-                                    height: 38,
-                                    width: 200,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(20),
-                                      color: detailsC,
+                                  height: 38,
+                                  width: 200,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20),
+                                    color: detailsC,
+                                  ),
+                                  child: GestureDetector(
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Center(
+                                          child: Text(
+                                            "Edit Profile",
+                                            style: GoogleFonts.poppins(
+                                                fontSize: 18),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: 5,
+                                        ),
+                                        Icon(
+                                          LucideIcons.edit,
+                                          size: 15,
+                                        ),
+                                      ],
                                     ),
-                                    child: GestureDetector(
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Center(
-                                            child: Text(
-                                              "Edit Profile",
-                                              style: GoogleFonts.poppins(
-                                                  fontSize: 18),
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            width: 5,
-                                          ),
-                                          Icon(
-                                            LucideIcons.edit,
-                                            size: 15,
-                                          ),
-                                        ],
-                                      ),
-                                    )),
+                                    onTap: () {
+                                      HapticFeedback.heavyImpact();
+                                    },
+                                  ),
+                                ),
                               ],
                             )
                           ],
@@ -225,6 +231,7 @@ class _ProfileState extends State<Profile> {
                             ),
                           ),
                           onTap: () {
+                            HapticFeedback.heavyImpact();
                             customPopup(
                               context,
                               "Are you sure to sign out?",
@@ -270,6 +277,7 @@ class _ProfileState extends State<Profile> {
                             ),
                           ),
                           onTap: () {
+                            HapticFeedback.heavyImpact();
                             setState(() {
                               present = !present;
                             });
@@ -303,7 +311,9 @@ class _ProfileState extends State<Profile> {
                               ),
                             ),
                           ),
-                          onTap: () {},
+                          onTap: () {
+                            HapticFeedback.heavyImpact();
+                          },
                         ),
                         SizedBox(
                           height: 5,
@@ -335,7 +345,9 @@ class _ProfileState extends State<Profile> {
                               ),
                             ),
                           ),
-                          onTap: () {},
+                          onTap: () {
+                            HapticFeedback.heavyImpact();
+                          },
                         ),
                       ],
                     ),

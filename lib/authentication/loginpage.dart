@@ -69,16 +69,18 @@ class LoginPageState extends State<LoginPage> {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
     return Scaffold(
-        resizeToAvoidBottomInset: true,
-        backgroundColor: backboxColor,
-        body: SingleChildScrollView(
-          physics: ClampingScrollPhysics(),
-          child: ConstrainedBox(
-            constraints: BoxConstraints(
-              minHeight: height,
-            ),
-            child: IntrinsicHeight(
-              child: Stack(clipBehavior: Clip.none, children: [
+      resizeToAvoidBottomInset: true,
+      backgroundColor: backboxColor,
+      body: SingleChildScrollView(
+        physics: ClampingScrollPhysics(),
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            minHeight: height,
+          ),
+          child: IntrinsicHeight(
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
                 IgnorePointer(
                   child: ClipPath(
                     clipper: MyClipper(),
@@ -94,150 +96,153 @@ class LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 Positioned(
-                    top: height * 0.25,
-                    left: 20,
-                    child: Container(
-                      width: width * 0.9,
-                      height: height - 370,
-                      decoration: BoxDecoration(
-                        color: mainboxColor, //fromRGBO(238, 158, 142, 1),
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(30),
-                        child: Column(
-                          //mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.only(bottom: 10, left: 15),
-                              child: Text('Login',
-                                  style: GoogleFonts.teko(
-                                    fontSize: 32,
-                                    fontWeight: FontWeight.w500,
-                                  )),
+                  top: height * 0.25,
+                  left: 20,
+                  child: Container(
+                    width: width * 0.9,
+                    height: height - 370,
+                    decoration: BoxDecoration(
+                      color: mainboxColor, //fromRGBO(238, 158, 142, 1),
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(30),
+                      child: Column(
+                        //mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(bottom: 10, left: 15),
+                            child: Text('Login',
+                                style: GoogleFonts.teko(
+                                  fontSize: 32,
+                                  fontWeight: FontWeight.w500,
+                                )),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                                top: 15.0, bottom: 15.0, left: 8, right: 8),
+                            child: Emailtextfield(
+                              bgColor: inputtextColor,
+                              hinttext: 'EMAIL',
+                              borderWidth: 1,
+                              controller: emailController,
                             ),
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                  top: 15.0, bottom: 15.0, left: 8, right: 8),
-                              child: Emailtextfield(
-                                bgColor: inputtextColor,
-                                hinttext: 'EMAIL',
-                                borderWidth: 1,
-                                controller: emailController,
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                  top: 15.0, bottom: 15.0, left: 8, right: 8),
-                              child: TextField(
-                                style: TextStyle(color: Colors.black),
-                                controller: passwordController,
-                                obscureText: isobscureText,
-                                decoration: InputDecoration(
-                                  filled: true,
-                                  fillColor: inputtextColor,
-                                  suffixIcon: IconButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        isobscureText =
-                                            !isobscureText; //toggle password icon
-                                      });
-                                    },
-                                    icon: Icon(isobscureText
-                                        ? Ionicons.eye_sharp
-                                        : Ionicons.eye_off_sharp),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                                top: 15.0, bottom: 15.0, left: 8, right: 8),
+                            child: TextField(
+                              style: TextStyle(color: Colors.black),
+                              controller: passwordController,
+                              obscureText: isobscureText,
+                              decoration: InputDecoration(
+                                filled: true,
+                                fillColor: inputtextColor,
+                                suffixIcon: IconButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      isobscureText =
+                                          !isobscureText; //toggle password icon
+                                    });
+                                  },
+                                  icon: Icon(isobscureText
+                                      ? Ionicons.eye_sharp
+                                      : Ionicons.eye_off_sharp),
+                                ),
+                                hintText: 'PASSWORD',
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                  borderSide: BorderSide(
+                                    width: 1.0,
+                                    color: Colors.black,
                                   ),
-                                  hintText: 'PASSWORD',
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(20),
-                                    borderSide: BorderSide(
-                                      width: 1.0,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(20),
-                                    borderSide: BorderSide(
-                                      width: 1.5,
-                                      color: Colors.black,
-                                    ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                  borderSide: BorderSide(
+                                    width: 1.5,
+                                    color: Colors.black,
                                   ),
                                 ),
                               ),
                             ),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.only(top: 8.0, bottom: 15.0),
-                              child: Align(
-                                alignment: Alignment.centerRight,
-                                child: GestureDetector(
-                                  onTap: () {
-                                    print('forhot');
+                          ),
+                          Padding(
+                            padding:
+                                const EdgeInsets.only(top: 8.0, bottom: 15.0),
+                            child: Align(
+                              alignment: Alignment.centerRight,
+                              child: GestureDetector(
+                                onTap: () {
+                                  print('forhot');
+                                },
+                                child: Text(
+                                  "forgot your password?",
+                                  style: TextStyle(
+                                      color: Colors.blueAccent,
+                                      decoration: TextDecoration.underline),
+                                ),
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: Align(
+                              alignment: Alignment.center,
+                              child: SizedBox(
+                                width: width * 0.9,
+                                height: height * 0.06,
+                                child: ElevatedButton(
+                                  style: ButtonStyle(
+                                    backgroundColor:
+                                        WidgetStateProperty.all(buttonColor),
+                                  ),
+                                  onPressed: () {
+                                    _validateInput();
+                                    login();
                                   },
                                   child: Text(
-                                    "forgot your password?",
+                                    "Login",
                                     style: TextStyle(
-                                        color: Colors.blueAccent,
-                                        decoration: TextDecoration.underline),
+                                        fontSize: 18, color: Colors.black),
                                   ),
                                 ),
                               ),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.all(10.0),
-                              child: Align(
-                                alignment: Alignment.center,
-                                child: SizedBox(
-                                  width: width * 0.9,
-                                  height: height * 0.06,
-                                  child: ElevatedButton(
-                                    style: ButtonStyle(
-                                      backgroundColor:
-                                          WidgetStateProperty.all(buttonColor),
-                                    ),
-                                    onPressed: () {
-                                      _validateInput();
-                                      login();
-                                    },
-                                    child: Text(
-                                      "Login",
-                                      style: TextStyle(
-                                          fontSize: 18, color: Colors.black),
-                                    ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(15),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text("Dont have a account?"),
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.pushReplacement(
+                                      context,
+                                      myRoute(SignupPage()),
+                                    );
+                                  },
+                                  child: Text(
+                                    "SignUp",
+                                    style: TextStyle(color: Colors.blueAccent),
                                   ),
-                                ),
-                              ),
+                                )
+                              ],
                             ),
-                            Padding(
-                              padding: const EdgeInsets.all(15),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text("Dont have a account?"),
-                                  GestureDetector(
-                                      onTap: () {
-                                        Navigator.pushReplacement(
-                                          context,
-                                          myRoute(SignupPage()),
-                                        );
-                                      },
-                                      child: Text(
-                                        "SignUp",
-                                        style:
-                                            TextStyle(color: Colors.blueAccent),
-                                      ))
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
+                          )
+                        ],
                       ),
-                    ))
-              ]),
+                    ),
+                  ),
+                )
+              ],
             ),
           ),
-        ));
+        ),
+      ),
+    );
   }
 
   void login() async {
