@@ -51,308 +51,403 @@ class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
+    //double height = MediaQuery.of(context).size.width;
     //double height = MediaQuery.of(context).size.height;
     return Scaffold(
       body: userData == null
           ? Center(
               child:
                   CircularProgressIndicator()) // Loading indicator in the center
-          : SafeArea(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  SizedBox(height: 30),
-                  Center(
-                    child: Column(
-                      children: [
-                        Row(
+          : SingleChildScrollView(
+              physics: ClampingScrollPhysics(),
+              child: SafeArea(
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      SizedBox(height: 30),
+                      Center(
+                        child: Column(
                           children: [
-                            GestureDetector(
-                              onLongPress: () async {
-                                HapticFeedback.vibrate();
-                                String? imagename =
-                                    await customImageSuggest(context);
-                                if (imagename != null) {
-                                  setState(() {
-                                    name = imagename;
-                                    _saveProfileImage(name);
-                                  });
-                                }
-                              },
-                              child: CircleAvatar(
-                                radius: 55,
-                                backgroundColor: Color.fromRGBO(93, 101, 95, 1),
-                                key: ValueKey(name),
-                                backgroundImage: name.isNotEmpty
-                                    ? Image.asset(
-                                            "assets/images/profile/$name.png")
-                                        .image
-                                    : null,
-                              ),
-                            ),
-                            SizedBox(width: 20),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                            Row(
                               children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(bottom: 8.0),
-                                  child: Text(
-                                    userData!["username"] ??
-                                        "Username", // Safely handle null
-                                    style: GoogleFonts.poppins(fontSize: 20),
+                                GestureDetector(
+                                  onLongPress: () async {
+                                    HapticFeedback.vibrate();
+                                    String? imagename =
+                                        await customImageSuggest(context);
+                                    if (imagename != null) {
+                                      setState(() {
+                                        name = imagename;
+                                        _saveProfileImage(name);
+                                      });
+                                    }
+                                  },
+                                  child: CircleAvatar(
+                                    radius: 55,
+                                    backgroundColor:
+                                        Color.fromRGBO(93, 101, 95, 1),
+                                    key: ValueKey(name),
+                                    backgroundImage: name.isNotEmpty
+                                        ? Image.asset(
+                                                "assets/images/profile/$name.png")
+                                            .image
+                                        : Image.asset(
+                                                "assets/images/profile/profile.png")
+                                            .image,
                                   ),
                                 ),
-                                Row(
+                                SizedBox(width: 20),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
-                                    // Role
-                                    Container(
-                                      height: 38,
-                                      width: 100,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(20),
-                                        color: detailsC,
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          userData!["role"] ??
-                                              "Role", // Safely handle null
-                                          style:
-                                              GoogleFonts.poppins(fontSize: 18),
-                                        ),
+                                    Padding(
+                                      padding:
+                                          const EdgeInsets.only(bottom: 8.0),
+                                      child: Text(
+                                        userData!["username"] ??
+                                            "Username", // Safely handle null
+                                        style:
+                                            GoogleFonts.poppins(fontSize: 20),
                                       ),
                                     ),
-                                    SizedBox(width: 8),
-                                    Container(
-                                      height: 38,
-                                      width: 100,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(20),
-                                        color: detailsC,
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          userData!["roomId"] ??
-                                              "Room ID", // Safely handle null
-                                          style:
-                                              GoogleFonts.poppins(fontSize: 18),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                Container(
-                                  height: 38,
-                                  width: 200,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(20),
-                                    color: detailsC,
-                                  ),
-                                  child: GestureDetector(
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
+                                    Row(
                                       children: [
-                                        Center(
-                                          child: Text(
-                                            "Edit Profile",
-                                            style: GoogleFonts.poppins(
-                                                fontSize: 18),
+                                        // Role
+                                        Container(
+                                          height: 38,
+                                          width: 100,
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                            color: detailsC,
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              userData!["role"] ??
+                                                  "Role", // Safely handle null
+                                              style: GoogleFonts.poppins(
+                                                  fontSize: 18),
+                                            ),
                                           ),
                                         ),
-                                        SizedBox(
-                                          width: 5,
-                                        ),
-                                        Icon(
-                                          LucideIcons.edit,
-                                          size: 15,
+                                        SizedBox(width: 8),
+                                        Container(
+                                          height: 38,
+                                          width: 100,
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                            color: detailsC,
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              userData!["roomId"] ??
+                                                  "Room ID", // Safely handle null
+                                              style: GoogleFonts.poppins(
+                                                  fontSize: 18),
+                                            ),
+                                          ),
                                         ),
                                       ],
                                     ),
-                                    onTap: () {
-                                      HapticFeedback.heavyImpact();
-                                    },
+                                  ],
+                                )
+                              ],
+                            ),
+                            SizedBox(height: 30),
+                            Container(
+                              height: 150,
+                              width: 150,
+                              decoration: BoxDecoration(
+                                color: flipC,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(10.0),
+                                child: (present)
+                                    ? Image(
+                                        image: Image.asset(
+                                                "assets/images/cutepng.png",
+                                                fit: BoxFit.contain)
+                                            .image)
+                                    : Image(
+                                        image: Image.asset(
+                                                "assets/images/dead.png",
+                                                fit: BoxFit.contain)
+                                            .image),
+                              ),
+                            ),
+                            SizedBox(height: 30),
+                            GestureDetector(
+                              child: Container(
+                                height: 50,
+                                width: width,
+                                decoration: BoxDecoration(
+                                  color: containerColor,
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Row(
+                                    children: [
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 12.0),
+                                        child: Icon(LucideIcons.edit),
+                                      ),
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 8.0),
+                                        child: Text(
+                                          "Edit Profile",
+                                          style:
+                                              GoogleFonts.poppins(fontSize: 18),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                              ],
-                            )
-                          ],
-                        ),
-                        SizedBox(height: 30),
-                        Container(
-                          height: 150,
-                          width: 150,
-                          decoration: BoxDecoration(
-                            color: flipC,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: (present)
-                                ? Image(
-                                    image: Image.asset(
-                                            "assets/images/cutepng.png",
-                                            fit: BoxFit.contain)
-                                        .image)
-                                : Image(
-                                    image: Image.asset("assets/images/dead.png",
-                                            fit: BoxFit.contain)
-                                        .image),
-                          ),
-                        ),
-                        SizedBox(height: 30),
-                        GestureDetector(
-                          child: Container(
-                            height: 50,
-                            width: width,
-                            decoration: BoxDecoration(
-                              color: containerColor,
-                              borderRadius: BorderRadius.circular(5),
-                            ),
-                            child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Row(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 12.0),
-                                    child: Icon(LucideIcons.logOut),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 8.0),
-                                    child: Text(
-                                      "Sign Out",
-                                      style: GoogleFonts.poppins(fontSize: 18),
-                                    ),
-                                  ),
-                                ],
                               ),
+                              onTap: () {
+                                HapticFeedback.heavyImpact();
+                              },
                             ),
-                          ),
-                          onTap: () {
-                            HapticFeedback.heavyImpact();
-                            customPopup(
-                              context,
-                              "Are you sure to sign out?",
-                              () {
-                                FirebaseAuth.instance.signOut();
-                                saveLoginState(false);
-                                Navigator.pushReplacement(
-                                  context,
-                                  myRoute(
-                                    LoginPage(),
+                            SizedBox(height: 5),
+                            GestureDetector(
+                              child: Container(
+                                height: 50,
+                                width: width,
+                                decoration: BoxDecoration(
+                                  color: containerColor,
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Row(
+                                    children: [
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 12.0),
+                                        child: Icon(LucideIcons.doorOpen),
+                                      ),
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 8.0),
+                                        child: Text(
+                                          "Room change?",
+                                          style:
+                                              GoogleFonts.poppins(fontSize: 18),
+                                        ),
+                                      ),
+                                    ],
                                   ),
+                                ),
+                              ),
+                              onTap: () {
+                                HapticFeedback.heavyImpact();
+                              },
+                            ),
+                            SizedBox(height: 5),
+                            GestureDetector(
+                              child: Container(
+                                height: 50,
+                                width: width,
+                                decoration: BoxDecoration(
+                                  color: containerColor,
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Row(
+                                    children: [
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 12.0),
+                                        child: Icon(LucideIcons.keySquare),
+                                      ),
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 8.0),
+                                        child: Text(
+                                          "change password",
+                                          style:
+                                              GoogleFonts.poppins(fontSize: 18),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              onTap: () {
+                                HapticFeedback.heavyImpact();
+                              },
+                            ),
+                            SizedBox(height: 5),
+                            GestureDetector(
+                              child: Container(
+                                height: 50,
+                                width: width,
+                                decoration: BoxDecoration(
+                                  color: containerColor,
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Row(
+                                    children: [
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 12.0),
+                                        child: Icon(LucideIcons.logOut),
+                                      ),
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 8.0),
+                                        child: Text(
+                                          "Sign Out",
+                                          style:
+                                              GoogleFonts.poppins(fontSize: 18),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              onTap: () {
+                                HapticFeedback.heavyImpact();
+                                customPopup(
+                                  context,
+                                  "Are you sure to sign out?",
+                                  () {
+                                    FirebaseAuth.instance.signOut();
+                                    saveLoginState(false);
+                                    Navigator.pushReplacement(
+                                      context,
+                                      myRoute(
+                                        LoginPage(),
+                                      ),
+                                    );
+                                  },
                                 );
                               },
-                            );
-                          },
-                        ),
-                        SizedBox(height: 5),
-                        GestureDetector(
-                          child: Container(
-                            height: 50,
-                            width: width,
-                            decoration: BoxDecoration(
-                              color: containerColor,
-                              borderRadius: BorderRadius.circular(5),
                             ),
-                            child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Row(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 12.0),
-                                    child: Icon(LucideIcons.library),
+                            SizedBox(height: 5),
+                            GestureDetector(
+                              child: Container(
+                                height: 50,
+                                width: width,
+                                decoration: BoxDecoration(
+                                  color: containerColor,
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Row(
+                                    children: [
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 12.0),
+                                        child: Icon(LucideIcons.library),
+                                      ),
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 8.0),
+                                        child: Text(
+                                          "User Guidelines",
+                                          style:
+                                              GoogleFonts.poppins(fontSize: 18),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 8.0),
-                                    child: Text(
-                                      "User Guidelines",
-                                      style: GoogleFonts.poppins(fontSize: 18),
-                                    ),
-                                  ),
-                                ],
+                                ),
                               ),
+                              onTap: () {
+                                HapticFeedback.heavyImpact();
+                                setState(() {
+                                  present = !present;
+                                });
+                              },
                             ),
-                          ),
-                          onTap: () {
-                            HapticFeedback.heavyImpact();
-                            setState(() {
-                              present = !present;
-                            });
-                          },
-                        ),
-                        SizedBox(height: 5),
-                        GestureDetector(
-                          child: Container(
-                            height: 50,
-                            width: width,
-                            decoration: BoxDecoration(
-                              color: containerColor,
-                              borderRadius: BorderRadius.circular(5),
-                            ),
-                            child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Row(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 12.0),
-                                    child: Icon(LucideIcons.info),
+                            SizedBox(height: 5),
+                            GestureDetector(
+                              child: Container(
+                                height: 50,
+                                width: width,
+                                decoration: BoxDecoration(
+                                  color: containerColor,
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Row(
+                                    children: [
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 12.0),
+                                        child: Icon(LucideIcons.info),
+                                      ),
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 8.0),
+                                        child: Text(
+                                          "Help",
+                                          style:
+                                              GoogleFonts.poppins(fontSize: 18),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 8.0),
-                                    child: Text(
-                                      "Help",
-                                      style: GoogleFonts.poppins(fontSize: 18),
-                                    ),
-                                  ),
-                                ],
+                                ),
                               ),
+                              onTap: () {
+                                HapticFeedback.heavyImpact();
+                              },
                             ),
-                          ),
-                          onTap: () {
-                            HapticFeedback.heavyImpact();
-                          },
-                        ),
-                        SizedBox(
-                          height: 5,
-                        ),
-                        GestureDetector(
-                          child: Container(
-                            height: 50,
-                            width: width,
-                            decoration: BoxDecoration(
-                              color: containerColor,
-                              borderRadius: BorderRadius.circular(5),
+                            SizedBox(
+                              height: 5,
                             ),
-                            child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Row(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 12.0),
-                                    child: Icon(LucideIcons.gitBranch),
+                            GestureDetector(
+                              child: Container(
+                                height: 50,
+                                width: width,
+                                decoration: BoxDecoration(
+                                  color: containerColor,
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Row(
+                                    children: [
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 12.0),
+                                        child: Icon(LucideIcons.gitBranch),
+                                      ),
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 8.0),
+                                        child: Text(
+                                          "Version",
+                                          style:
+                                              GoogleFonts.poppins(fontSize: 18),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 8.0),
-                                    child: Text(
-                                      "Version",
-                                      style: GoogleFonts.poppins(fontSize: 18),
-                                    ),
-                                  ),
-                                ],
+                                ),
                               ),
+                              onTap: () {
+                                HapticFeedback.heavyImpact();
+                              },
                             ),
-                          ),
-                          onTap: () {
-                            HapticFeedback.heavyImpact();
-                          },
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
             ),
     );

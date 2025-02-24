@@ -92,8 +92,8 @@ class _HomepageState extends State<Homepage> {
             child: Text(
               wish,
               style: GoogleFonts.nunito(
-                  textStyle:
-                      TextStyle(fontSize: 26, fontWeight: FontWeight.bold)),
+                textStyle: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+              ),
             ),
           ),
           GestureDetector(
@@ -103,19 +103,18 @@ class _HomepageState extends State<Homepage> {
             child: Mycontainer(
               height: cheight,
               color: containerColor,
-              child: Row(children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 10),
-                  child: Text(
-                    "Maintenance Request",
-                    style: AppFonts.body,
+              child: Row(
+                children: [
+                  Icon(Ionicons.construct_outline),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 20),
+                    child: Text(
+                      "Maintenance Request",
+                      style: AppFonts.body,
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 30),
-                  child: Icon(Ionicons.construct_outline),
-                )
-              ]),
+                ],
+              ),
             ),
           ),
           GestureDetector(
@@ -127,17 +126,14 @@ class _HomepageState extends State<Homepage> {
               color: containerColor,
               child: Row(
                 children: [
+                  Icon(Ionicons.calendar_outline),
                   Padding(
-                    padding: const EdgeInsets.only(left: 10),
+                    padding: const EdgeInsets.only(left: 20),
                     child: Text(
                       "Leave Application",
                       style: AppFonts.body,
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 30),
-                    child: Icon(Ionicons.calendar_outline),
-                  )
                 ],
               ),
             ),
@@ -147,21 +143,21 @@ class _HomepageState extends State<Homepage> {
               Navigator.push(context, myRoute(Payment()));
             },
             child: Mycontainer(
-                height: cheight,
-                color: containerColor,
-                child: Row(children: [
+              height: cheight,
+              color: containerColor,
+              child: Row(
+                children: [
+                  Icon(Ionicons.card_outline),
                   Padding(
-                    padding: const EdgeInsets.only(left: 10),
+                    padding: const EdgeInsets.only(left: 20),
                     child: Text(
                       "Payment",
                       style: AppFonts.body,
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 30),
-                    child: Icon(Ionicons.card_outline),
-                  )
-                ])),
+                ],
+              ),
+            ),
           ),
           GestureDetector(
             child: Mycontainer(
@@ -169,17 +165,14 @@ class _HomepageState extends State<Homepage> {
               color: containerColor,
               child: Row(
                 children: [
+                  Icon(Ionicons.flag_outline),
                   Padding(
-                    padding: const EdgeInsets.only(left: 10),
+                    padding: const EdgeInsets.only(left: 20),
                     child: Text(
                       "Complaint registration",
                       style: AppFonts.body,
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 30),
-                    child: Icon(Ionicons.flag_outline),
-                  )
                 ],
               ),
             ),
@@ -192,21 +185,21 @@ class _HomepageState extends State<Homepage> {
               Navigator.push(context, myRoute(Vacate()));
             },
             child: Mycontainer(
-                height: cheight,
-                color: containerColor,
-                child: Row(children: [
+              height: cheight,
+              color: containerColor,
+              child: Row(
+                children: [
+                  Icon(Icons.luggage),
                   Padding(
-                    padding: const EdgeInsets.only(left: 10),
+                    padding: const EdgeInsets.only(left: 20),
                     child: Text(
                       "Vacate",
                       style: AppFonts.body,
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 30),
-                    child: Icon(Icons.luggage),
-                  )
-                ])),
+                ],
+              ),
+            ),
           )
         ],
       ),

@@ -7,7 +7,7 @@ import 'package:minipro/splashscreen.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
-  // debugPaintSizeEnabled = true;
+  //debugPaintSizeEnabled = true;
   //bool loggedIn = await isLoggedIn();
 
   WidgetsFlutterBinding.ensureInitialized();
