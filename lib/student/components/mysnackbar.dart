@@ -14,7 +14,7 @@ class Mysnackbar {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
         ),
-        duration: Duration(seconds: 5),
+        duration: Duration(seconds: 1),
         action: SnackBarAction(
           label: 'OK',
           textColor: Colors.white,

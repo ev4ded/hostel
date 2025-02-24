@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:lucide_icons/lucide_icons.dart';
 import 'package:minipro/firebase/firestore_services.dart';
 import 'package:minipro/student/Student_queries/queries.dart';
-import 'package:minipro/student/components/custom_route.dart';
 import 'package:minipro/student/components/mysnackbar.dart';
-import 'package:minipro/student/pages/shop.dart';
 
 class Menu extends StatefulWidget {
   const Menu({super.key});
@@ -18,7 +15,6 @@ class _MenuState extends State<Menu> {
   Color iconC = Color.fromRGBO(255, 189, 109, 1);
   Color menuC = Color.fromRGBO(123, 114, 218, 1); //123, 114, 218
   Color text = Color.fromRGBO(120, 47, 32, 1);
-  double heightMainContainer = 650;
   List<String>? breakfast;
   List<String>? lunch;
   List<String>? snacks;
@@ -68,323 +64,320 @@ class _MenuState extends State<Menu> {
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
+    double heightMainContainer = height * 0.75;
     //var breakfast = ["A", "B", "C"];
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          "Soup of the Day:",
-          style: GoogleFonts.raleway(
-              textStyle: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-        ),
-        actions: [
-          IconButton(
-            onPressed: () {
-              Navigator.push(context, myRoute(Shop()));
-            },
-            icon: Icon(
-              LucideIcons.store,
-              size: 25,
-              color: iconC,
+        appBar: AppBar(
+          title: Text(
+            "Soup of the Day:",
+            style: GoogleFonts.raleway(
+              textStyle: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
-            color: iconC,
-          )
-        ],
-      ),
-      body: isloading
-          ? Center(
-              child: CircularProgressIndicator(),
-            )
-          : SizedBox(
-              width: width,
-              height: height,
-              child: Center(
-                child: Padding(
-                  padding:
-                      EdgeInsets.only(top: 4, bottom: 4, left: 4, right: 4),
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      Container(
-                        //main container
-                        width: width * 0.95,
-                        height: heightMainContainer,
-                        decoration: BoxDecoration(
-                            color: menuC,
-                            borderRadius: BorderRadius.circular(30)),
-                      ),
-                      Container(
-                        //smaller container at back
-                        height: 150,
-                        width: width * 0.95,
-                        color: Color.fromRGBO(11, 14, 29, 1),
-                      ),
-                      Container(
-                        //front most container
-                        height: heightMainContainer - 30,
-                        width: width * 0.89,
-                        decoration: BoxDecoration(
-                          color: Color.fromRGBO(217, 222, 250, 1),
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        child: Column(
-                          children: [
-                            Text(
-                              "MENU",
-                              style: GoogleFonts.barriecito(
-                                textStyle: TextStyle(
-                                    fontSize: 35,
-                                    fontWeight: FontWeight.bold,
-                                    color: text),
-                              ),
+          ),
+        ),
+        body: isloading
+            ? Center(
+                child: CircularProgressIndicator(),
+              )
+            : Center(
+                child: SingleChildScrollView(
+                  physics: ClampingScrollPhysics(),
+                  child: Center(
+                    child: Padding(
+                      padding:
+                          EdgeInsets.only(top: 4, bottom: 4, left: 4, right: 4),
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Container(
+                            //main container
+                            width: width * 0.95,
+                            height: heightMainContainer,
+                            decoration: BoxDecoration(
+                                color: menuC,
+                                borderRadius: BorderRadius.circular(30)),
+                          ),
+                          Container(
+                            //smaller container at back
+                            height: 150,
+                            width: width * 0.95,
+                            color: Color.fromRGBO(11, 14, 29, 1),
+                          ),
+                          Container(
+                            //front most container
+                            height: heightMainContainer - 30,
+                            width: width * 0.89,
+                            decoration: BoxDecoration(
+                              color: Color.fromRGBO(217, 222, 250, 1),
+                              borderRadius: BorderRadius.circular(30),
                             ),
-                            Container(
-                              height: 1,
-                              width: width * 0.65,
-                              color: text,
-                            ),
-                            SizedBox(
-                              height: height * 0.02,
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
+                            child: Column(
                               children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 10.0),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Column(
+                                Text(
+                                  "MENU",
+                                  style: GoogleFonts.barriecito(
+                                    textStyle: TextStyle(
+                                        fontSize: 35,
+                                        fontWeight: FontWeight.bold,
+                                        color: text),
+                                  ),
+                                ),
+                                Container(
+                                  height: 1,
+                                  width: width * 0.65,
+                                  color: text,
+                                ),
+                                SizedBox(
+                                  height: height * 0.02,
+                                ),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Padding(
+                                      padding:
+                                          const EdgeInsets.only(left: 10.0),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
                                         crossAxisAlignment:
                                             CrossAxisAlignment.center,
                                         children: [
-                                          Text(
-                                            "Breakfast:",
-                                            style: GoogleFonts.luckiestGuy(
-                                              textStyle: TextStyle(
-                                                  fontSize: 25,
-                                                  //fontWeight: FontWeight.bold,
-                                                  color: text),
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            height: 5,
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                              left: 30,
-                                            ),
-                                            child: Align(
-                                              alignment: Alignment.centerLeft,
-                                              child: Text(
-                                                breakfast!.first,
-                                                style: GoogleFonts
-                                                    .zcoolQingKeHuangYou(
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                "Breakfast:",
+                                                style: GoogleFonts.luckiestGuy(
                                                   textStyle: TextStyle(
-                                                      fontSize: 20,
-                                                      fontWeight:
-                                                          FontWeight.bold,
+                                                      fontSize: 25,
+                                                      //fontWeight: FontWeight.bold,
                                                       color: text),
                                                 ),
                                               ),
+                                              SizedBox(
+                                                height: 5,
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                  left: 30,
+                                                ),
+                                                child: Align(
+                                                  alignment:
+                                                      Alignment.centerLeft,
+                                                  child: Text(
+                                                    breakfast!.first,
+                                                    style: GoogleFonts
+                                                        .zcoolQingKeHuangYou(
+                                                      textStyle: TextStyle(
+                                                          fontSize: 20,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: text),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          SizedBox(
+                                            width: 120,
+                                            height: 120,
+                                            child: Image(
+                                              image: AssetImage(
+                                                  "assets/images/breakfast.png"),
                                             ),
                                           ),
                                         ],
                                       ),
-                                      SizedBox(
-                                        width: 120,
-                                        height: 120,
-                                        child: Image(
-                                          image: AssetImage(
-                                              "assets/images/breakfast.png"),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    SizedBox(
-                                      width: 120,
-                                      height: 120,
-                                      child: Image(
-                                        image: AssetImage(
-                                            "assets/images/lunch.png"),
-                                      ),
                                     ),
-                                    Column(
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
                                       crossAxisAlignment:
                                           CrossAxisAlignment.center,
                                       children: [
-                                        Text(
-                                          "Lunch:",
-                                          style: GoogleFonts.luckiestGuy(
-                                            textStyle: TextStyle(
-                                                fontSize: 25,
-                                                //fontWeight: FontWeight.bold,
-                                                color: text),
-                                          ),
-                                        ),
                                         SizedBox(
-                                          height: 5,
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                            right: 10,
+                                          width: 120,
+                                          height: 120,
+                                          child: Image(
+                                            image: AssetImage(
+                                                "assets/images/lunch.png"),
                                           ),
-                                          child: Align(
-                                            alignment: Alignment.centerLeft,
-                                            child: Text(
-                                              lunch!.first,
-                                              style: GoogleFonts
-                                                  .zcoolQingKeHuangYou(
+                                        ),
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              "Lunch:",
+                                              style: GoogleFonts.luckiestGuy(
                                                 textStyle: TextStyle(
-                                                    fontSize: 20,
-                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 25,
+                                                    //fontWeight: FontWeight.bold,
                                                     color: text),
                                               ),
                                             ),
-                                          ),
-                                        ),
-                                        /*SizedBox(
+                                            SizedBox(
+                                              height: 5,
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                right: 10,
+                                              ),
+                                              child: Align(
+                                                alignment: Alignment.centerLeft,
+                                                child: Text(
+                                                  lunch!.first,
+                                                  style: GoogleFonts
+                                                      .zcoolQingKeHuangYou(
+                                                    textStyle: TextStyle(
+                                                        fontSize: 20,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: text),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            /*SizedBox(
                                         height: 15,
                                       ),*/
+                                          ],
+                                        ),
                                       ],
                                     ),
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: height * 0.01,
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 10.0),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Column(
+                                    SizedBox(
+                                      height: height * 0.01,
+                                    ),
+                                    Padding(
+                                      padding:
+                                          const EdgeInsets.only(left: 10.0),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          Text(
-                                            "Snacks:",
-                                            style: GoogleFonts.luckiestGuy(
-                                              textStyle: TextStyle(
-                                                  fontSize: 25,
-                                                  //fontWeight: FontWeight.bold,
-                                                  color: text),
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            height: 5,
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                              left: 30,
-                                            ),
-                                            child: Align(
-                                              alignment: Alignment.centerLeft,
-                                              child: Text(
-                                                snacks!.first,
-                                                style: GoogleFonts
-                                                    .zcoolQingKeHuangYou(
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                "Snacks:",
+                                                style: GoogleFonts.luckiestGuy(
                                                   textStyle: TextStyle(
-                                                      fontSize: 20,
-                                                      fontWeight:
-                                                          FontWeight.bold,
+                                                      fontSize: 25,
+                                                      //fontWeight: FontWeight.bold,
                                                       color: text),
                                                 ),
                                               ),
-                                            ),
-                                          ),
-                                          /*SizedBox(
+                                              SizedBox(
+                                                height: 5,
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                  left: 30,
+                                                ),
+                                                child: Align(
+                                                  alignment:
+                                                      Alignment.centerLeft,
+                                                  child: Text(
+                                                    snacks!.first,
+                                                    style: GoogleFonts
+                                                        .zcoolQingKeHuangYou(
+                                                      textStyle: TextStyle(
+                                                          fontSize: 20,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: text),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              /*SizedBox(
                                           height: 15,
                                         ),*/
+                                            ],
+                                          ),
+                                          SizedBox(
+                                            width: 120,
+                                            height: 120,
+                                            child: Image(
+                                              image: AssetImage(
+                                                  "assets/images/snacks.png"),
+                                            ),
+                                          ),
                                         ],
                                       ),
-                                      SizedBox(
-                                        width: 120,
-                                        height: 120,
-                                        child: Image(
-                                          image: AssetImage(
-                                              "assets/images/snacks.png"),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    SizedBox(
-                                      width: 120,
-                                      height: 120,
-                                      child: Image(
-                                        image: AssetImage(
-                                            "assets/images/dinner.png"),
-                                      ),
                                     ),
-                                    Column(
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
                                       crossAxisAlignment:
                                           CrossAxisAlignment.center,
                                       children: [
-                                        Text(
-                                          "Dinner:",
-                                          style: GoogleFonts.luckiestGuy(
-                                            textStyle: TextStyle(
-                                                fontSize: 25,
-                                                //fontWeight: FontWeight.bold,
-                                                color: text),
-                                          ),
-                                        ),
                                         SizedBox(
-                                          height: 5,
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                            right: 10,
+                                          width: 120,
+                                          height: 120,
+                                          child: Image(
+                                            image: AssetImage(
+                                                "assets/images/dinner.png"),
                                           ),
-                                          child: Align(
-                                            alignment: Alignment.centerLeft,
-                                            child: Text(
-                                              dinner!.first,
-                                              style: GoogleFonts
-                                                  .zcoolQingKeHuangYou(
+                                        ),
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              "Dinner:",
+                                              style: GoogleFonts.luckiestGuy(
                                                 textStyle: TextStyle(
-                                                    fontSize: 20,
-                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 25,
+                                                    //fontWeight: FontWeight.bold,
                                                     color: text),
                                               ),
                                             ),
-                                          ),
-                                        ),
-                                        /*SizedBox(
+                                            SizedBox(
+                                              height: 5,
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                right: 10,
+                                              ),
+                                              child: Align(
+                                                alignment: Alignment.centerLeft,
+                                                child: Text(
+                                                  dinner!.first,
+                                                  style: GoogleFonts
+                                                      .zcoolQingKeHuangYou(
+                                                    textStyle: TextStyle(
+                                                        fontSize: 20,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: text),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            /*SizedBox(
                                         height: 15,
                                       ),*/
+                                          ],
+                                        ),
                                       ],
                                     ),
                                   ],
                                 ),
                               ],
                             ),
-                          ],
-                        ),
-                      )
-                    ],
+                          )
+                        ],
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ),
-    );
+              ));
   }
 
   void _showSnackBar(String message, {bool isError = false}) {
