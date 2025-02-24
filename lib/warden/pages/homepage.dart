@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
+
 import 'package:minipro/warden/components/my_drawer.dart';
 import 'package:minipro/warden/pages/functions/complaints.dart';
 import 'package:minipro/warden/pages/functions/maintenance.dart';
+
+
+
 //import 'package:google_fonts/google_fonts.dart';
 // Import next page
 
@@ -56,7 +60,7 @@ class _HomePageState extends State<HomePage> {
                       () => Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => MaintenancePage(), // Go to next page
+                          builder: (context) => Maintenance(), // Go to next page
                         ),
                       ),
                     ),
