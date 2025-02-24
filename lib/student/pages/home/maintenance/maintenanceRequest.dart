@@ -172,7 +172,7 @@ class _MaintenanceState extends State<MaintenanceRequest> {
             'hostel_id': userData!["hostelId"],
             'title': title,
             'status': 'pending',
-            'room no': userData!["roomId"],
+            'room_no': userData!["roomId"],
             'description': description,
             'created_at': FieldValue.serverTimestamp(),
           },
