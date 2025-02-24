@@ -81,245 +81,247 @@ class _SignupPageState extends State<SignupPage> {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       backgroundColor: backboxColor,
-      body: SingleChildScrollView(
-        physics: ClampingScrollPhysics(),
-        child: ConstrainedBox(
-          constraints: BoxConstraints(
-            minHeight: height, // Prevent extra space at the bottom
-          ),
-          child: IntrinsicHeight(
-            child: Stack(
-              clipBehavior: Clip.none,
-              children: [
-                IgnorePointer(
-                  child: ClipPath(
-                    clipper: MyClipper(),
-                    child: Container(
-                      height: height * 0.6,
-                      width: width,
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: AssetImage('assets/images/meow.jpg'),
-                          fit: BoxFit.cover,
+      body: LayoutBuilder(builder: (context,constraints){
+        return SingleChildScrollView(
+          physics: ClampingScrollPhysics(),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: height, // Prevent extra space at the bottom
+            ),
+            child: IntrinsicHeight(
+              child: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  IgnorePointer(
+                    child: ClipPath(
+                      clipper: MyClipper(),
+                      child: Container(
+                        height: height * 0.6,
+                        width: width,
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: AssetImage('assets/images/meow.jpg'),
+                            fit: BoxFit.cover,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-                Positioned(
-                  top: height * 0.15, // Adjusted top position
-                  left: 20,
-                  child: Container(
-                    width: width * 0.9,
-                    decoration: BoxDecoration(
-                      color: mainboxColor,
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(30),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.only(left: 15),
-                            child: Text(
-                              'SIGNUP',
-                              style: GoogleFonts.teko(
-                                fontSize: 32,
-                                color: Colors.black,
-                                fontWeight: FontWeight.w500,
+                  Positioned(
+                    top: height * 0.15, // Adjusted top position
+                    left: 20,
+                    child: Container(
+                      width: width * 0.9,
+                      decoration: BoxDecoration(
+                        color: mainboxColor,
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(30),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(left: 15),
+                              child: Text(
+                                'SIGNUP',
+                                style: GoogleFonts.teko(
+                                  fontSize: 32,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w500,
+                                ),
                               ),
                             ),
-                          ),
-                          SizedBox(height: 15),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                left: 8, right: 8, bottom: 8),
-                            child: Mytextfield(
-                              hintColor: hintColor,
-                              hasError: _errors['hostelId'] ??
-                                  false, //to ensure notnull
-                              hinttext: 'HOSTEl ID',
-                              controller: _controllers["hostelId"],
-                              bgColor: inputtextColor,
+                            SizedBox(height: 15),
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 8, right: 8, bottom: 8),
+                              child: Mytextfield(
+                                hintColor: hintColor,
+                                hasError: _errors['hostelId'] ??
+                                    false, //to ensure notnull
+                                hinttext: 'HOSTEl ID',
+                                controller: _controllers["hostelId"],
+                                bgColor: inputtextColor,
+                              ),
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8),
-                            child: Row(
-                              children: [
-                                Text(
-                                  'Role: ',
-                                  style: GoogleFonts.poppins(
-                                      fontSize: 18,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                Form(
-                                  key: _formKey,
-                                  child: Expanded(
-                                    child: DropdownButtonHideUnderline(
-                                      child: DropdownButtonFormField2<String>(
-                                        iconStyleData: IconStyleData(
-                                          icon: Icon(
-                                            Icons.arrow_drop_down,
-                                            color: Colors.black,
+                            Padding(
+                              padding: const EdgeInsets.all(8),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    'Role: ',
+                                    style: GoogleFonts.poppins(
+                                        fontSize: 18,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  Form(
+                                    key: _formKey,
+                                    child: Expanded(
+                                      child: DropdownButtonHideUnderline(
+                                        child: DropdownButtonFormField2<String>(
+                                          iconStyleData: IconStyleData(
+                                            icon: Icon(
+                                              Icons.arrow_drop_down,
+                                              color: Colors.black,
+                                            ),
                                           ),
-                                        ),
-                                        hint: Text(
-                                          'SELECT ROLE',
-                                          style: GoogleFonts.inter(
-                                            color: Colors.grey[400],
+                                          hint: Text(
+                                            'SELECT ROLE',
+                                            style: GoogleFonts.inter(
+                                              color: Colors.grey[400],
+                                            ),
                                           ),
-                                        ),
-                                        decoration: InputDecoration(
-                                          contentPadding: EdgeInsets.symmetric(
-                                              horizontal: 10, vertical: 10),
-                                          filled: true,
-                                          fillColor: inputtextColor,
-                                          border: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(20),
+                                          decoration: InputDecoration(
+                                            contentPadding: EdgeInsets.symmetric(
+                                                horizontal: 10, vertical: 10),
+                                            filled: true,
+                                            fillColor: inputtextColor,
+                                            border: OutlineInputBorder(
+                                              borderRadius:
+                                              BorderRadius.circular(20),
+                                            ),
                                           ),
-                                        ),
-                                        isExpanded: true,
-                                        items: roleList
-                                            .map(
-                                              (e) => DropdownMenuItem(
-                                                value: e,
-                                                child: Text(
-                                                  e,
-                                                  style: TextStyle(
-                                                    color: Colors.black,
-                                                  ),
+                                          isExpanded: true,
+                                          items: roleList
+                                              .map(
+                                                (e) => DropdownMenuItem(
+                                              value: e,
+                                              child: Text(
+                                                e,
+                                                style: TextStyle(
+                                                  color: Colors.black,
                                                 ),
                                               ),
-                                            )
-                                            .toList(),
-                                        onChanged: (value) {
-                                          setState(() {
-                                            role = value.toString();
-                                          });
-                                        },
-                                        value: role,
-                                        /*validator: (value) {
+                                            ),
+                                          )
+                                              .toList(),
+                                          onChanged: (value) {
+                                            setState(() {
+                                              role = value.toString();
+                                            });
+                                          },
+                                          value: role,
+                                          /*validator: (value) {
                                           if (value == null) {
                                             return 'Please select a role';
                                           }
                                           return null;
                                         },*/
-                                        dropdownStyleData: DropdownStyleData(
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(20),
-                                            color: inputtextColor,
+                                          dropdownStyleData: DropdownStyleData(
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                              BorderRadius.circular(20),
+                                              color: inputtextColor,
+                                            ),
                                           ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                )
-                              ],
+                                  )
+                                ],
+                              ),
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8),
-                            child: Mytextfield(
-                                hintColor: hintColor,
-                                hasError: _errors['username'] ?? false,
-                                hinttext: 'USERNAME',
-                                controller: _controllers["username"],
-                                bgColor: inputtextColor),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8),
-                            child: Emailtextfield(
-                                hintColor: hintColor,
-                                hasError: _errors['email'] ?? false,
-                                hinttext: 'EMAIL-ID',
-                                controller: _controllers["email"],
-                                bgColor: inputtextColor),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8),
-                            child: Mytextfield(
-                              hintColor: hintColor,
-                              hasError: _errors['password'] ?? false,
-                              hinttext: 'PASSWORD',
-                              controller: _controllers["password"],
-                              bgColor: inputtextColor,
-                              isHidden: true,
+                            Padding(
+                              padding: const EdgeInsets.all(8),
+                              child: Mytextfield(
+                                  hintColor: hintColor,
+                                  hasError: _errors['username'] ?? false,
+                                  hinttext: 'USERNAME',
+                                  controller: _controllers["username"],
+                                  bgColor: inputtextColor),
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8),
-                            child: Mytextfield(
+                            Padding(
+                              padding: const EdgeInsets.all(8),
+                              child: Emailtextfield(
+                                  hintColor: hintColor,
+                                  hasError: _errors['email'] ?? false,
+                                  hinttext: 'EMAIL-ID',
+                                  controller: _controllers["email"],
+                                  bgColor: inputtextColor),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8),
+                              child: Mytextfield(
                                 hintColor: hintColor,
-                                hasError: _errors['confirmpassword'] ?? false,
-                                hinttext: 'CONFIRM PASSWORD',
-                                controller: _controllers["confirmpassword"],
+                                hasError: _errors['password'] ?? false,
+                                hinttext: 'PASSWORD',
+                                controller: _controllers["password"],
+                                bgColor: inputtextColor,
                                 isHidden: true,
-                                bgColor: inputtextColor),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: Align(
-                              alignment: Alignment.center,
-                              child: SizedBox(
-                                width: width * 0.9,
-                                height: height * 0.06,
-                                child: ElevatedButton(
-                                  onPressed: () {
-                                    _validateInput();
-                                    createUser();
-                                    //clearTextField();
-                                  },
-                                  style: ButtonStyle(
-                                    backgroundColor:
-                                        WidgetStatePropertyAll(buttonColor),
-                                  ),
-                                  child: Text(
-                                    "SIGNUP",
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      color: Colors.black,
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8),
+                              child: Mytextfield(
+                                  hintColor: hintColor,
+                                  hasError: _errors['confirmpassword'] ?? false,
+                                  hinttext: 'CONFIRM PASSWORD',
+                                  controller: _controllers["confirmpassword"],
+                                  isHidden: true,
+                                  bgColor: inputtextColor),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Align(
+                                alignment: Alignment.center,
+                                child: SizedBox(
+                                  width: width * 0.9,
+                                  height: height * 0.06,
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      _validateInput();
+                                      createUser();
+                                      //clearTextField();
+                                    },
+                                    style: ButtonStyle(
+                                      backgroundColor:
+                                      WidgetStatePropertyAll(buttonColor),
+                                    ),
+                                    child: Text(
+                                      "SIGNUP",
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        color: Colors.black,
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(15),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text("Already have an account?"),
-                                GestureDetector(
-                                  onTap: () {
-                                    Navigator.pushReplacement(
-                                        context, myRoute(LoginPage()));
-                                  },
-                                  child: Text(
-                                    "LogIn",
-                                    style: TextStyle(
-                                      color: Colors.blueAccent,
+                            Padding(
+                              padding: const EdgeInsets.all(15),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text("Already have an account?"),
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.pushReplacement(
+                                          context, myRoute(LoginPage()));
+                                    },
+                                    child: Text(
+                                      "LogIn",
+                                      style: TextStyle(
+                                        color: Colors.blueAccent,
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      })
     );
   }
 
