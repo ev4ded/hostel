@@ -10,10 +10,12 @@ class Myparafield extends StatelessWidget {
   final Color hintColor;
   final TextEditingController? controller;
   final String? hintText;
+  final int noOfLine;
   const Myparafield({
     super.key,
     this.controller,
     this.hintText,
+    this.noOfLine = 5,
     this.borderWidth = 1.0,
     this.borderRadius = 15,
     this.borderColor = Colors.white,
@@ -25,7 +27,7 @@ class Myparafield extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextField(
-      maxLines: 5,
+      maxLines: noOfLine,
       keyboardType: TextInputType.multiline,
       textAlignVertical: TextAlignVertical.top,
       cursorColor: Colors.white,

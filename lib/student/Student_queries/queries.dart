@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 Future<List<QueryDocumentSnapshot>> getStudentMaintenance(String uid) async {
   try {
@@ -53,5 +54,20 @@ Future<Map<String, List<String>>> getMenu(String hostelId) async {
   } catch (e) {
     print("error:$e");
     return {};
+  }
+}
+
+Future<bool> appliedForVacate() async {
+  User? user = FirebaseAuth.instance.currentUser;
+  if (user == null) return false;
+  try {
+    DocumentSnapshot doc = await FirebaseFirestore.instance
+        .collection('vacate')
+        .doc(user.uid) // Replace with actual student ID  user.uid
+        .get();
+    return doc.exists;
+  } catch (e) {
+    print("error:$e");
+    return false;
   }
 }

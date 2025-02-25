@@ -3,10 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:minipro/authentication/fcmtoken.dart';
 import 'package:minipro/firebase/firestore_services.dart';
 import 'package:minipro/authentication/loginpage.dart';
 import 'package:minipro/student/components/custom_route.dart';
 import 'package:minipro/student/components/customnotification.dart';
+import 'package:minipro/student/pages/profile/editprofile.dart';
+import 'package:minipro/student/pages/profile/help.dart';
+import 'package:minipro/student/pages/profile/roomchange.dart';
+import 'package:minipro/student/pages/profile/userguidelines.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Profile extends StatefulWidget {
@@ -156,7 +161,7 @@ class _ProfileState extends State<Profile> {
                               ],
                             ),
                             SizedBox(height: 30),
-                            Container(
+                            /*Container(
                               height: 150,
                               width: 150,
                               decoration: BoxDecoration(
@@ -177,7 +182,7 @@ class _ProfileState extends State<Profile> {
                                                 fit: BoxFit.contain)
                                             .image),
                               ),
-                            ),
+                            ),*/
                             SizedBox(height: 30),
                             GestureDetector(
                               child: Container(
@@ -210,6 +215,12 @@ class _ProfileState extends State<Profile> {
                                 ),
                               ),
                               onTap: () {
+                                Navigator.push(
+                                  context,
+                                  myRoute(
+                                    Editprofile(),
+                                  ),
+                                );
                                 HapticFeedback.heavyImpact();
                               },
                             ),
@@ -245,6 +256,13 @@ class _ProfileState extends State<Profile> {
                                 ),
                               ),
                               onTap: () {
+                                Roomchange();
+                                Navigator.push(
+                                  context,
+                                  myRoute(
+                                    Roomchange(),
+                                  ),
+                                );
                                 HapticFeedback.heavyImpact();
                               },
                             ),
@@ -322,11 +340,15 @@ class _ProfileState extends State<Profile> {
                                   () {
                                     FirebaseAuth.instance.signOut();
                                     saveLoginState(false);
-                                    Navigator.pushReplacement(
+                                    User? userid =
+                                        FirebaseAuth.instance.currentUser;
+                                    removeFCMToken(userid!.uid);
+                                    Navigator.pushAndRemoveUntil(
                                       context,
                                       myRoute(
                                         LoginPage(),
                                       ),
+                                      (route) => false,
                                     );
                                   },
                                 );
@@ -364,6 +386,12 @@ class _ProfileState extends State<Profile> {
                                 ),
                               ),
                               onTap: () {
+                                Navigator.push(
+                                  context,
+                                  myRoute(
+                                    Userguidelines(),
+                                  ),
+                                );
                                 HapticFeedback.heavyImpact();
                                 setState(() {
                                   present = !present;
@@ -402,6 +430,12 @@ class _ProfileState extends State<Profile> {
                                 ),
                               ),
                               onTap: () {
+                                Navigator.push(
+                                  context,
+                                  myRoute(
+                                    Help(),
+                                  ),
+                                );
                                 HapticFeedback.heavyImpact();
                               },
                             ),
@@ -439,6 +473,12 @@ class _ProfileState extends State<Profile> {
                                 ),
                               ),
                               onTap: () {
+                                Navigator.push(
+                                  context,
+                                  myRoute(
+                                    Help(),
+                                  ),
+                                );
                                 HapticFeedback.heavyImpact();
                               },
                             ),

@@ -313,7 +313,7 @@ class _MenuState extends State<Menu> {
                                     ),
                                     Row(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
+                                          MainAxisAlignment.start,
                                       crossAxisAlignment:
                                           CrossAxisAlignment.center,
                                       children: [

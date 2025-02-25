@@ -12,7 +12,7 @@ class Mysnackbar {
         backgroundColor: isError ? Colors.redAccent : Colors.green,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(1),
         ),
         duration: Duration(seconds: 1),
         action: SnackBarAction(

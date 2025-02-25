@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 //import 'package:flutter/rendering.dart'; // debug
 import 'package:firebase_core/firebase_core.dart';
+//import 'package:get_it/get_it.dart';
 import 'package:minipro/authentication/authprovider.dart';
 import 'package:minipro/student/Theme/theme.dart';
 import 'package:minipro/splashscreen.dart';
 import 'package:provider/provider.dart';
+
+/*final GetIt getIt = GetIt.instance;
+void setupLocator() {
+  getIt.registerLazySingleton<AnalyticService>(() => AnalyticService());
+}*/
 
 void main() async {
   //debugPaintSizeEnabled = true;
