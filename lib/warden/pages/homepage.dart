@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 
 import 'package:minipro/warden/components/my_drawer.dart';
+import 'package:minipro/warden/pages/functions/allocate.dart';
 import 'package:minipro/warden/pages/functions/complaints.dart';
 import 'package:minipro/warden/pages/functions/maintenance.dart';
+import 'package:minipro/warden/pages/functions/menuupdate.dart';
 
 
 
@@ -76,6 +78,29 @@ class _HomePageState extends State<HomePage> {
                        
                       
                     ),
+                    _buildMenuItem(
+                      Ionicons.fast_food_outline,
+                      "Mess Menu Update",
+                      () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => Menu(), // Go to next page
+                        ),
+                      ),
+                    ),
+
+                     _buildMenuItem(
+                      Ionicons.bed_outline,
+                      "Room Allotment",
+                      () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>RoomAllotment(), // Go to next page
+                        ),
+                      ),
+                    ),
+
+
                   ],
                 ),
               ),

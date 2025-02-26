@@ -39,9 +39,9 @@ class _MaintenanceState extends State<Maintenance> with SingleTickerProviderStat
   PreferredSizeWidget _buildTabBar() {
     return TabBar(
       controller: _tabController,
-      labelColor: Color(0xFFFAF4F4), 
-      unselectedLabelColor: Color(0xFFDCC8C8), 
-      indicatorColor: Color(0xFFFAF4F4), 
+      labelColor: const Color.fromARGB(255, 250, 244, 244).withRed(7), 
+      unselectedLabelColor: Color.fromARGB(255, 141, 136, 136), 
+      indicatorColor:  const Color.fromARGB(255, 250, 244, 244).withRed(7), 
       indicatorWeight: 3,
       tabs: [
         Tab(text: "Pending"),
@@ -138,7 +138,7 @@ class RequestsList extends StatelessWidget {
                   children: [
                     SizedBox(height: 10),
                     Text("Room No: ${requestData["room_no"] ?? "No Room No"}"),
-                    Text(requestData["description"] ?? "No Description"),
+                    Text("Description: ${requestData["description"] ?? "No Description"}"),
                   ],
                 ),
                 trailing: status == "Pending"
