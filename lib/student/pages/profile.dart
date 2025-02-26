@@ -75,6 +75,7 @@ class _ProfileState extends State<Profile> {
                         child: Column(
                           children: [
                             Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 GestureDetector(
                                   onLongPress: () async {
@@ -89,7 +90,7 @@ class _ProfileState extends State<Profile> {
                                     }
                                   },
                                   child: CircleAvatar(
-                                    radius: 55,
+                                    radius: 60,
                                     backgroundColor:
                                         Color.fromRGBO(93, 101, 95, 1),
                                     key: ValueKey(name),

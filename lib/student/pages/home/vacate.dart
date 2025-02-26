@@ -32,6 +32,7 @@ class _VacateState extends State<Vacate> {
   Color buttonColor = Color.fromRGBO(255, 189, 109, 1);
   Color buttonTextColor = Color.fromRGBO(18, 18, 18, 1);
   Color highlightColor = Colors.blueAccent;
+  String today = DateFormat("yyyy-MM-dd").format(DateTime.now());
   List<String> reasons = [
     "Graduation Completed",
     "End of Semester Break",
@@ -48,11 +49,13 @@ class _VacateState extends State<Vacate> {
   Map<String, dynamic>? userData;
   final FirestoreServices _firestoreService = FirestoreServices();
   User? user = FirebaseAuth.instance.currentUser;
+  bool isloading = true;
   bool isApplied = false;
   @override
   void initState() {
     super.initState();
     fetchUserData();
+    applied();
   }
 
   void fetchUserData() async {
@@ -66,9 +69,32 @@ class _VacateState extends State<Vacate> {
       await _firestoreService.getUserData();
       Map<String, dynamic>? newUserData =
           await _firestoreService.getCachedUserData();
+      setState(
+        () {
+          userData = newUserData;
+        },
+      );
+    }
+  }
+
+  void applied() async {
+    setState(() {
+      isloading = true;
+    });
+    try {
+      bool did = await appliedForVacate();
       setState(() {
-        userData = newUserData;
+        isApplied = did;
+        isloading = false;
       });
+      if (did) {
+        _showAppliedDialog();
+      }
+    } catch (e) {
+      setState(() {
+        isloading = false;
+      });
+      _showSnackBar("message:$e");
     }
   }
 
@@ -77,121 +103,132 @@ class _VacateState extends State<Vacate> {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
     return Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon: Icon(LucideIcons.chevronLeft),
-          ),
-          title: Text(
-            "Vacate Request",
-            style: GoogleFonts.inter(),
-          ),
+      appBar: AppBar(
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: Icon(LucideIcons.chevronLeft),
         ),
-        body: SingleChildScrollView(
-          child: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    height: height * 0.03,
-                  ),
-                  Text(
-                    "Date",
-                    style: GoogleFonts.inter(),
-                  ),
-                  SizedBox(
-                    height: height * 0.02,
-                  ),
-                  Mydate(
-                    hinttext: "Vacating date?",
-                    bgColor: bgColor,
-                    borderColor: borderColor,
-                    borderRadius: borderRadius,
-                    borderWidth: borderWidth,
-                    datecontroller: _dateController,
-                    hintColor: hintColor,
-                    textColor: textColor,
-                  ),
-                  SizedBox(
-                    height: height * 0.02,
-                  ),
-                  Text("Reason"),
-                  SizedBox(
-                    height: height * 0.02,
-                  ),
-                  Mydropdownmenu(
-                    bgColor: bgColor,
-                    borderColor: borderColor,
-                    borderRadius: borderRadius,
-                    borderWidth: borderWidth,
-                    buttonColor: buttonColor,
-                    getvalue: (value) {
-                      setState(() {
-                        reason = value;
-                      });
-                    },
-                    hintColor: hintColor,
-                    hinttext: "Reason?",
-                    list: reasons,
-                    textColor: textColor,
-                    width: width,
-                  ),
-                  SizedBox(
-                    height: height * 0.02,
-                  ),
-                  Text("Forwarding Address"),
-                  SizedBox(
-                    height: height * 0.02,
-                  ),
-                  Myparafield(
-                    bgColor: bgColor,
-                    borderColor: borderColor,
-                    borderRadius: borderRadius,
-                    borderWidth: borderWidth,
-                    controller: _addressController,
-                    hintColor: hintColor,
-                    hintText: "address here",
-                    textColor: textColor,
-                    noOfLine: 3,
-                  ),
-                  SizedBox(
-                    height: height * 0.05,
-                  ),
-                  Center(
-                    child: SliderButton(
-                      action: () async {
-                        submit();
-                        Future.delayed(Duration(seconds: 1), () {
-                          if (context.mounted) {
-                            Navigator.pop(context);
-                          }
-                        });
-                        return true;
-                      },
-                      label: Text(
-                        "Slide to apply",
-                        style: GoogleFonts.inter(fontWeight: FontWeight.w500),
+        title: Text(
+          "Vacate Request",
+          style: GoogleFonts.inter(),
+        ),
+      ),
+      body: isloading
+          ? Center(child: CircularProgressIndicator())
+          : isApplied
+              ? SizedBox()
+              : SingleChildScrollView(
+                  child: SafeArea(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(
+                            height: height * 0.03,
+                          ),
+                          Text(
+                            "Date",
+                            style: GoogleFonts.inter(),
+                          ),
+                          SizedBox(
+                            height: height * 0.02,
+                          ),
+                          Mydate(
+                            hinttext: "Vacating date?",
+                            bgColor: bgColor,
+                            borderColor: borderColor,
+                            borderRadius: borderRadius,
+                            borderWidth: borderWidth,
+                            datecontroller: _dateController,
+                            hintColor: hintColor,
+                            textColor: textColor,
+                          ),
+                          SizedBox(
+                            height: height * 0.02,
+                          ),
+                          Text("Reason"),
+                          SizedBox(
+                            height: height * 0.02,
+                          ),
+                          Mydropdownmenu(
+                            bgColor: bgColor,
+                            borderColor: borderColor,
+                            borderRadius: borderRadius,
+                            borderWidth: borderWidth,
+                            buttonColor: buttonColor,
+                            getvalue: (value) {
+                              setState(
+                                () {
+                                  reason = value;
+                                },
+                              );
+                            },
+                            hintColor: hintColor,
+                            hinttext: "Reason?",
+                            list: reasons,
+                            textColor: textColor,
+                            width: width,
+                          ),
+                          SizedBox(
+                            height: height * 0.02,
+                          ),
+                          Text("Forwarding Address"),
+                          SizedBox(
+                            height: height * 0.02,
+                          ),
+                          Myparafield(
+                            bgColor: bgColor,
+                            borderColor: borderColor,
+                            borderRadius: borderRadius,
+                            borderWidth: borderWidth,
+                            controller: _addressController,
+                            hintColor: hintColor,
+                            hintText: "address here",
+                            textColor: textColor,
+                            noOfLine: 3,
+                          ),
+                          SizedBox(
+                            height: height * 0.05,
+                          ),
+                          Center(
+                            child: SliderButton(
+                              action: () async {
+                                submit();
+                                Future.delayed(
+                                  Duration(seconds: 1),
+                                  () {
+                                    if (context.mounted) {
+                                      Navigator.pop(context);
+                                    }
+                                  },
+                                );
+                                return true;
+                              },
+                              label: Text(
+                                "Slide to apply",
+                                style: GoogleFonts.inter(
+                                    fontWeight: FontWeight.w500),
+                              ),
+                              backgroundColor: bgColor,
+                              icon: Icon(
+                                LucideIcons.chevronsRight,
+                                color: buttonTextColor,
+                                size: width * 0.1,
+                              ),
+                              buttonColor: buttonColor,
+                              baseColor: textColor,
+                              highlightedColor: buttonTextColor,
+                            ),
+                          ),
+                        ],
                       ),
-                      backgroundColor: bgColor,
-                      icon: Icon(
-                        LucideIcons.chevronsRight,
-                        color: buttonTextColor,
-                        size: width * 0.1,
-                      ),
-                      buttonColor: buttonColor,
-                      baseColor: textColor,
-                      highlightedColor: buttonTextColor,
                     ),
                   ),
-                ],
-              ),
-            ),
-          ),
-        ));
+                ),
+    );
   }
 
   void _showSnackBar(String message, {bool isError = false}) {
@@ -206,6 +243,10 @@ class _VacateState extends State<Vacate> {
       _showSnackBar("please fill in all fields", isError: true);
       return;
     }
+    /*if ((DateTime.parse(date)).isAfter(DateTime.parse(today))) {
+      _showSnackBar("you aint any time traveller");
+      return;
+    }*/
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       try {
@@ -225,5 +266,46 @@ class _VacateState extends State<Vacate> {
         _showSnackBar("request failed:$e");
       }
     }
+  }
+
+  void _showAppliedDialog() {
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (context) {
+        return PopScope(
+          canPop: false,
+          child: AlertDialog(
+            backgroundColor: bgColor,
+            title: Text("Already Applied"),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text("You have already applied for vacating"),
+                Image.asset("assets/images/confusion.png"),
+              ],
+            ),
+            actions: [
+              Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    Navigator.pop(context);
+                  },
+                  style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.all(buttonColor)),
+                  child: Text(
+                    "close",
+                    style: GoogleFonts.inter(
+                        fontWeight: FontWeight.w700, color: Colors.black),
+                  ),
+                ),
+              )
+            ],
+          ),
+        );
+      },
+    );
   }
 }

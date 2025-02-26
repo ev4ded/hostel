@@ -34,7 +34,9 @@ class _CregisterState extends State<Cregister> {
   String? priority;
 
   @override
+  @override
   void initState() {
+    super.initState();
     fetchUserData();
   }
 
