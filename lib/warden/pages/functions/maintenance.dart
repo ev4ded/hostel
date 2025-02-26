@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -40,7 +41,6 @@ class _MaintenanceState extends State<Maintenance>
     );
   }
 
-  // Custom TabBar with Underline
   PreferredSizeWidget _buildTabBar() {
     return TabBar(
       controller: _tabController,
@@ -66,7 +66,6 @@ class _MaintenanceState extends State<Maintenance>
   }
 }
 
-// Widget to Fetch & Display Requests Based on Status
 class RequestsList extends StatelessWidget {
   final String status;
   final String hostel_id;
@@ -100,7 +99,7 @@ class RequestsList extends StatelessWidget {
         }
 
         var requests = snapshot.data!.docs;
-        print("Fetched ${requests.length} documents");
+        debugPrint("Fetched ${requests.length} documents");
 
         return ListView.builder(
           itemCount: requests.length,
@@ -119,7 +118,8 @@ class RequestsList extends StatelessWidget {
                 subtitle: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("Room No: ${requestData["room no"] ?? "No Room"}"),
+                    SizedBox(height: 10),
+                    Text("Room No: ${requestData["room_no"] ?? "No Room No"}"),
                     Text(requestData["description"] ?? "No Description"),
                   ],
                 ),
@@ -149,6 +149,7 @@ class RequestsList extends StatelessWidget {
                             ? Icons.check_circle
                             : Icons.cancel,
                         color: status == "Approved" ? Colors.green : Colors.red,
+                        size: 30,
                       ),
               ),
             );
@@ -168,7 +169,7 @@ class RequestsList extends StatelessWidget {
       ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Status updated to $newStatus")));
     } catch (e) {
-      print("Error updating status: $e");
+      debugPrint("Error updating status: $e");
     }
   }
 }
