@@ -12,10 +12,12 @@ class Mytextfield extends StatelessWidget {
   final Color? bgColor;
   final Color hintColor;
   final Color textColor;
+  final TextInputType type;
   final TextEditingController? controller;
   const Mytextfield({
     super.key,
     this.labelText,
+    this.type = TextInputType.text,
     this.textColor = Colors.black,
     this.hintColor = Colors.blueGrey,
     this.hasError = false,
@@ -31,6 +33,7 @@ class Mytextfield extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextField(
+      keyboardType: type,
       cursorColor: Colors.lightBlueAccent,
       style: GoogleFonts.inter(color: textColor),
       controller: controller,
