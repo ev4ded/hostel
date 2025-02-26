@@ -196,16 +196,19 @@ class _VacateState extends State<Vacate> {
                           Center(
                             child: SliderButton(
                               action: () async {
-                                submit();
-                                Future.delayed(
-                                  Duration(seconds: 1),
-                                  () {
-                                    if (context.mounted) {
-                                      Navigator.pop(context);
-                                    }
-                                  },
-                                );
-                                return true;
+                                bool success = await submit();
+                                if (success) {
+                                  Future.delayed(
+                                    Duration(seconds: 1),
+                                    () {
+                                      if (context.mounted) {
+                                        Navigator.pop(context);
+                                      }
+                                    },
+                                  );
+                                  return true;
+                                }
+                                return false;
                               },
                               label: Text(
                                 "Slide to apply",
@@ -236,17 +239,20 @@ class _VacateState extends State<Vacate> {
     Mysnackbar.show(context, message, isError: isError);
   }
 
-  void submit() async {
+  Future<bool> submit() async {
     String date = _dateController.text.trim();
     String address = _addressController.text.trim();
     if (date.isEmpty || address.isEmpty || reason == null) {
       _showSnackBar("please fill in all fields", isError: true);
-      return;
+      return false;
     }
-    /*if ((DateTime.parse(date)).isAfter(DateTime.parse(today))) {
-      _showSnackBar("you aint any time traveller");
-      return;
-    }*/
+    if ((DateTime.parse(date)).isBefore(DateTime.parse(today))) {
+      _showSnackBar("check the date stupid");
+      return false;
+    }
+    if (await showAlert(context) == false) {
+      return false;
+    }
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       try {
@@ -262,10 +268,13 @@ class _VacateState extends State<Vacate> {
           },
         );
         _showSnackBar("vacate request send");
+        return true;
       } catch (e) {
         _showSnackBar("request failed:$e");
+        return false;
       }
     }
+    return false;
   }
 
   void _showAppliedDialog() {
@@ -298,7 +307,7 @@ class _VacateState extends State<Vacate> {
                   child: Text(
                     "close",
                     style: GoogleFonts.inter(
-                        fontWeight: FontWeight.w700, color: Colors.black),
+                        fontWeight: FontWeight.w700, color: buttonTextColor),
                   ),
                 ),
               )
@@ -307,5 +316,53 @@ class _VacateState extends State<Vacate> {
         );
       },
     );
+  }
+
+  Future<bool> showAlert(BuildContext context) async {
+    bool status = false;
+    status = await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            "Alert",
+            style: GoogleFonts.inter(),
+          ),
+          content: Text(
+            "are you sure u wanna vacate?",
+            style: GoogleFonts.inter(),
+          ),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context, false);
+              },
+              style: ButtonStyle(
+                backgroundColor: WidgetStateProperty.all(buttonColor),
+              ),
+              child: Text(
+                "cancel",
+                style: GoogleFonts.inter(
+                    fontWeight: FontWeight.w700, color: buttonTextColor),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context, true);
+              },
+              style: ButtonStyle(
+                backgroundColor: WidgetStateProperty.all(buttonColor),
+              ),
+              child: Text(
+                "yes",
+                style: GoogleFonts.inter(
+                    fontWeight: FontWeight.w700, color: buttonTextColor),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+    return status;
   }
 }

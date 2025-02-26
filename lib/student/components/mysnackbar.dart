@@ -12,9 +12,9 @@ class Mysnackbar {
         backgroundColor: isError ? Colors.redAccent : Colors.green,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(1),
+          borderRadius: BorderRadius.circular(15),
         ),
-        duration: Duration(seconds: 1),
+        duration: Duration(seconds: 2),
         action: SnackBarAction(
           label: 'OK',
           textColor: Colors.white,

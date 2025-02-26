@@ -54,7 +54,7 @@ class _MydateState extends State<Mydate> {
               setState(() {
                 _selectedDay = selectedDay;
                 widget.datecontroller!.text =
-                    DateFormat('dd-MM-yyyy').format(selectedDay);
+                    DateFormat('yyyy-MM-dd').format(selectedDay);
               });
               Navigator.pop(context); // Close dialog after selection
             },
