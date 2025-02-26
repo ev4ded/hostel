@@ -13,6 +13,7 @@ class MyProfile extends StatelessWidget {
         appBar: AppBar(
           title: const Text('Profile'),
         ),
+        backgroundColor: Theme.of(context).colorScheme.surface,
         body: Center(
           child: ElevatedButton(
               onPressed: () {

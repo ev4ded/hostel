@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -7,37 +8,41 @@ class Maintenance extends StatefulWidget {
 }
 
 class _MaintenanceState extends State<Maintenance> with SingleTickerProviderStateMixin {
-   late TabController _tabController;
+  late TabController _tabController;
+  String? hostelId;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
+    fetchHostelId();
+    
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("Maintenance Requests"), bottom: _buildTabBar()),
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          RequestsList(status: "Pending", hostel_id: "123"), // Replace with actual hostel ID
-          RequestsList(status: "Approved", hostel_id: "123"), // Replace with actual hostel ID
-          RequestsList(status: "Denied", hostel_id: "123"), // Replace with actual hostel ID
-        ],
-      ),
+      body: hostelId == null
+          ? Center(child: CircularProgressIndicator()) 
+          : TabBarView(
+              controller: _tabController,
+              children: [
+                RequestsList(status: "Pending", hostel_id: hostelId!),
+                RequestsList(status: "Approved", hostel_id: hostelId!),
+                RequestsList(status: "Denied", hostel_id: hostelId!),
+              ],
+            ),
     );
   }
 
-  // Custom TabBar with Underline
   PreferredSizeWidget _buildTabBar() {
     return TabBar(
       controller: _tabController,
-      labelColor: const Color.fromARGB(255, 250, 244, 244).withRed(3), // Active tab color
-      unselectedLabelColor:  const Color.fromARGB(255, 220, 200, 200), // Inactive tab color
-      indicatorColor:const Color.fromARGB(255, 250, 244, 244).withRed(3), // Underline color
-      indicatorWeight: 3, // Thickness of the underline
+      labelColor: Color(0xFFFAF4F4), 
+      unselectedLabelColor: Color(0xFFDCC8C8), 
+      indicatorColor: Color(0xFFFAF4F4), 
+      indicatorWeight: 3,
       tabs: [
         Tab(text: "Pending"),
         Tab(text: "Approved"),
@@ -46,6 +51,37 @@ class _MaintenanceState extends State<Maintenance> with SingleTickerProviderStat
     );
   }
 
+   Future<void> fetchHostelId() async {
+  try {
+    User? user = FirebaseAuth.instance.currentUser; // Get logged-in user
+    if (user == null) {
+      debugPrint("⚠️ No user is logged in.");
+      return;
+    }
+    debugPrint("✅ Logged-in user: ${user.email}");
+
+    QuerySnapshot snapshot = await FirebaseFirestore.instance
+        .collection("users")
+        .where("email", isEqualTo: user.email) // Fetch warden by email
+        .where("role", isEqualTo: "warden")
+        .limit(1)
+        .get();
+
+    if (snapshot.docs.isNotEmpty) {
+      setState(() {
+        hostelId = snapshot.docs.first["hostelId"];
+      });
+      debugPrint("🏠 Hostel ID fetched: $hostelId");
+    } else {
+      debugPrint("⚠️ No hostel found for this warden.");
+    }
+  } catch (e) {
+    debugPrint("❌ Error fetching hostel ID: $e");
+  }
+}
+
+
+
   @override
   void dispose() {
     _tabController.dispose();
@@ -53,7 +89,6 @@ class _MaintenanceState extends State<Maintenance> with SingleTickerProviderStat
   }
 }
 
-// Widget to Fetch & Display Requests Based on Status
 class RequestsList extends StatelessWidget {
   final String status;
   final String hostel_id;
@@ -66,16 +101,15 @@ class RequestsList extends StatelessWidget {
     return StreamBuilder<QuerySnapshot>(
       stream: _firestore
           .collection("maintenance_request")
-          .where("status", isEqualTo: status.toLowerCase()) // Ensure lowercase match
           .where("hostel_id", isEqualTo: hostel_id)
-          .orderBy("created_at", descending: true) // Ordering by created_at
+          .where("status", isEqualTo: status.toLowerCase())          
+          .orderBy("created_at", descending: true)
           .snapshots(),
-    builder: (context, snapshot) {
-    if (snapshot.hasError) {
-      print("Firestore Error: ${snapshot.error}"); // <-- Log Firestore error
-      return Center(child: Text("Error: ${snapshot.error}"));
-  }
-
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          debugPrint("Firestore Error: ${snapshot.error}");
+          return Center(child: Text("Error: ${snapshot.error}"));
+        }
 
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(child: CircularProgressIndicator());
@@ -86,25 +120,24 @@ class RequestsList extends StatelessWidget {
         }
 
         var requests = snapshot.data!.docs;
-        print("Fetched ${requests.length} documents");
+        debugPrint("Fetched ${requests.length} documents");
 
         return ListView.builder(
           itemCount: requests.length,
           itemBuilder: (context, index) {
             var request = requests[index];
             Map<String, dynamic> requestData = request.data() as Map<String, dynamic>;
-
-            // Extract request_id safely
             String request_id = requestData["request_id"] ?? request.id;
-            
+
             return Card(
               margin: EdgeInsets.all(8.0),
               child: ListTile(
-                title: Text(requestData["title"] ?? "No Title"),
+                title: Text(requestData["title"] ?? "No Title", style: TextStyle(fontWeight: FontWeight.bold)),
                 subtitle: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("Room No: ${requestData["room no"] ?? "No Room"}"),
+                    SizedBox(height: 10),
+                    Text("Room No: ${requestData["room_no"] ?? "No Room No"}"),
                     Text(requestData["description"] ?? "No Description"),
                   ],
                 ),
@@ -113,13 +146,13 @@ class RequestsList extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           ElevatedButton(
-                            onPressed: () => updateStatus(request_id, "approved", context),
+                            onPressed: () => updateStatus(request_id, "Approved", context),
                             style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
                             child: Text("Approve"),
                           ),
                           SizedBox(width: 10),
                           ElevatedButton(
-                            onPressed: () => updateStatus(request_id, "denied", context),
+                            onPressed: () => updateStatus(request_id, "Denied", context),
                             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
                             child: Text("Deny"),
                           ),
@@ -128,6 +161,7 @@ class RequestsList extends StatelessWidget {
                     : Icon(
                         status == "Approved" ? Icons.check_circle : Icons.cancel,
                         color: status == "Approved" ? Colors.green : Colors.red,
+                        size: 30,
                       ),
               ),
             );
@@ -140,11 +174,12 @@ class RequestsList extends StatelessWidget {
   void updateStatus(String requestId, String newStatus, BuildContext context) async {
     try {
       await _firestore.collection("maintenance_request").doc(requestId).update({
-        "status": newStatus.toLowerCase()
+        "status": newStatus.toLowerCase(),
+        
       });
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Status updated to $newStatus")));
     } catch (e) {
-      print("Error updating status: $e");
+      debugPrint("Error updating status: $e");
     }
   }
 }
