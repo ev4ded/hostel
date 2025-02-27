@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ionicons/ionicons.dart';
 
 class Complaints extends StatefulWidget {
   @override
@@ -14,7 +15,7 @@ class _ComplaintsState extends State<Complaints> with SingleTickerProviderStateM
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 2, vsync: this);
     fetchHostelId();
     
   }
@@ -29,7 +30,7 @@ class _ComplaintsState extends State<Complaints> with SingleTickerProviderStateM
               controller: _tabController,
               children: [
                 RequestsList(status: "Pending", hostel_id: hostelId!),
-                RequestsList(status: "Approved", hostel_id: hostelId!),
+                RequestsList(status: "Resolved", hostel_id: hostelId!),
                  //RequestsList(status: "Denied", hostel_id: hostelId!),
               ],
             ),
@@ -147,22 +148,17 @@ class RequestsList extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           ElevatedButton(
-                            onPressed: () => updateStatus(request_id, "Approved", context),
+                            onPressed: () => updateStatus(request_id, "Resolved", context),
                             style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-                            child: Text("Approve"),
+                            child: Text("Resolve"),
                           ),
-                        /*  SizedBox(width: 10),
-                          ElevatedButton(
-                            onPressed: () => updateStatus(request_id, "Denied", context),
-                            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                            child: Text("Deny"),
-                          ),*/
+                        
                         ],
                       )
                     : Icon(
-                        status == "Approved" ? Icons.check_circle : Icons.cancel,
-                        color: status == "Approved" ? Colors.green : Colors.red,
-                        size: 30,
+                         Ionicons.checkmark_circle_outline ,
+                         color:  Colors.green ,
+                         size: 30,
                       ),
               ),
             );

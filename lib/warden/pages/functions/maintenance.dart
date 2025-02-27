@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ionicons/ionicons.dart';
 
 class Maintenance extends StatefulWidget {
   @override
@@ -146,20 +147,72 @@ class RequestsList extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           ElevatedButton(
-                            onPressed: () => updateStatus(request_id, "Approved", context),
+                            onPressed: () 
+                            async {
+                              DateTime? selectedDate = await showDatePicker(
+                                context: context,
+                                initialDate: DateTime.now(),
+                                firstDate: DateTime.now(),
+                                lastDate: DateTime(2070),
+                              );
+
+                                if (selectedDate == null) return;
+
+                            
+                               
+
+                                TimeOfDay? selectedTime = await showTimePicker(
+                             
+                                context: context,
+                               
+                                initialTime: TimeOfDay.now(),
+                               
+                              );
+                             
+
+
+                              if (selectedTime == null) return; // User canceled the time picker
+                               TimeOfDay minTime = TimeOfDay(hour: 9, minute: 0);  // 9:00 AM
+                                  TimeOfDay maxTime = TimeOfDay(hour: 17, minute: 0); // 5:00 PM
+
+                                  // Validate time selection
+                                  if (selectedTime.hour < minTime.hour ||
+                                      (selectedTime.hour == minTime.hour && selectedTime.minute < minTime.minute)) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text("My guy select a time after 9:00 AM.")),
+                                     
+                                    );
+                                   return;
+                                  } 
+                                  
+                                  else if (selectedTime.hour > maxTime.hour ||
+                                      (selectedTime.hour == maxTime.hour && selectedTime.minute > maxTime.minute)) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text("My guy select a time before 5:00 PM.")),
+                                    );
+                                     return;
+                                  } 
+                                     String formattedDateTime = "${selectedDate.year}-${selectedDate.month}-${selectedDate.day} "
+                                  
+                                  "${selectedTime.hour}:${selectedTime.minute}:00";
+                                     
+                                   updateStatus(request_id, "Approved", formattedDateTime, context);     
+                             
+                            },
+
                             style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
                             child: Text("Approve"),
                           ),
                           SizedBox(width: 10),
                           ElevatedButton(
-                            onPressed: () => updateStatus(request_id, "Denied", context),
+                            onPressed: () => updateStatus(request_id, "Denied",  "approvedDateTime", context),
                             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
                             child: Text("Deny"),
                           ),
                         ],
                       )
                     : Icon(
-                        status == "Approved" ? Icons.check_circle : Icons.cancel,
+                        status == "Approved" ? Ionicons.checkmark_circle_outline : Ionicons.close_circle_outline,
                         color: status == "Approved" ? Colors.green : Colors.red,
                         size: 30,
                       ),
@@ -171,10 +224,11 @@ class RequestsList extends StatelessWidget {
     );
   }
 
-  void updateStatus(String requestId, String newStatus, BuildContext context) async {
+  void updateStatus(String requestId, String newStatus,String formattedDateTime, BuildContext context) async {
     try {
       await _firestore.collection("maintenance_request").doc(requestId).update({
         "status": newStatus.toLowerCase(),
+        "approvedDateTime": formattedDateTime,
         
       });
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Status updated to $newStatus")));

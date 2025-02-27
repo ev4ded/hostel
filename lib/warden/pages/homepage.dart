@@ -52,6 +52,8 @@ class _HomePageState extends State<HomePage> {
               child: Padding(
                 padding: const EdgeInsets.all(7.0),
                 child: GridView.count(
+                  scrollDirection: Axis.vertical,
+                  physics: BouncingScrollPhysics(),
                   crossAxisCount: 2,
                   crossAxisSpacing: 16,
                   mainAxisSpacing: 16,
@@ -88,6 +90,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                     ),
+                    
 
                      _buildMenuItem(
                       Ionicons.bed_outline,
@@ -123,7 +126,7 @@ class _HomePageState extends State<HomePage> {
           borderRadius: BorderRadius.circular(10),
           boxShadow: [
             BoxShadow(
-              color: const Color.fromARGB(255, 250, 244, 244).withRed(7),
+              color: const Color.fromARGB(255, 250, 244, 244).withRed(3),
               spreadRadius: 1,
               blurRadius: 2,
               offset: Offset(0, 1),

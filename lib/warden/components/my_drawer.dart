@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:minipro/warden/components/drawer_tiles.dart';
 
 class MyDrawer extends StatelessWidget {
@@ -13,7 +14,7 @@ class MyDrawer extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 58.0),
             child: Icon(
-              Icons.person_3_rounded,
+              Ionicons.person_circle_outline,
               size: 100.0,
               //text: 'Hostel Warden',
               color: Color.fromARGB(248, 70, 70, 70),
