@@ -21,7 +21,7 @@ class _ComplaintState extends State<Complaint> {
   final Color borderColor = Color.fromRGBO(74, 85, 104, 1);
   Map<String, Color> status = {
     "pending": Color.fromRGBO(181, 139, 96, 1),
-    "approved": Color.fromRGBO(46, 125, 50, 1),
+    "resolved": Color.fromRGBO(46, 125, 50, 1),
   };
   @override
   Widget build(BuildContext context) {
