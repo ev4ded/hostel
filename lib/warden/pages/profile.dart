@@ -8,21 +8,20 @@ import 'package:shared_preferences/shared_preferences.dart';
 */
 class MyProfile extends StatefulWidget {
   const MyProfile({super.key});
-   @override
+  @override
   State<MyProfile> createState() => _MyProfileState();
 }
 
 class _MyProfileState extends State<MyProfile> {
   final FirestoreServices _firestoreService = FirestoreServices();
   Map<String, dynamic>? userData;
-    
- 
+
+  @override
   void initState() {
-super.initState();
-  fetchUserData ();
-  
+    super.initState();
+    fetchUserData();
   }
- 
+
   void fetchUserData() async {
     Map<String, dynamic>? cachedUserData =
         await _firestoreService.getCachedUserData();
@@ -39,62 +38,49 @@ super.initState();
       });
     }
   }
-  
-  @override
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Profile'),
+      appBar: AppBar(
+        title: const Text('Profile'),
+      ),
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      body: Container(
+        alignment: Alignment.center,
+        child: Builder(
+          builder: (context) {
+            return userData == null
+                ? const CircularProgressIndicator()
+                : Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      const CircleAvatar(
+                        radius: 50.0,
+                        backgroundImage:
+                            AssetImage('assets/images/profile/profile.png'),
+                      ),
+                      const SizedBox(height: 10.0),
+                      Text(
+                        userData!["username"] ?? "Username",
+                        style: const TextStyle(
+                          fontSize: 22.0,
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                      const SizedBox(height: 10.0),
+                      Text(
+                        userData!["role"] ?? "Username",
+                        style: const TextStyle(
+                          fontSize: 22.0,
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                    ],
+                  );
+          },
         ),
-        backgroundColor: Theme.of(context).colorScheme.surface,
-        body: Container(
-         alignment: Alignment.center,
-          child: Builder(
-            
-            builder: (context) {
-              return userData == null
-                  ? const CircularProgressIndicator()
-                  : Column(
-                      
-                     
-                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                      
-                        const CircleAvatar(
-                          
-                          radius: 50.0,
-                          backgroundImage: AssetImage('assets/images/profile/profile.png'),
-                        ),
-                        const SizedBox(height: 10.0),
-                        Text(
-                          userData!["username"]?? "Username",
-                          
-                          style: const TextStyle(
-                            fontSize: 22.0,
-                            fontStyle: FontStyle.italic,
-                          ),
-                        ),
-                        const SizedBox(height: 10.0),
-                        Text(
-                          userData!["role"]?? "Username",
-                          
-                          style: const TextStyle(
-                            fontSize: 22.0,
-                            fontStyle: FontStyle.italic,
-                          ),
-                        ),
-                      ],
-                    );
-            },
-          ),
-        ),
-
-        
+      ),
     );
   }
-
-  
 }
-          
-

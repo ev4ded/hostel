@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:minipro/authentication/fcmtoken.dart';
 import 'package:minipro/firebase/firestore_services.dart';
 import 'package:minipro/authentication/signuppage.dart';
+import 'package:minipro/Theme/appcolors.dart';
 import 'package:minipro/student/components/custom_route.dart';
 import 'package:minipro/student/components/emailtextfield.dart';
 import 'package:minipro/student/components/myclipper.dart';
@@ -119,6 +120,7 @@ class LoginPageState extends State<LoginPage> {
                             SizedBox(height: height * 0.02),
                             Emailtextfield(
                               bgColor: inputtextColor,
+                              hintColor: AppColors.hintColor,
                               hinttext: 'EMAIL',
                               borderWidth: 1,
                               controller: emailController,
@@ -143,6 +145,8 @@ class LoginPageState extends State<LoginPage> {
                                       : Ionicons.eye_off_sharp),
                                 ),
                                 hintText: 'PASSWORD',
+                                hintStyle: GoogleFonts.inter(
+                                    color: AppColors.hintColor),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(20),
                                   borderSide: BorderSide(

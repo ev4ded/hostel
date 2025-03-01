@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class RoomAllotment extends StatelessWidget {
+  const RoomAllotment({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

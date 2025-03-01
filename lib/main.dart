@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 //import 'package:get_it/get_it.dart';
 import 'package:minipro/authentication/authprovider.dart';
-import 'package:minipro/student/Theme/theme.dart';
+import 'package:minipro/Theme/theme.dart';
 import 'package:minipro/splashscreen.dart';
 import 'package:provider/provider.dart';
 

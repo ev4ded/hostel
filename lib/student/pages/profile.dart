@@ -6,6 +6,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:minipro/authentication/fcmtoken.dart';
 import 'package:minipro/firebase/firestore_services.dart';
 import 'package:minipro/authentication/loginpage.dart';
+import 'package:minipro/Theme/appcolors.dart';
 import 'package:minipro/student/components/custom_route.dart';
 import 'package:minipro/student/components/customnotification.dart';
 import 'package:minipro/student/pages/profile/editprofile.dart';
@@ -24,8 +25,6 @@ class Profile extends StatefulWidget {
 class _ProfileState extends State<Profile> {
   final FirestoreServices _firestoreService = FirestoreServices();
   Map<String, dynamic>? userData;
-  Color detailsC = Color.fromRGBO(109, 121, 134, 1);
-  Color containerColor = Color.fromRGBO(40, 40, 40, 1);
   Color flipC = Color.fromRGBO(237, 208, 176, 1);
   bool present = true;
   String name = "profile";
@@ -56,8 +55,8 @@ class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
-    //double height = MediaQuery.of(context).size.width;
-    //double height = MediaQuery.of(context).size.height;
+    Color containerColor = AppColors.getContainerColor(context);
+    Color detailsC = AppColors.getDetailsC(context);
     return Scaffold(
       body: userData == null
           ? Center(
