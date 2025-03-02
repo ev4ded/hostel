@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:minipro/warden/services/FCMservices.dart';
+
 
 class Complaints extends StatefulWidget {
   const Complaints({super.key});
@@ -149,7 +151,7 @@ class RequestsList extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           ElevatedButton(
-                            onPressed: () => updateStatus(requestId, "Resolved", context),
+                            onPressed: () => updateStatus(requestId, "Resolved" ,context,),
                             style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
                             child: Text("Resolve",style: GoogleFonts.inter(fontWeight: FontWeight.w500),),
                           ),
@@ -168,16 +170,55 @@ class RequestsList extends StatelessWidget {
     );
   }
 
-  void updateStatus(
-      String requestId, String newStatus, BuildContext context) async {
-    try {
-      await _firestore.collection("complaints").doc(requestId).update({
-        "status": newStatus.toLowerCase(),
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Status updated to $newStatus")));
-    } catch (e) {
-      debugPrint("Error updating status: $e");
+ void updateStatus(String requestId, String newStatus, BuildContext context) async {
+  try {
+    final complaintRef = _firestore.collection("complaints").doc(requestId);
+    final complaintSnapshot = await complaintRef.get();
+
+    if (!complaintSnapshot.exists) {
+      print("❌ Complaint not found!");
+      return;
     }
+
+    final complaintData = complaintSnapshot.data();
+    final studentUid = complaintData?["student_id"];
+    final complaintTitle = complaintData?["title"] ?? "Complaint Update";
+
+    if (studentUid == null) {
+      print("❌ Student ID not found in complaint data!");
+      return;
+    }
+
+    final studentDoc = await _firestore.collection("users").doc(studentUid).get();
+
+    if (!studentDoc.exists) {
+      print("❌ Student not found in users collection!");
+      return;
+    }
+
+    final fcmTokens = studentDoc["FCM_tokens"] ?? [];
+    if (fcmTokens.isEmpty) {
+      print("❌ No FCM tokens found for the student!");
+      return;
+    }
+
+    // ✅ Update Firestore: Mark complaint as Resolved
+    await complaintRef.update({"status": newStatus.toLowerCase()});
+
+    // ✅ Send Notification
+     for (var token in fcmTokens) {
+      await FCMService.sendNotification(
+        fcmToken: token,
+        title: "Complaint Update: $complaintTitle",
+        body: "Your complaint has been marked as $newStatus.",
+      );
+    }
+
+    // ✅ Show success message
+    ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Status updated to $newStatus")));
+  } catch (e) {
+    print("❌ Error updating status: $e");
   }
+}
 }

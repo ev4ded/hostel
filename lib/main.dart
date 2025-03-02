@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 //import 'package:flutter/rendering.dart'; // debug
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 //import 'package:get_it/get_it.dart';
 import 'package:minipro/authentication/authprovider.dart';
 import 'package:minipro/Theme/theme.dart';
@@ -20,6 +21,7 @@ void main() async {
   await Firebase.initializeApp(
       //options: DefaultFirebaseOptions.currentPlatform,
       );
+      await dotenv.load(fileName: ".env");
   runApp(MyApp());
 }
 
