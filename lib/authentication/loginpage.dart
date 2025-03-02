@@ -252,9 +252,29 @@ class LoginPageState extends State<LoginPage> {
       updateFCMToken(userid!.uid);
       Navigator.pushAndRemoveUntil(
           context, myRoute(Splashscreen()), (route) => false);
-    } catch (e) {
+    } on FirebaseAuthException catch (e) {
       if (!mounted) return;
-      _showSnackBar('Signup failed: ${e.toString()}');
+      if (e.code == 'invalid-credential') {
+        _showSnackBar('Invalid email or password. Please try again',
+            isError: true);
+      } else if (e.code == 'user-not-found') {
+        _showSnackBar('No account found. Please sign up first', isError: true);
+      } else if (e.code == 'wrong-password') {
+        _showSnackBar('Incorrect password. Try again or reset your password',
+            isError: true);
+      } else if (e.code == 'invalid-email') {
+        _showSnackBar('Please enter a valid email address', isError: true);
+      } else if (e.code == 'too-many-requests') {
+        _showSnackBar('Too many attempts. Please try again later',
+            isError: true);
+      } else if (e.code == 'network-request-failed') {
+        _showSnackBar('Check your internet connection and try again',
+            isError: true);
+      } else if (e.code == 'user-disabled') {
+        _showSnackBar("This account has been disabled. Contact support.");
+      } else {
+        _showSnackBar('Signup failed: ${e.toString()}');
+      }
     }
   }
 
