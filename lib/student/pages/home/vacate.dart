@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:minipro/student/Student_queries/queries.dart';
+import 'package:minipro/Theme/appcolors.dart';
 import 'package:minipro/student/components/mydate.dart';
 import 'package:minipro/student/components/mydropdownmenu.dart';
 import 'package:minipro/student/components/myparafield.dart';
@@ -20,17 +21,14 @@ class Vacate extends StatefulWidget {
 }
 
 class _VacateState extends State<Vacate> {
-  final Color inputtextColor = Color.fromRGBO(240, 237, 235, 1);
   final _dateController = TextEditingController();
   final _addressController = TextEditingController();
   final double borderWidth = 1;
   final double borderRadius = 15;
-  final Color borderColor = Color.fromRGBO(74, 85, 104, 1);
-  Color textColor = Colors.white;
-  Color bgColor = Color.fromRGBO(40, 40, 40, 1);
-  Color hintColor = Color.fromRGBO(139, 139, 139, 0.5);
-  Color buttonColor = Color.fromRGBO(255, 189, 109, 1);
-  Color buttonTextColor = Color.fromRGBO(18, 18, 18, 1);
+  final Color borderColor = AppColors.borderColor;
+  Color hintColor = AppColors.hintColor;
+  Color buttonColor = AppColors.buttonColor;
+  Color buttonTextColor = AppColors.buttonTextColor;
   Color highlightColor = Colors.blueAccent;
   String today = DateFormat("yyyy-MM-dd").format(DateTime.now());
   List<String> reasons = [
@@ -102,6 +100,8 @@ class _VacateState extends State<Vacate> {
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
+    Color textColor = AppColors.getTextColor(context);
+    Color bgColor = AppColors.getContainerColor(context);
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -120,114 +120,112 @@ class _VacateState extends State<Vacate> {
           : isApplied
               ? SizedBox()
               : SingleChildScrollView(
-                  child: SafeArea(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(
-                            height: height * 0.03,
-                          ),
-                          Text(
-                            "Date",
-                            style: GoogleFonts.inter(),
-                          ),
-                          SizedBox(
-                            height: height * 0.02,
-                          ),
-                          Mydate(
-                            hinttext: "Vacating date?",
-                            bgColor: bgColor,
-                            borderColor: borderColor,
-                            borderRadius: borderRadius,
-                            borderWidth: borderWidth,
-                            datecontroller: _dateController,
-                            hintColor: hintColor,
-                            textColor: textColor,
-                          ),
-                          SizedBox(
-                            height: height * 0.02,
-                          ),
-                          Text("Reason"),
-                          SizedBox(
-                            height: height * 0.02,
-                          ),
-                          Mydropdownmenu(
-                            bgColor: bgColor,
-                            borderColor: borderColor,
-                            borderRadius: borderRadius,
-                            borderWidth: borderWidth,
-                            buttonColor: buttonColor,
-                            getvalue: (value) {
-                              setState(
-                                () {
-                                  reason = value;
-                                },
-                              );
-                            },
-                            hintColor: hintColor,
-                            hinttext: "Reason?",
-                            list: reasons,
-                            textColor: textColor,
-                            width: width,
-                          ),
-                          SizedBox(
-                            height: height * 0.02,
-                          ),
-                          Text("Forwarding Address"),
-                          SizedBox(
-                            height: height * 0.02,
-                          ),
-                          Myparafield(
-                            bgColor: bgColor,
-                            borderColor: borderColor,
-                            borderRadius: borderRadius,
-                            borderWidth: borderWidth,
-                            controller: _addressController,
-                            hintColor: hintColor,
-                            hintText: "address here",
-                            textColor: textColor,
-                            noOfLine: 3,
-                          ),
-                          SizedBox(
-                            height: height * 0.05,
-                          ),
-                          Center(
-                            child: SliderButton(
-                              action: () async {
-                                bool success = await submit();
-                                if (success) {
-                                  Future.delayed(
-                                    Duration(seconds: 1),
-                                    () {
-                                      if (context.mounted) {
-                                        Navigator.pop(context);
-                                      }
-                                    },
-                                  );
-                                  return true;
-                                }
-                                return false;
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 10.0, right: 10.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          height: height * 0.03,
+                        ),
+                        Text(
+                          "Date",
+                          style: GoogleFonts.inter(),
+                        ),
+                        SizedBox(
+                          height: height * 0.02,
+                        ),
+                        Mydate(
+                          hinttext: "Vacating date?",
+                          bgColor: bgColor,
+                          borderColor: borderColor,
+                          borderRadius: borderRadius,
+                          borderWidth: borderWidth,
+                          datecontroller: _dateController,
+                          hintColor: hintColor,
+                          textColor: textColor,
+                        ),
+                        SizedBox(
+                          height: height * 0.02,
+                        ),
+                        Text("Reason"),
+                        SizedBox(
+                          height: height * 0.02,
+                        ),
+                        Mydropdownmenu(
+                          bgColor: bgColor,
+                          borderColor: borderColor,
+                          borderRadius: borderRadius,
+                          borderWidth: borderWidth,
+                          buttonColor: buttonColor,
+                          getvalue: (value) {
+                            setState(
+                              () {
+                                reason = value;
                               },
-                              label: Text(
-                                "Slide to apply",
-                                style: GoogleFonts.inter(
-                                    fontWeight: FontWeight.w500),
-                              ),
-                              backgroundColor: bgColor,
-                              icon: Icon(
-                                LucideIcons.chevronsRight,
-                                color: buttonTextColor,
-                                size: width * 0.1,
-                              ),
-                              buttonColor: buttonColor,
-                              baseColor: textColor,
-                              highlightedColor: buttonTextColor,
+                            );
+                          },
+                          hintColor: hintColor,
+                          hinttext: "Reason?",
+                          list: reasons,
+                          textColor: textColor,
+                          width: width,
+                        ),
+                        SizedBox(
+                          height: height * 0.02,
+                        ),
+                        Text("Forwarding Address"),
+                        SizedBox(
+                          height: height * 0.02,
+                        ),
+                        Myparafield(
+                          bgColor: bgColor,
+                          borderColor: borderColor,
+                          borderRadius: borderRadius,
+                          borderWidth: borderWidth,
+                          controller: _addressController,
+                          hintColor: hintColor,
+                          hintText: "address here",
+                          textColor: textColor,
+                          noOfLine: 3,
+                        ),
+                        SizedBox(
+                          height: height * 0.05,
+                        ),
+                        Center(
+                          child: SliderButton(
+                            action: () async {
+                              bool success = await submit();
+                              if (success) {
+                                Future.delayed(
+                                  Duration(seconds: 1),
+                                  () {
+                                    if (context.mounted) {
+                                      Navigator.pop(context);
+                                    }
+                                  },
+                                );
+                                return true;
+                              }
+                              return false;
+                            },
+                            label: Text(
+                              "Slide to apply",
+                              style: GoogleFonts.inter(
+                                  fontWeight: FontWeight.w500),
                             ),
+                            backgroundColor: bgColor,
+                            icon: Icon(
+                              LucideIcons.chevronsRight,
+                              color: buttonTextColor,
+                              size: width * 0.1,
+                            ),
+                            buttonColor: buttonColor,
+                            baseColor: textColor,
+                            highlightedColor: buttonTextColor,
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -285,7 +283,7 @@ class _VacateState extends State<Vacate> {
         return PopScope(
           canPop: false,
           child: AlertDialog(
-            backgroundColor: bgColor,
+            backgroundColor: AppColors.getContainerColor(context),
             title: Text("Already Applied"),
             content: Column(
               mainAxisSize: MainAxisSize.min,

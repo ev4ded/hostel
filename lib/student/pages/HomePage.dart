@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:minipro/student/Theme/fonts.dart';
+import 'package:minipro/Theme/appcolors.dart';
+import 'package:minipro/Theme/fonts.dart';
 import 'package:minipro/student/components/custom_route.dart';
 import 'package:minipro/student/components/customnotification.dart';
 import 'package:minipro/student/components/myContainer.dart';
@@ -21,10 +22,10 @@ class Homepage extends StatefulWidget {
 }
 
 class _HomepageState extends State<Homepage> {
-  Color containerColor = Color.fromRGBO(40, 40, 40, 1);
-  Color iconC = Color.fromRGBO(255, 189, 109, 1);
   @override
   Widget build(BuildContext context) {
+    Color containerColor = AppColors.getContainerColor(context);
+    Color iconC = AppColors.buttonColor;
     //double height = MediaQuery.of(context).size.height;
     double cheight = 65;
     String wish;

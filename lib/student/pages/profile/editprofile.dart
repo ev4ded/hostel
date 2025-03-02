@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:minipro/Theme/appcolors.dart';
 import 'package:minipro/student/components/mydate.dart';
 import 'package:minipro/student/components/mydropdownmenu.dart';
 import 'package:minipro/student/components/myparafield.dart';
@@ -17,7 +18,6 @@ class Editprofile extends StatefulWidget {
 }
 
 class _EditprofileState extends State<Editprofile> {
-  final Color inputtextColor = Color.fromRGBO(240, 237, 235, 1);
   final _nameController = TextEditingController();
   final _bioController = TextEditingController();
   final _dobController = TextEditingController();
@@ -25,12 +25,10 @@ class _EditprofileState extends State<Editprofile> {
   final _degreeController = TextEditingController();
   final double borderWidth = 1;
   final double borderRadius = 15;
-  final Color borderColor = Color.fromRGBO(74, 85, 104, 1);
-  Color textColor = Colors.white;
-  Color bgColor = Color.fromRGBO(40, 40, 40, 1);
-  Color hintColor = Color.fromRGBO(139, 139, 139, 0.5);
-  Color buttonColor = Color.fromRGBO(255, 189, 109, 1);
-  Color buttonTextColor = Color.fromRGBO(18, 18, 18, 1);
+  final Color borderColor = AppColors.borderColor;
+  Color hintColor = AppColors.hintColor;
+  Color buttonColor = AppColors.buttonColor;
+  Color buttonTextColor = AppColors.buttonTextColor;
   Color highlightColor = Colors.blueAccent;
   String? gender;
   String? year;
@@ -39,6 +37,8 @@ class _EditprofileState extends State<Editprofile> {
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
+    Color bgColor = AppColors.getContainerColor(context);
+    Color textColor = AppColors.getTextColor(context);
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(

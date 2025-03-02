@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:minipro/student/Student_queries/queries.dart';
+import 'package:minipro/Theme/appcolors.dart';
 import 'package:minipro/student/components/custom_route.dart';
 import 'package:minipro/student/pages/home/complaint/cregister.dart';
 
@@ -16,15 +17,15 @@ class Complaint extends StatefulWidget {
 
 class _ComplaintState extends State<Complaint> {
   double containerHeight = 65;
-  Color containerColor = Color.fromRGBO(40, 40, 40, 1);
-  Color tileColor = Color.fromRGBO(78, 68, 64, 1);
   final Color borderColor = Color.fromRGBO(74, 85, 104, 1);
   Map<String, Color> status = {
-    "pending": Color.fromRGBO(181, 139, 96, 1),
-    "approved": Color.fromRGBO(46, 125, 50, 1),
+    "pending": Colors.amberAccent,
+    "resolved": Colors.lightGreen,
   };
   @override
   Widget build(BuildContext context) {
+    Color containerColor = AppColors.getContainerColor(context);
+    Color tileColor = AppColors.getTileColorLight(context);
     return Scaffold(
       body: SafeArea(
         child: Padding(

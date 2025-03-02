@@ -9,7 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 */
 class MyProfile extends StatefulWidget {
   const MyProfile({super.key});
-   @override
+  @override
   State<MyProfile> createState() => _MyProfileState();
 }
 
@@ -17,13 +17,12 @@ class _MyProfileState extends State<MyProfile> {
   final FirestoreServices _firestoreService = FirestoreServices();
   Map<String, dynamic>? userData;
     
- @override
-  void initState() {
-super.initState();
-  fetchUserData ();
-  
-  }
  
+  void initState() {
+    super.initState();
+    fetchUserData();
+  }
+
   void fetchUserData() async {
     Map<String, dynamic>? cachedUserData =
         await _firestoreService.getCachedUserData();
@@ -40,13 +39,12 @@ super.initState();
       });
     }
   }
-  
-  @override
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('Profile',style:GoogleFonts.inter()),
+          title: const Text('Profile'),
         ),
         backgroundColor: Theme.of(context).colorScheme.surface,
         body: Container(
@@ -71,16 +69,16 @@ super.initState();
                         Text(
                           userData!["username"]?? "Username",
                           
-                          style: GoogleFonts.pixelifySans(
+                          style: const TextStyle(
                             fontSize: 22.0,
                             fontStyle: FontStyle.italic,
-                            ),
+                          ),
                         ),
                         const SizedBox(height: 10.0),
                         Text(
                           userData!["role"]?? "Username",
                           
-                          style:GoogleFonts.pixelifySans(
+                          style: const TextStyle(
                             fontSize: 22.0,
                             fontStyle: FontStyle.italic,
                           ),
@@ -94,8 +92,4 @@ super.initState();
         
     );
   }
-
-  
 }
-          
-

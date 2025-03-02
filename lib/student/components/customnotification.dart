@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:minipro/Theme/appcolors.dart';
 
 void customPopup(BuildContext context, String content, Function function) {
   showDialog(
@@ -6,7 +8,7 @@ void customPopup(BuildContext context, String content, Function function) {
     builder: (context) => Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Container(
-        width: 300, // Small size
+        //width: 20, // Small size
         padding: EdgeInsets.all(16),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -17,11 +19,19 @@ void customPopup(BuildContext context, String content, Function function) {
             Text(content),
             SizedBox(height: 20),
             ElevatedButton(
+              style: ButtonStyle(
+                  backgroundColor:
+                      WidgetStatePropertyAll(AppColors.buttonColor)),
               onPressed: () {
                 function();
               },
-              child: Text("OK"),
-            ),
+              child: Text(
+                "YES",
+                style: GoogleFonts.inter(
+                    color: AppColors.buttonTextColor,
+                    fontWeight: FontWeight.w600),
+              ),
+            )
           ],
         ),
       ),

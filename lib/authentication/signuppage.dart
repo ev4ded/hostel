@@ -2,10 +2,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:minipro/firebase/firestore_services.dart';
+import 'package:minipro/Theme/appcolors.dart';
 import 'package:minipro/student/components/custom_route.dart';
 import 'package:minipro/student/components/emailtextfield.dart';
 import 'package:minipro/student/components/myclipper.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:minipro/student/components/mydropdownmenu.dart';
 import 'package:minipro/student/components/mysnackbar.dart';
 import 'package:minipro/student/components/mytextfield.dart';
 import 'package:minipro/authentication/loginpage.dart';
@@ -157,74 +159,22 @@ class _SignupPageState extends State<SignupPage> {
                                           color: Colors.black,
                                           fontWeight: FontWeight.bold),
                                     ),
-                                    Form(
-                                      key: _formKey,
-                                      child: Expanded(
-                                        child: DropdownButtonHideUnderline(
-                                          child:
-                                              DropdownButtonFormField2<String>(
-                                            iconStyleData: IconStyleData(
-                                              icon: Icon(
-                                                Icons.arrow_drop_down,
-                                                color: Colors.black,
-                                              ),
-                                            ),
-                                            hint: Text(
-                                              'SELECT ROLE',
-                                              style: GoogleFonts.inter(
-                                                color: Colors.grey[400],
-                                              ),
-                                            ),
-                                            decoration: InputDecoration(
-                                              contentPadding:
-                                                  EdgeInsets.symmetric(
-                                                      horizontal: 10,
-                                                      vertical: 10),
-                                              filled: true,
-                                              fillColor: inputtextColor,
-                                              border: OutlineInputBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(20),
-                                              ),
-                                            ),
-                                            isExpanded: true,
-                                            items: roleList
-                                                .map(
-                                                  (e) => DropdownMenuItem(
-                                                    value: e,
-                                                    child: Text(
-                                                      e,
-                                                      style: TextStyle(
-                                                        color: Colors.black,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                )
-                                                .toList(),
-                                            onChanged: (value) {
-                                              setState(() {
-                                                role = value.toString();
-                                              });
-                                            },
-                                            value: role,
-                                            /*validator: (value) {
-                                          if (value == null) {
-                                            return 'Please select a role';
-                                          }
-                                          return null;
-                                        },*/
-                                            dropdownStyleData:
-                                                DropdownStyleData(
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(20),
-                                                color: inputtextColor,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
+                                    Expanded(
+                                      child: Mydropdownmenu(
+                                        bgColor: inputtextColor,
+                                        borderColor: Colors.black,
+                                        buttonColor: AppColors.buttonColor,
+                                        getvalue: (value) {
+                                          setState(() {
+                                            role = value;
+                                          });
+                                        },
+                                        hinttext: "SELECT ROLE",
+                                        hintColor: AppColors.hintColor,
+                                        list: roleList,
+                                        textColor: Colors.black,
                                       ),
-                                    )
+                                    ),
                                   ],
                                 ),
                               ),

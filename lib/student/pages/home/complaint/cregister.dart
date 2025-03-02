@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:minipro/firebase/firestore_services.dart';
+import 'package:minipro/Theme/appcolors.dart';
 import 'package:minipro/student/components/mydropdownmenu.dart';
 import 'package:minipro/student/components/myparafield.dart';
 import 'package:minipro/student/components/mysnackbar.dart';
@@ -16,15 +17,12 @@ class Cregister extends StatefulWidget {
 }
 
 class _CregisterState extends State<Cregister> {
-  final Color inputtextColor = Color.fromRGBO(240, 237, 235, 1);
   final _titleController = TextEditingController();
   final _descController = TextEditingController();
   final double borderWidth = 1;
   final double borderRadius = 15;
   final Color borderColor = Color.fromRGBO(74, 85, 104, 1);
-  Color textColor = Colors.white;
-  Color bgColor = Color.fromRGBO(40, 40, 40, 1);
-  Color hintColor = Color.fromRGBO(139, 139, 139, 0.5);
+  Color hintColor = AppColors.hintColor;
   Color buttonColor = Color.fromRGBO(255, 189, 109, 1);
   Color buttonTextColor = Color.fromRGBO(18, 18, 18, 1);
   final int year = DateTime.now().year;
@@ -60,6 +58,8 @@ class _CregisterState extends State<Cregister> {
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
+    Color bgColor = AppColors.getContainerColor(context);
+    Color textColor = AppColors.getTextColor(context);
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -69,7 +69,8 @@ class _CregisterState extends State<Cregister> {
       ),
       body: SingleChildScrollView(
         physics: ClampingScrollPhysics(),
-        child: Center(
+        child: Padding(
+          padding: const EdgeInsets.only(left: 16.0, right: 16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

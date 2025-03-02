@@ -8,10 +8,10 @@ class AppThemes {
       selectionHandleColor: Colors.blueAccent,
     ),*/
     brightness: Brightness.light,
-    primarySwatch: Colors.blue,
-    scaffoldBackgroundColor: Color.fromRGBO(255, 253, 208, 0.8),
+    primarySwatch: Colors.teal,
+    scaffoldBackgroundColor: Color.fromRGBO(248, 249, 250, 1),
     appBarTheme: AppBarTheme(
-      backgroundColor: Colors.blue,
+      backgroundColor: const Color(0xFF5D4037),
       titleTextStyle: TextStyle(color: Colors.white, fontSize: 20),
       iconTheme: IconThemeData(color: Colors.white),
     ),
@@ -21,7 +21,7 @@ class AppThemes {
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.tealAccent,
         foregroundColor: Colors.white,
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       ),

@@ -5,11 +5,14 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
 
 class Complaints extends StatefulWidget {
+  const Complaints({super.key});
+
   @override
   _ComplaintsState createState() => _ComplaintsState();
 }
 
-class _ComplaintsState extends State<Complaints> with SingleTickerProviderStateMixin {
+class _ComplaintsState extends State<Complaints>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
   String? hostelId;
 
@@ -18,7 +21,6 @@ class _ComplaintsState extends State<Complaints> with SingleTickerProviderStateM
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
     fetchHostelId();
-    
   }
 
   @override
@@ -26,13 +28,14 @@ class _ComplaintsState extends State<Complaints> with SingleTickerProviderStateM
     return Scaffold(
       appBar: AppBar(title: Text("Complaints",style: GoogleFonts.inter(),), bottom: _buildTabBar()),
       body: hostelId == null
-          ? Center(child: CircularProgressIndicator()) 
+          ? Center(child: CircularProgressIndicator())
           : TabBarView(
               controller: _tabController,
               children: [
                 RequestsList(status: "Pending", hostel_id: hostelId!),
                 RequestsList(status: "Resolved", hostel_id: hostelId!),
-             ],
+                 //RequestsList(status: "Denied", hostel_id: hostelId!),
+              ],
             ),
     );
   }
@@ -40,48 +43,46 @@ class _ComplaintsState extends State<Complaints> with SingleTickerProviderStateM
   PreferredSizeWidget _buildTabBar() {
     return TabBar(
       controller: _tabController,
-      labelColor: const Color.fromARGB(255, 250, 244, 244).withRed(3), 
-      unselectedLabelColor: Color(0xFFDCC8C8), 
-      indicatorColor:  const Color.fromARGB(255, 250, 244, 244).withRed(3), 
+      labelColor: const Color.fromARGB(255, 250, 244, 244).withRed(3),
+      unselectedLabelColor: Color(0xFFDCC8C8),
+      indicatorColor: const Color.fromARGB(255, 250, 244, 244).withRed(3),
       indicatorWeight: 3,
       tabs: [
-         Tab(child:Text( "Pending",style: GoogleFonts.dmSans(),)),
-         Tab(child:Text( "Resolved",style: GoogleFonts.dmSans(),)),
+        Tab(text: "Pending"),
+        Tab(text: "Resolved"),
        // Tab(text: "Denied"),
       ],
     );
   }
 
-   Future<void> fetchHostelId() async {
-  try {
-    User? user = FirebaseAuth.instance.currentUser; // Get logged-in user
-    if (user == null) {
-      debugPrint("⚠️ No user is logged in.");
-      return;
-    }
-    debugPrint("✅ Logged-in user: ${user.email}");
+  Future<void> fetchHostelId() async {
+    try {
+      User? user = FirebaseAuth.instance.currentUser; // Get logged-in user
+      if (user == null) {
+        debugPrint("⚠️ No user is logged in.");
+        return;
+      }
+      debugPrint("✅ Logged-in user: ${user.email}");
 
-    QuerySnapshot snapshot = await FirebaseFirestore.instance
-        .collection("users")
-        .where("email", isEqualTo: user.email) // Fetch warden by email
-        .where("role", isEqualTo: "warden")
-        .limit(1)
-        .get();
+      QuerySnapshot snapshot = await FirebaseFirestore.instance
+          .collection("users")
+          .where("email", isEqualTo: user.email) // Fetch warden by email
+          .where("role", isEqualTo: "warden")
+          .limit(1)
+          .get();
 
-    if (snapshot.docs.isNotEmpty) {
-      setState(() {
-        hostelId = snapshot.docs.first["hostelId"];
-      });
-      debugPrint("🏠 Hostel ID fetched: $hostelId");
-    } else {
-      debugPrint("⚠️ No hostel found for this warden.");
+      if (snapshot.docs.isNotEmpty) {
+        setState(() {
+          hostelId = snapshot.docs.first["hostelId"];
+        });
+        debugPrint("🏠 Hostel ID fetched: $hostelId");
+      } else {
+        debugPrint("⚠️ No hostel found for this warden.");
+      }
+    } catch (e) {
+      debugPrint("❌ Error fetching hostel ID: $e");
     }
-  } catch (e) {
-    debugPrint("❌ Error fetching hostel ID: $e");
   }
-}
-
-
 
   @override
   void dispose() {
@@ -103,7 +104,7 @@ class RequestsList extends StatelessWidget {
       stream: _firestore
           .collection("complaints")
           .where("hostel_id", isEqualTo: hostel_id)
-          .where("status", isEqualTo: status.toLowerCase())          
+          .where("status", isEqualTo: status.toLowerCase())
           //.orderBy("created_at", descending: false)
           .snapshots(),
       builder: (context, snapshot) {
@@ -127,20 +128,21 @@ class RequestsList extends StatelessWidget {
           itemCount: requests.length,
           itemBuilder: (context, index) {
             var request = requests[index];
-            Map<String, dynamic> requestData = request.data() as Map<String, dynamic>;
-            String request_id = requestData["request_id"] ?? request.id;
+            Map<String, dynamic> requestData =
+                request.data() as Map<String, dynamic>;
+            String requestId = requestData["request_id"] ?? request.id;
 
             return Card(
               margin: EdgeInsets.all(8.0),
               child: ListTile(
-                title: Text(requestData["title"] ?? "No Title", style: GoogleFonts.inder(fontWeight: FontWeight.bold)),
+                title: Text(requestData["title"] ?? "No Title", style: TextStyle(fontWeight: FontWeight.bold)),
                 subtitle: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(height: 10),
-                    Text("Room No: ${requestData["room_no"] ?? "No Room No"}", style:GoogleFonts.inter(fontWeight: FontWeight.w400)),
-                    Text("Description: ${requestData["description"] ?? "No Description"}", style:GoogleFonts.inter(fontWeight: FontWeight.w400)),
-                    Text("Priority: ${requestData["priority"] ?? "No Priority"}", style:GoogleFonts.inter(fontWeight: FontWeight.w400)),
+                    Text("Room No: ${requestData["room_no"] ?? "No Room No"}"),
+                    Text("Description: ${requestData["description"] ?? "No Description"}"),
+                    Text("Priority: ${requestData["priority"] ?? "No Priority"}"),
                   ],
                 ),
                 trailing: status == "Pending"
@@ -148,17 +150,16 @@ class RequestsList extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           ElevatedButton(
-                            onPressed: () => updateStatus(request_id, "Resolved", context),
+                            onPressed: () => updateStatus("request_id", "Resolved", context),
                             style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-                            child: Text("Resolve",style: GoogleFonts.inter(fontWeight: FontWeight.w500),),
+                            child: Text("Resolve"),
                           ),
-                        
                         ],
                       )
                     : Icon(
-                         Ionicons.checkmark_circle_outline ,
-                         color:  Colors.green ,
-                         size: 30,
+                        Ionicons.checkmark_circle_outline,
+                        color: Colors.green,
+                        size: 30,
                       ),
               ),
             );
@@ -168,13 +169,14 @@ class RequestsList extends StatelessWidget {
     );
   }
 
-  void updateStatus(String requestId, String newStatus, BuildContext context) async {
+  void updateStatus(
+      String requestId, String newStatus, BuildContext context) async {
     try {
       await _firestore.collection("complaints").doc(requestId).update({
         "status": newStatus.toLowerCase(),
-        
       });
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Status updated to $newStatus")));
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Status updated to $newStatus")));
     } catch (e) {
       debugPrint("Error updating status: $e");
     }
