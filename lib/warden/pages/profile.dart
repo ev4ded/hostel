@@ -69,9 +69,9 @@ class _MyProfileState extends State<MyProfile> {
                         Text(
                           userData!["username"]?? "Username",
                           
-                          style: const TextStyle(
+                          style: GoogleFonts.inder(
                             fontSize: 22.0,
-                            fontStyle: FontStyle.italic,
+                            
                           ),
                         ),
                         const SizedBox(height: 10.0),
