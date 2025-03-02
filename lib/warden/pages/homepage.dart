@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
 
 import 'package:minipro/warden/components/my_drawer.dart';
@@ -24,7 +25,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Home'),
+        title:  Text('Home',style:GoogleFonts.inter (), ),
         actions: [
           IconButton(
             icon: Icon(Icons.notifications),
@@ -69,7 +70,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                     _buildMenuItem(
-                      Ionicons.chatbubble_ellipses_outline,
+                      Ionicons.receipt_outline,
                       "Complaints",
                       ()=>Navigator.push(
                         context,
@@ -136,12 +137,12 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 40),
+            Icon(icon, size: 40,color: Colors.white,),
             SizedBox(height: 8),
             Text(
               label,
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 16),
+             style:GoogleFonts.inter(fontSize: 16.0,fontWeight:FontWeight.w300,color: Colors.white),
             ),
           ],
         ),

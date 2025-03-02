@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:minipro/firebase/firestore_services.dart';
 
 /*import 'package:firebase_auth/firebase_auth.dart';
@@ -15,8 +16,8 @@ class MyProfile extends StatefulWidget {
 class _MyProfileState extends State<MyProfile> {
   final FirestoreServices _firestoreService = FirestoreServices();
   Map<String, dynamic>? userData;
-
-  @override
+    
+ 
   void initState() {
     super.initState();
     fetchUserData();
@@ -42,45 +43,53 @@ class _MyProfileState extends State<MyProfile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Profile'),
-      ),
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      body: Container(
-        alignment: Alignment.center,
-        child: Builder(
-          builder: (context) {
-            return userData == null
-                ? const CircularProgressIndicator()
-                : Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      const CircleAvatar(
-                        radius: 50.0,
-                        backgroundImage:
-                            AssetImage('assets/images/profile/profile.png'),
-                      ),
-                      const SizedBox(height: 10.0),
-                      Text(
-                        userData!["username"] ?? "Username",
-                        style: const TextStyle(
-                          fontSize: 22.0,
-                          fontStyle: FontStyle.italic,
-                        ),
-                      ),
-                      const SizedBox(height: 10.0),
-                      Text(
-                        userData!["role"] ?? "Username",
-                        style: const TextStyle(
-                          fontSize: 22.0,
-                          fontStyle: FontStyle.italic,
-                        ),
-                      ),
-                    ],
-                  );
-          },
+        appBar: AppBar(
+          title: const Text('Profile'),
         ),
-      ),
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        body: Container(
+         alignment: Alignment.center,
+          child: Builder(
+            
+            builder: (context) {
+              return userData == null
+                  ? const CircularProgressIndicator()
+                  : Column(
+                      
+                     
+                       mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                      
+                        const CircleAvatar(
+                          
+                          radius: 50.0,
+                          backgroundImage: AssetImage('assets/images/profile/profile.png'),
+                        ),
+                        const SizedBox(height: 10.0),
+                        Text(
+                          userData!["username"]?? "Username",
+                          
+                          style: GoogleFonts.inder(
+                            fontSize: 22.0,
+                            
+                          ),
+                        ),
+                        const SizedBox(height: 10.0),
+                        Text(
+                          userData!["role"]?? "Username",
+                          
+                          style: const TextStyle(
+                            fontSize: 22.0,
+                            fontStyle: FontStyle.italic,
+                          ),
+                        ),
+                      ],
+                    );
+            },
+          ),
+        ),
+
+        
     );
   }
 }

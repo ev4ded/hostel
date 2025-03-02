@@ -12,10 +12,6 @@
 .swiftpm/
 migrate_working_dir/
 .env
-
-#igore service account JSON
-assets/service-account.json
-
 # IntelliJ related
 *.iml
 *.ipr
