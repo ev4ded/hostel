@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:minipro/firebase/firestore_services.dart';
 
 /*import 'package:firebase_auth/firebase_auth.dart';
@@ -16,7 +17,7 @@ class _MyProfileState extends State<MyProfile> {
   final FirestoreServices _firestoreService = FirestoreServices();
   Map<String, dynamic>? userData;
     
- 
+ @override
   void initState() {
 super.initState();
   fetchUserData ();
@@ -45,7 +46,7 @@ super.initState();
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Profile'),
+          title: Text('Profile',style:GoogleFonts.inter()),
         ),
         backgroundColor: Theme.of(context).colorScheme.surface,
         body: Container(
@@ -70,16 +71,16 @@ super.initState();
                         Text(
                           userData!["username"]?? "Username",
                           
-                          style: const TextStyle(
+                          style: GoogleFonts.pixelifySans(
                             fontSize: 22.0,
                             fontStyle: FontStyle.italic,
-                          ),
+                            ),
                         ),
                         const SizedBox(height: 10.0),
                         Text(
                           userData!["role"]?? "Username",
                           
-                          style: const TextStyle(
+                          style:GoogleFonts.pixelifySans(
                             fontSize: 22.0,
                             fontStyle: FontStyle.italic,
                           ),

@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:minipro/authentication/loginpage.dart';
 import 'package:minipro/student/components/custom_route.dart';
@@ -19,7 +20,7 @@ class DrawerTiles extends StatelessWidget {
     return Column(
       children: [
         ListTile(
-          title:Text("settings",style:TextStyle( fontSize: 18.0)),
+          title:Text("settings",style:GoogleFonts.mooli ( fontSize: 18.0)),
             
             leading: Icon(Ionicons.settings_outline),
             onTap: () {
@@ -37,7 +38,7 @@ class DrawerTiles extends StatelessWidget {
         
               ),
                ListTile(
-          title:Text("Logout",style:TextStyle( fontSize: 18.0)),
+          title:Text("logout",style:GoogleFonts.mooli ( fontSize: 18.0)),
            onTap:  () {
                 FirebaseAuth.instance.signOut();
                 saveLoginState(false);

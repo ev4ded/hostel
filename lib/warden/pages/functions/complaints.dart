@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
 
 class Complaints extends StatefulWidget {
@@ -23,7 +24,7 @@ class _ComplaintsState extends State<Complaints> with SingleTickerProviderStateM
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Complaints"), bottom: _buildTabBar()),
+      appBar: AppBar(title: Text("Complaints",style: GoogleFonts.inter(),), bottom: _buildTabBar()),
       body: hostelId == null
           ? Center(child: CircularProgressIndicator()) 
           : TabBarView(
@@ -31,8 +32,7 @@ class _ComplaintsState extends State<Complaints> with SingleTickerProviderStateM
               children: [
                 RequestsList(status: "Pending", hostel_id: hostelId!),
                 RequestsList(status: "Resolved", hostel_id: hostelId!),
-                 //RequestsList(status: "Denied", hostel_id: hostelId!),
-              ],
+             ],
             ),
     );
   }
@@ -45,8 +45,8 @@ class _ComplaintsState extends State<Complaints> with SingleTickerProviderStateM
       indicatorColor:  const Color.fromARGB(255, 250, 244, 244).withRed(3), 
       indicatorWeight: 3,
       tabs: [
-        Tab(text: "Pending"),
-        Tab(text: "Resolved"),
+         Tab(child:Text( "Pending",style: GoogleFonts.dmSans(),)),
+         Tab(child:Text( "Resolved",style: GoogleFonts.dmSans(),)),
        // Tab(text: "Denied"),
       ],
     );
@@ -133,14 +133,14 @@ class RequestsList extends StatelessWidget {
             return Card(
               margin: EdgeInsets.all(8.0),
               child: ListTile(
-                title: Text(requestData["title"] ?? "No Title", style: TextStyle(fontWeight: FontWeight.bold)),
+                title: Text(requestData["title"] ?? "No Title", style: GoogleFonts.inder(fontWeight: FontWeight.bold)),
                 subtitle: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(height: 10),
-                    Text("Room No: ${requestData["room_no"] ?? "No Room No"}"),
-                    Text("Description: ${requestData["description"] ?? "No Description"}"),
-                    Text("Priority: ${requestData["priority"] ?? "No Priority"}"),
+                    Text("Room No: ${requestData["room_no"] ?? "No Room No"}", style:GoogleFonts.inter(fontWeight: FontWeight.w400)),
+                    Text("Description: ${requestData["description"] ?? "No Description"}", style:GoogleFonts.inter(fontWeight: FontWeight.w400)),
+                    Text("Priority: ${requestData["priority"] ?? "No Priority"}", style:GoogleFonts.inter(fontWeight: FontWeight.w400)),
                   ],
                 ),
                 trailing: status == "Pending"
@@ -150,7 +150,7 @@ class RequestsList extends StatelessWidget {
                           ElevatedButton(
                             onPressed: () => updateStatus(request_id, "Resolved", context),
                             style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-                            child: Text("Resolve"),
+                            child: Text("Resolve",style: GoogleFonts.inter(fontWeight: FontWeight.w500),),
                           ),
                         
                         ],
