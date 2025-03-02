@@ -143,7 +143,7 @@ class _SignupPageState extends State<SignupPage> {
                                   hintColor: hintColor,
                                   hasError: _errors['hostelId'] ??
                                       false, //to ensure notnull
-                                  hinttext: 'HOSTEl ID',
+                                  hinttext: 'Hostel ID',
                                   controller: _controllers["hostelId"],
                                   bgColor: inputtextColor,
                                 ),
@@ -153,7 +153,7 @@ class _SignupPageState extends State<SignupPage> {
                                 child: Row(
                                   children: [
                                     Text(
-                                      'Role: ',
+                                      'Role',
                                       style: GoogleFonts.poppins(
                                           fontSize: 18,
                                           color: Colors.black,
@@ -169,7 +169,7 @@ class _SignupPageState extends State<SignupPage> {
                                             role = value;
                                           });
                                         },
-                                        hinttext: "SELECT ROLE",
+                                        hinttext: "Select Role",
                                         hintColor: AppColors.hintColor,
                                         list: roleList,
                                         textColor: Colors.black,
@@ -183,7 +183,7 @@ class _SignupPageState extends State<SignupPage> {
                                 child: Mytextfield(
                                     hintColor: hintColor,
                                     hasError: _errors['username'] ?? false,
-                                    hinttext: 'USERNAME',
+                                    hinttext: 'Username',
                                     controller: _controllers["username"],
                                     bgColor: inputtextColor),
                               ),
@@ -192,7 +192,7 @@ class _SignupPageState extends State<SignupPage> {
                                 child: Emailtextfield(
                                     hintColor: hintColor,
                                     hasError: _errors['email'] ?? false,
-                                    hinttext: 'EMAIL-ID',
+                                    hinttext: 'Email ID',
                                     controller: _controllers["email"],
                                     bgColor: inputtextColor),
                               ),
@@ -201,7 +201,7 @@ class _SignupPageState extends State<SignupPage> {
                                 child: Mytextfield(
                                   hintColor: hintColor,
                                   hasError: _errors['password'] ?? false,
-                                  hinttext: 'PASSWORD',
+                                  hinttext: 'Password',
                                   controller: _controllers["password"],
                                   bgColor: inputtextColor,
                                   isHidden: true,
@@ -213,7 +213,7 @@ class _SignupPageState extends State<SignupPage> {
                                     hintColor: hintColor,
                                     hasError:
                                         _errors['confirmpassword'] ?? false,
-                                    hinttext: 'CONFIRM PASSWORD',
+                                    hinttext: 'Confirm Password',
                                     controller: _controllers["confirmpassword"],
                                     isHidden: true,
                                     bgColor: inputtextColor),

@@ -112,8 +112,9 @@ class LoginPageState extends State<LoginPage> {
                           //mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Login',
+                            Text('LOGIN',
                                 style: GoogleFonts.teko(
+                                  color: Colors.black,
                                   fontSize: 32,
                                   fontWeight: FontWeight.w500,
                                 )),
@@ -121,7 +122,7 @@ class LoginPageState extends State<LoginPage> {
                             Emailtextfield(
                               bgColor: inputtextColor,
                               hintColor: AppColors.hintColor,
-                              hinttext: 'EMAIL',
+                              hinttext: 'Email',
                               borderWidth: 1,
                               controller: emailController,
                             ),
@@ -144,7 +145,7 @@ class LoginPageState extends State<LoginPage> {
                                       ? Ionicons.eye_sharp
                                       : Ionicons.eye_off_sharp),
                                 ),
-                                hintText: 'PASSWORD',
+                                hintText: 'Password',
                                 hintStyle: GoogleFonts.inter(
                                     color: AppColors.hintColor),
                                 enabledBorder: OutlineInputBorder(
