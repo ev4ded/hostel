@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:minipro/warden/services/FCMservices.dart';
 
 class Maintenance extends StatefulWidget {
   const Maintenance({super.key});
@@ -227,16 +228,62 @@ class RequestsList extends StatelessWidget {
     );
   }
 
-  void updateStatus(String requestId, String newStatus,String formattedDateTime, BuildContext context) async {
-    try {
-      await _firestore.collection("maintenance_request").doc(requestId).update({
-        "status": newStatus.toLowerCase(),
-        "approvedDateTime": formattedDateTime,
-        
-      });
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Status updated to $newStatus")));
-    } catch (e) {
-      debugPrint("Error updating status: $e");
+  void updateStatus(String requestId, String newStatus,String formattedDateTime ,BuildContext context) async {
+  try {
+    final maintenanceRef = _firestore.collection("maintenance_request").doc(requestId);
+    final maintenanceSnapshot = await maintenanceRef.get();
+
+    if (!maintenanceSnapshot.exists) {
+      print("❌ Complaint not found!");
+      return;
     }
+
+    final maintenanceData = maintenanceSnapshot.data();
+    final studentUid = maintenanceData?["student_id"];
+    final maintenanceTitle = maintenanceData?["title"] ?? "Maintenance Update";
+
+    if (studentUid == null) {
+      print("❌ Student ID not found in complaint data!");
+      return;
+    }
+
+    final studentDoc = await _firestore.collection("users").doc(studentUid).get();
+
+    if (!studentDoc.exists) {
+      print("❌ Student not found in users collection!");
+      return;
+    }
+
+    final fcmTokens = studentDoc["FCM_tokens"] ?? [];
+    if (fcmTokens.isEmpty) {
+      print("❌ No FCM tokens found for the student!");
+      return;
+    }
+
+    // ✅ Update Firestore: Mark complaint as Resolved
+    await maintenanceRef.update({"status": newStatus.toLowerCase(),});
+    String notificationBody;
+if (newStatus.toLowerCase() == "approved") {
+  
+  await maintenanceRef.update({"approvedDateTime": formattedDateTime});
+  notificationBody = "Your maintenance request has been approved and scheduled for $formattedDateTime.";
+} else {
+  notificationBody = "Your maintenance request status has been  $newStatus.";
+}
+    // ✅ Send Notification
+     for (var token in fcmTokens) {
+      await FCMService.sendNotification(
+        fcmToken: token,
+        title: "Maintenance Update: $maintenanceTitle",
+        body: notificationBody,
+      );
+    }
+
+    // ✅ Show success message
+    ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Status updated to $newStatus")));
+  } catch (e) {
+    print("❌ Error updating status: $e");
   }
+}
 }

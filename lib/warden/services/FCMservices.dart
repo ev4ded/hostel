@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:flutter/material.dart';
+
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'package:http/http.dart' as http;
@@ -23,7 +23,7 @@ class FCMService {
       return;
     }
 
-    final Map<String, dynamic> notificationData = {
+     Map<String, dynamic> notificationData = {
       "message": {
         "token": fcmToken,
         "notification": {
@@ -32,9 +32,13 @@ class FCMService {
         },
         "data": {
           "type": "complaint_update",
-        }
+        },
+         "android": {
+      "priority": "high",
       }
-    };
+    }
+     };
+    
 
     final response = await http.post(
       Uri.parse(endpoint),
