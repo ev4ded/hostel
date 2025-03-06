@@ -147,10 +147,11 @@ class _EditprofileState extends State<Editprofile> {
                       hintColor: hintColor,
                       hinttext: degree.isEmpty ? "choose your degree" : degree,
                       textColor: textColor,
-                      /*defaultvalue: degree.isNotEmpty &&
-                        ["Male", "Female", "Other"].contains(degree)
-                    ? degree
-                    : null,*/
+                      defaultvalue: degree.isNotEmpty &&
+                              ["B.Tech", "M.Tech", "MBA", "BBA", "BCA"]
+                                  .contains(degree)
+                          ? degree
+                          : null,
                       getvalue: (value) {
                         setState(() {
                           degree = value;
@@ -179,10 +180,10 @@ class _EditprofileState extends State<Editprofile> {
                           ? "Select which year"
                           : yearOfStudy,
                       textColor: textColor,
-                      /*defaultvalue: yearOfStudy.isNotEmpty &&
-                        ["1st", "2nd", "3rd", "4th"].contains(yearOfStudy)
-                    ? yearOfStudy
-                    : null,*/
+                      defaultvalue: yearOfStudy.isNotEmpty &&
+                              ["1st", "2nd", "3rd", "4th"].contains(yearOfStudy)
+                          ? yearOfStudy
+                          : null,
                       getvalue: (value) {
                         setState(() {
                           yearOfStudy = value;

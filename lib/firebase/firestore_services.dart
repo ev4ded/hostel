@@ -77,4 +77,27 @@ class FirestoreServices {
     }
     return null;
   }
+
+  Future<List> getRoomChangeStatus() async {
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        DocumentSnapshot doc =
+            await _firestore.collection("room_change").doc(user.uid).get();
+        if (doc.exists) {
+          if (doc["status"] == "approved") {
+            return [doc["status"], doc["room_no"]];
+          } else if (doc["status"] == "denied") {
+            return [doc["status"], doc["reason"]];
+          } else {
+            return doc["status"];
+          }
+        }
+      }
+      return [""];
+    } catch (e) {
+      print("error:${e.toString()}");
+    }
+    return [""];
+  }
 }
