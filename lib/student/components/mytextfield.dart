@@ -19,7 +19,7 @@ class Mytextfield extends StatelessWidget {
     this.labelText,
     this.type = TextInputType.text,
     this.textColor = Colors.black,
-    this.hintColor = Colors.blueGrey,
+    this.hintColor = Colors.grey,
     this.hasError = false,
     this.hinttext,
     this.bgColor,
