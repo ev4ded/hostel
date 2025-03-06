@@ -14,6 +14,7 @@ class Mydropdownmenu extends StatefulWidget {
   final List<String> list;
   final Color? textColor;
   final double? width;
+  final String? defaultvalue;
   final Function(String)? getvalue;
 
   const Mydropdownmenu({
@@ -29,6 +30,7 @@ class Mydropdownmenu extends StatefulWidget {
     this.textColor,
     this.width,
     this.getvalue,
+    this.defaultvalue,
   });
 
   @override
@@ -38,6 +40,11 @@ class Mydropdownmenu extends StatefulWidget {
 class _MydropdownmenuState extends State<Mydropdownmenu> {
   String? listvalue;
   final _formkey = GlobalKey<FormState>();
+  @override
+  void initState() {
+    super.initState();
+    listvalue = widget.defaultvalue;
+  }
 
   @override
   Widget build(BuildContext context) {

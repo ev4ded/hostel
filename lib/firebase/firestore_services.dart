@@ -60,4 +60,21 @@ class FirestoreServices {
     }
     return role;
   }
+
+  Future<Map<String, dynamic>?> getUserDetails() async {
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user == null) return null;
+      DocumentSnapshot userDoc =
+          await _firestore.collection("Udetails").doc(user.uid).get();
+      if (userDoc.exists) {
+        return userDoc.data() as Map<String, dynamic>;
+      } else {
+        print("No user found");
+      }
+    } catch (e) {
+      print("getUserData: $e");
+    }
+    return null;
+  }
 }

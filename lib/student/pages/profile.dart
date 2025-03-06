@@ -56,7 +56,8 @@ class _ProfileState extends State<Profile> {
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     Color containerColor = AppColors.getContainerColor(context);
-    Color detailsC = AppColors.getDetailsC(context);
+    Color detailsC = AppColors.buttonColor;
+    Color buttonTextC = AppColors.buttonTextColor;
     return Scaffold(
       body: userData == null
           ? Center(
@@ -132,7 +133,8 @@ class _ProfileState extends State<Profile> {
                                               userData!["role"] ??
                                                   "Role", // Safely handle null
                                               style: GoogleFonts.poppins(
-                                                  fontSize: 18),
+                                                  fontSize: 18,
+                                                  color: buttonTextC),
                                             ),
                                           ),
                                         ),
@@ -150,7 +152,8 @@ class _ProfileState extends State<Profile> {
                                               userData!["room_no"] ??
                                                   "Room ID", // Safely handle null
                                               style: GoogleFonts.poppins(
-                                                  fontSize: 18),
+                                                  fontSize: 18,
+                                                  color: buttonTextC),
                                             ),
                                           ),
                                         ),
