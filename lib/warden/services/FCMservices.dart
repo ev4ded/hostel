@@ -12,8 +12,10 @@ class FCMService {
     required String title,
     required String body,
   }) async {
-    final String projectId =dotenv.env['FIREBASE_PROJECT_ID']!; ; // Replace with your project ID
-    final String endpoint = "https://fcm.googleapis.com/v1/projects/$projectId/messages:send";
+    final String projectId =
+        dotenv.env['FIREBASE_PROJECT_ID']!; // Replace with your project ID
+    final String endpoint =
+        "https://fcm.googleapis.com/v1/projects/$projectId/messages:send";
 
     // Get access token from Firebase Service Account
     final String accessToken = await getAccessToken();
@@ -23,7 +25,7 @@ class FCMService {
       return;
     }
 
-     Map<String, dynamic> notificationData = {
+    Map<String, dynamic> notificationData = {
       "message": {
         "token": fcmToken,
         "notification": {
@@ -33,12 +35,11 @@ class FCMService {
         "data": {
           "type": "complaint_update",
         },
-         "android": {
-      "priority": "high",
+        "android": {
+          "priority": "high",
+        }
       }
-    }
-     };
-    
+    };
 
     final response = await http.post(
       Uri.parse(endpoint),
@@ -62,7 +63,8 @@ class FCMService {
       // Load Service Account JSON from assets
       final String serviceAccountJson =
           await rootBundle.loadString('assets/service-account.json');
-      final Map<String, dynamic> serviceAccount = jsonDecode(serviceAccountJson);
+      final Map<String, dynamic> serviceAccount =
+          jsonDecode(serviceAccountJson);
 
       // Authenticate using Google OAuth2
       final auth.ServiceAccountCredentials credentials =
@@ -71,7 +73,9 @@ class FCMService {
       final auth.AutoRefreshingAuthClient client =
           await auth.clientViaServiceAccount(
         credentials,
-        ['https://www.googleapis.com/auth/firebase.messaging'], // Required scope
+        [
+          'https://www.googleapis.com/auth/firebase.messaging'
+        ], // Required scope
       );
 
       return client.credentials.accessToken.data; // ✅ Auto-refresh enabled

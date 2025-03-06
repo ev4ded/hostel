@@ -141,7 +141,7 @@ class _VacateState extends State<Vacate> {
                           borderColor: borderColor,
                           borderRadius: borderRadius,
                           borderWidth: borderWidth,
-                          datecontroller: _dateController,
+                          dateController: _dateController,
                           hintColor: hintColor,
                           textColor: textColor,
                         ),

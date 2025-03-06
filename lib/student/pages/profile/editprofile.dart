@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:minipro/Theme/appcolors.dart';
+import 'package:minipro/firebase/firestore_services.dart';
 import 'package:minipro/student/components/mydate.dart';
 import 'package:minipro/student/components/mydropdownmenu.dart';
-import 'package:minipro/student/components/myparafield.dart';
 import 'package:minipro/student/components/mysnackbar.dart';
 import 'package:minipro/student/components/mytextfield.dart';
 
@@ -19,276 +19,289 @@ class Editprofile extends StatefulWidget {
 
 class _EditprofileState extends State<Editprofile> {
   final _nameController = TextEditingController();
-  final _bioController = TextEditingController();
-  final _dobController = TextEditingController();
-  final _collegeNameController = TextEditingController();
-  final _degreeController = TextEditingController();
+  final _dateController = TextEditingController();
+  final _collageNameController = TextEditingController();
+  String degree = "";
+  String gender = "";
+  String yearOfStudy = "";
   final double borderWidth = 1;
   final double borderRadius = 15;
   final Color borderColor = AppColors.borderColor;
   Color hintColor = AppColors.hintColor;
   Color buttonColor = AppColors.buttonColor;
   Color buttonTextColor = AppColors.buttonTextColor;
-  Color highlightColor = Colors.blueAccent;
-  String? gender;
-  String? year;
-  String? degree;
+  final int year = DateTime.now().year;
+  final FirestoreServices _firestoreService = FirestoreServices();
+  Map<String, dynamic>? userDetails;
+  bool isloading = true;
+
+  @override
+  @override
+  void initState() {
+    super.initState();
+    fetchUserDetails();
+  }
+
+  void fetchUserDetails() async {
+    Map<String, dynamic>? userDetails =
+        await _firestoreService.getUserDetails();
+    if (userDetails != null) {
+      setState(() {
+        _nameController.text = userDetails["full_name"] ?? "";
+        _collageNameController.text = userDetails["college_name"] ?? "";
+        _dateController.text = userDetails["dob"] ?? "";
+        degree = userDetails["degree"] ?? "";
+        yearOfStudy = userDetails["year_of_study"] ?? "";
+        _dateController.text = userDetails["dob"] ?? "";
+        gender = userDetails["gender"] ?? "";
+        isloading = false;
+      });
+    } else {
+      setState(() {
+        isloading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    double height = MediaQuery.of(context).size.height;
-    double width = MediaQuery.of(context).size.width;
-    Color bgColor = AppColors.getContainerColor(context);
     Color textColor = AppColors.getTextColor(context);
+    Color bgColor = AppColors.getContainerColor(context);
     return Scaffold(
       appBar: AppBar(
+        title: Text(
+          "Profile Details",
+          style: GoogleFonts.inter(),
+        ),
         leading: IconButton(
           icon: Icon(LucideIcons.chevronLeft),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
-        title: Text(
-          "Profile Details",
-          style: GoogleFonts.inter(),
-        ),
       ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(
-                  height: height * 0.02,
-                ),
-                Text(
-                  "Full Name:",
-                  style: GoogleFonts.inter(),
-                ),
-                SizedBox(
-                  height: height * 0.01,
-                ),
-                Mytextfield(
-                  bgColor: bgColor,
-                  borderColor: borderColor,
-                  borderRadius: borderRadius,
-                  borderWidth: borderWidth,
-                  controller: _nameController,
-                  hintColor: hintColor,
-                  hinttext: "Enter your full name",
-                  textColor: textColor,
-                ),
-                SizedBox(
-                  height: height * 0.02,
-                ),
-                Text(
-                  "Bio:",
-                  style: GoogleFonts.inter(),
-                ),
-                SizedBox(
-                  height: height * 0.01,
-                ),
-                Myparafield(
-                  bgColor: bgColor,
-                  borderColor: borderColor,
-                  borderRadius: borderRadius,
-                  borderWidth: borderWidth,
-                  controller: _bioController,
-                  hintColor: hintColor,
-                  hintText: "bio here",
-                  noOfLine: 3,
-                  textColor: textColor,
-                ),
-                SizedBox(
-                  height: height * 0.02,
-                ),
-                Text(
-                  "College Name:",
-                  style: GoogleFonts.inter(),
-                ),
-                SizedBox(
-                  height: height * 0.01,
-                ),
-                Mytextfield(
-                  bgColor: bgColor,
-                  borderColor: borderColor,
-                  borderRadius: borderRadius,
-                  borderWidth: borderWidth,
-                  controller: _collegeNameController,
-                  hintColor: hintColor,
-                  hinttext: "College Name",
-                  textColor: textColor,
-                ),
-                SizedBox(
-                  height: height * 0.02,
-                ),
-                Text(
-                  "Degree:",
-                  style: GoogleFonts.inter(),
-                ),
-                SizedBox(
-                  height: height * 0.01,
-                ),
-                Mydropdownmenu(
-                  bgColor: bgColor,
-                  borderColor: borderColor,
-                  borderRadius: borderRadius,
-                  borderWidth: borderWidth,
-                  buttonColor: buttonColor,
-                  getvalue: (value) {
-                    setState(() {
-                      degree = value;
-                    });
-                  },
-                  list: [
-                    "BTech",
-                    "MBBS",
-                    "BSc",
-                    "BCom",
-                    "BA",
-                    "BBA",
-                    "BCA",
-                    "MBA",
-                    "CA",
-                    "LLB"
-                  ],
-                  hintColor: hintColor,
-                  hinttext: "which degree",
-                  textColor: textColor,
-                  width: width,
-                ),
-                SizedBox(
-                  height: height * 0.02,
-                ),
-                Text(
-                  "Year of study:",
-                  style: GoogleFonts.inter(),
-                ),
-                SizedBox(
-                  height: height * 0.01,
-                ),
-                Mydropdownmenu(
-                  bgColor: bgColor,
-                  borderColor: borderColor,
-                  borderRadius: borderRadius,
-                  borderWidth: borderWidth,
-                  buttonColor: buttonColor,
-                  getvalue: (value) {
-                    setState(() {
-                      year = value;
-                    });
-                  },
-                  list: ["1st", "2nd", "3rd", "4th"],
-                  hintColor: hintColor,
-                  hinttext: "which year u currently at?",
-                  textColor: textColor,
-                  width: width,
-                ),
-                SizedBox(
-                  height: height * 0.02,
-                ),
-                Text(
-                  "Date of Birth:",
-                  style: GoogleFonts.inter(),
-                ),
-                SizedBox(
-                  height: height * 0.01,
-                ),
-                Mydate(
-                  bgColor: bgColor,
-                  borderColor: borderColor,
-                  borderRadius: borderRadius,
-                  borderWidth: borderWidth,
-                  datecontroller: _dobController,
-                  hintColor: hintColor,
-                  hinttext: "D.O.B",
-                  textColor: textColor,
-                ),
-                SizedBox(
-                  height: height * 0.02,
-                ),
-                Text(
-                  "Gender:",
-                  style: GoogleFonts.inter(),
-                ),
-                SizedBox(
-                  height: height * 0.01,
-                ),
-                Mydropdownmenu(
-                  bgColor: bgColor,
-                  borderColor: borderColor,
-                  borderRadius: borderRadius,
-                  borderWidth: borderWidth,
-                  buttonColor: buttonColor,
-                  getvalue: (value) {
-                    setState(() {
-                      gender = value;
-                    });
-                  },
-                  list: ["Male", "Female", "Other"],
-                  hintColor: hintColor,
-                  hinttext: "gender",
-                  textColor: textColor,
-                  width: width,
-                ),
-                SizedBox(
-                  height: height * 0.02,
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(right: 10.0),
-                  child: Align(
-                    alignment: Alignment.bottomRight,
-                    child: SizedBox(
-                      width: width * 0.35,
+      body: isloading
+          ? Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
+              physics: ClampingScrollPhysics(),
+              child: Padding(
+                padding: const EdgeInsets.only(
+                    left: 15.0, right: 15.0, top: 10, bottom: 10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Full Name:",
+                      style: GoogleFonts.inter(),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Mytextfield(
+                      bgColor: bgColor,
+                      borderColor: borderColor,
+                      borderRadius: borderRadius,
+                      borderWidth: borderWidth,
+                      controller: _nameController,
+                      hintColor: hintColor,
+                      hinttext: "Enter your full name",
+                      textColor: textColor,
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Text(
+                      "College Name:",
+                      style: GoogleFonts.inter(),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Mytextfield(
+                      bgColor: bgColor,
+                      borderColor: borderColor,
+                      borderRadius: borderRadius,
+                      borderWidth: borderWidth,
+                      controller: _collageNameController,
+                      hintColor: hintColor,
+                      hinttext: "Enter your college name",
+                      textColor: textColor,
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Text(
+                      "Degree:",
+                      style: GoogleFonts.inter(),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Mydropdownmenu(
+                      list: ["B.Tech", "M.Tech", "MBA", "BBA", "BCA"],
+                      bgColor: bgColor,
+                      borderColor: borderColor,
+                      borderRadius: borderRadius,
+                      borderWidth: borderWidth,
+                      buttonColor: buttonColor,
+                      hintColor: hintColor,
+                      hinttext: degree.isEmpty ? "choose your degree" : degree,
+                      textColor: textColor,
+                      /*defaultvalue: degree.isNotEmpty &&
+                        ["Male", "Female", "Other"].contains(degree)
+                    ? degree
+                    : null,*/
+                      getvalue: (value) {
+                        setState(() {
+                          degree = value;
+                        });
+                      },
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Text(
+                      "Year of Study:",
+                      style: GoogleFonts.inter(),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Mydropdownmenu(
+                      list: ["1st", "2nd", "3rd", "4th"],
+                      bgColor: bgColor,
+                      borderColor: borderColor,
+                      borderRadius: borderRadius,
+                      borderWidth: borderWidth,
+                      buttonColor: buttonColor,
+                      hintColor: hintColor,
+                      hinttext: yearOfStudy.isEmpty
+                          ? "Select which year"
+                          : yearOfStudy,
+                      textColor: textColor,
+                      /*defaultvalue: yearOfStudy.isNotEmpty &&
+                        ["1st", "2nd", "3rd", "4th"].contains(yearOfStudy)
+                    ? yearOfStudy
+                    : null,*/
+                      getvalue: (value) {
+                        setState(() {
+                          yearOfStudy = value;
+                        });
+                      },
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Text(
+                      "DOB:",
+                      style: GoogleFonts.inter(),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Mydate(
+                      hinttext: "Select your DOB",
+                      borderColor: borderColor,
+                      borderWidth: borderWidth,
+                      borderRadius: borderRadius,
+                      bgColor: bgColor,
+                      hintColor: hintColor,
+                      textColor: textColor,
+                      dateController: _dateController,
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Text(
+                      "Gender:",
+                      style: GoogleFonts.inter(),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Mydropdownmenu(
+                      list: ["Male", "Female", "Other"],
+                      bgColor: bgColor,
+                      borderColor: borderColor,
+                      borderRadius: borderRadius,
+                      borderWidth: borderWidth,
+                      buttonColor: buttonColor,
+                      hintColor: hintColor,
+                      hinttext: gender.isEmpty ? "Select your gender" : gender,
+                      textColor: textColor,
+                      defaultvalue: gender.isNotEmpty &&
+                              ["Male", "Female", "Other"].contains(gender)
+                          ? gender
+                          : null,
+                      getvalue: (value) {
+                        setState(() {
+                          gender = value;
+                        });
+                      },
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Align(
+                      alignment: Alignment.bottomRight,
                       child: ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          submit();
+                        },
                         style: ButtonStyle(
                             backgroundColor:
-                                WidgetStateProperty.all(buttonColor)),
-                        child: Text(
-                          "Submit",
-                          style: GoogleFonts.inter(
-                              color: buttonTextColor,
-                              fontWeight: FontWeight.w700),
-                        ),
+                                WidgetStatePropertyAll(buttonColor)),
+                        child: Text("Save",
+                            style: GoogleFonts.inter(
+                                color: buttonTextColor,
+                                fontWeight: FontWeight.w600)),
                       ),
-                    ),
-                  ),
+                    )
+                  ],
                 ),
-              ],
+              ),
             ),
-          ),
-        ),
-      ),
     );
   }
 
   void submit() {
-    String name = _nameController.toString().trim();
-    String bio = _bioController.toString().trim();
-    String collegeName = _collegeNameController.toString().trim();
-    String dob = _dobController.toString().trim();
-    User? user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      try {
-        FirebaseFirestore.instance.collection("Udetails").doc(user.uid).set(
-          {
-            'full_name': name,
-            'bio': bio,
-            'college_name': collegeName,
-            'degree': degree ?? "",
-            'year': year ?? "",
-            'dob': dob,
-            'gender': gender ?? ""
-          },
-        );
-        _showSnackBar("profile updated successfully");
-      } catch (e) {
-        _showSnackBar("error:$e");
+    String name = _nameController.text;
+    String college = _collageNameController.text;
+    String dob = _dateController.text;
+    if (name.isEmpty ||
+        college.isEmpty ||
+        dob.isEmpty ||
+        degree.isEmpty ||
+        yearOfStudy.isEmpty ||
+        gender.isEmpty) {
+      _showSnackBar("please fill in all fields", isError: true);
+    } else {
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        try {
+          DocumentReference docRef =
+              FirebaseFirestore.instance.collection("Udetails").doc(user.uid);
+          docRef.set(
+            {
+              'full_name': name,
+              'college_name': college,
+              'degree': degree,
+              'year_of_study': yearOfStudy,
+              'dob': dob,
+              'gender': gender,
+            },
+          );
+          _showSnackBar("upated successfully");
+          Future.delayed(Duration(seconds: 1), () {
+            if (context.mounted) {
+              Navigator.pop(context);
+            }
+          });
+        } catch (e) {
+          _showSnackBar("updation failed");
+        }
       }
     }
-    _showSnackBar("user not found");
   }
 
   void _showSnackBar(String message, {bool isError = false}) {

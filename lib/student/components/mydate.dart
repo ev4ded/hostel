@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:table_calendar/table_calendar.dart';
 
 class Mydate extends StatefulWidget {
   final String? hinttext;
@@ -11,7 +10,7 @@ class Mydate extends StatefulWidget {
   final Color? bgColor;
   final Color hintColor;
   final Color textColor;
-  final TextEditingController? datecontroller;
+  final TextEditingController? dateController;
   const Mydate({
     super.key,
     this.hinttext,
@@ -21,7 +20,7 @@ class Mydate extends StatefulWidget {
     this.bgColor,
     this.hintColor = Colors.blueGrey,
     this.textColor = Colors.white,
-    this.datecontroller,
+    this.dateController,
   });
 
   @override
@@ -29,9 +28,23 @@ class Mydate extends StatefulWidget {
 }
 
 class _MydateState extends State<Mydate> {
-  DateTime _selectedDay = DateTime.now();
   int year = DateTime.now().year.toInt();
-  void _showCalendar() {
+  void _showCalendar() async {
+    DateTime? selectedDate = await showDatePicker(
+      context: context,
+      firstDate: DateTime(DateTime.now().year - 100),
+      lastDate: DateTime(DateTime.now().year + 100),
+      initialDate: DateTime.now(),
+    );
+
+    if (selectedDate != null) {
+      setState(() {
+        widget.dateController!.text =
+            DateFormat('yyyy-MM-dd').format(selectedDate);
+      });
+    }
+  }
+  /*void _showCalendar() {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -62,7 +75,7 @@ class _MydateState extends State<Mydate> {
         ),
       ),
     );
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -71,7 +84,7 @@ class _MydateState extends State<Mydate> {
       keyboardType: TextInputType.datetime,
       cursorColor: Colors.lightBlueAccent,
       style: GoogleFonts.inter(color: widget.textColor),
-      controller: widget.datecontroller,
+      controller: widget.dateController,
       decoration: InputDecoration(
         filled: true,
         fillColor: widget.bgColor,
