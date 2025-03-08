@@ -11,6 +11,7 @@ class Mydate extends StatefulWidget {
   final Color hintColor;
   final Color textColor;
   final TextEditingController? dateController;
+  final bool blockPastDates;
   const Mydate({
     super.key,
     this.hinttext,
@@ -21,6 +22,7 @@ class Mydate extends StatefulWidget {
     this.hintColor = Colors.blueGrey,
     this.textColor = Colors.white,
     this.dateController,
+    this.blockPastDates = false,
   });
 
   @override
@@ -44,38 +46,22 @@ class _MydateState extends State<Mydate> {
       });
     }
   }
-  /*void _showCalendar() {
-    showDialog(
+
+  void _showBlockedCalendar() async {
+    DateTime? selectedDate = await showDatePicker(
       context: context,
-      builder: (context) => AlertDialog(
-        content: SizedBox(
-          width: MediaQuery.of(context).size.width,
-          height: (MediaQuery.of(context).size.height) * 0.48,
-          child: TableCalendar(
-            headerStyle:
-                HeaderStyle(formatButtonVisible: false, titleCentered: true),
-            calendarFormat: CalendarFormat.month,
-            //onFormatChanged: (format) => CalenderFormat,
-            calendarStyle: CalendarStyle(defaultTextStyle: GoogleFonts.inter()),
-            firstDay: DateTime.utc(year - 4, 1, 1),
-            lastDay: DateTime.utc(year + 4, 12, 31),
-            focusedDay: _selectedDay,
-            selectedDayPredicate: (day) {
-              return isSameDay(_selectedDay, day);
-            },
-            onDaySelected: (selectedDay, focusedDay) {
-              setState(() {
-                _selectedDay = selectedDay;
-                widget.datecontroller!.text =
-                    DateFormat('yyyy-MM-dd').format(selectedDay);
-              });
-              Navigator.pop(context); // Close dialog after selection
-            },
-          ),
-        ),
-      ),
+      firstDate: DateTime.now(),
+      lastDate: DateTime(DateTime.now().year + 100),
+      initialDate: DateTime.now(),
     );
-  }*/
+
+    if (selectedDate != null) {
+      setState(() {
+        widget.dateController!.text =
+            DateFormat('yyyy-MM-dd').format(selectedDate);
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -105,7 +91,7 @@ class _MydateState extends State<Mydate> {
           ),
         ),
       ),
-      onTap: _showCalendar,
+      onTap: (widget.blockPastDates) ? _showBlockedCalendar : _showCalendar,
     );
   }
 }

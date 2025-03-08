@@ -6,7 +6,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:minipro/Theme/appcolors.dart';
 import 'package:minipro/Theme/fonts.dart';
 import 'package:minipro/student/components/custom_route.dart';
-import 'package:minipro/student/components/customnotification.dart';
+import 'package:minipro/student/components/customProfilepopUp.dart';
 import 'package:minipro/student/components/myContainer.dart';
 import 'package:minipro/student/pages/home/complaint/complaint.dart';
 import 'package:minipro/student/pages/home/maintenance/maintenance.dart';

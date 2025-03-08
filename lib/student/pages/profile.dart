@@ -8,7 +8,7 @@ import 'package:minipro/firebase/firestore_services.dart';
 import 'package:minipro/authentication/loginpage.dart';
 import 'package:minipro/Theme/appcolors.dart';
 import 'package:minipro/student/components/custom_route.dart';
-import 'package:minipro/student/components/customnotification.dart';
+import 'package:minipro/student/components/customProfilepopUp.dart';
 import 'package:minipro/student/pages/profile/editprofile.dart';
 import 'package:minipro/student/pages/profile/help.dart';
 import 'package:minipro/student/pages/profile/roomchange.dart';

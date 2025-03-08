@@ -90,7 +90,7 @@ class FirestoreServices {
           } else if (doc["status"] == "denied") {
             return [doc["status"], doc["reason"]];
           } else {
-            return doc["status"];
+            return [doc["status"]];
           }
         }
       }

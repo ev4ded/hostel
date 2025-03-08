@@ -71,3 +71,25 @@ Future<bool> appliedForVacate() async {
     return false;
   }
 }
+
+Future<String?> getLatestLeaveRequest() async {
+  try {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      QuerySnapshot doc = await FirebaseFirestore.instance
+          .collection("leave_application")
+          .where("student_id", isEqualTo: user.uid)
+          .orderBy("created_at", descending: true)
+          .limit(1)
+          .get();
+      if (doc.docs.isNotEmpty) {
+        var latestLeave = doc.docs.first;
+        Map<String, dynamic> data = latestLeave.data() as Map<String, dynamic>;
+        return data["status"] as String;
+      }
+    }
+    return null;
+  } catch (e) {
+    return null;
+  }
+}

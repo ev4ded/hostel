@@ -53,15 +53,18 @@ class _RoomchangeState extends State<Roomchange> {
       });
     }
     List read = await _firestoreServices.getRoomChangeStatus();
-    setState(() {
-      status = read[0];
-      if (status == "approved") {
-        roomno = read[1];
-      } else if (status == "denied") {
-        reason = read[1];
-      }
-    });
-    isloading = false;
+    setState(
+      () {
+        status = read[0];
+        //status = status!.trim();
+        if (status == "approved") {
+          roomno = read[1];
+        } else if (status == "denied") {
+          reason = read[1] ?? "";
+        }
+        isloading = false;
+      },
+    );
   }
 
   @override
@@ -87,204 +90,220 @@ class _RoomchangeState extends State<Roomchange> {
     Color bgColor = AppColors.getContainerColor(context);
     double width = MediaQuery.of(context).size.width;
     if (status == "") {
-      return Container(
-        height: 300,
-        width: width * 0.95,
-        decoration: BoxDecoration(
-          color: bgColor,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              height: 10,
+      return Wrap(
+        children: [
+          Container(
+            width: width * 0.95,
+            decoration: BoxDecoration(
+              color: bgColor,
+              borderRadius: BorderRadius.circular(20),
             ),
-            Padding(
-              padding:
-                  const EdgeInsets.only(left: 20.0, right: 10.0, top: 10.0),
-              child: Text(
-                "Reason:",
-                style: GoogleFonts.inter(fontWeight: FontWeight.w600),
-              ),
-            ),
-            Padding(
-              padding:
-                  const EdgeInsets.only(left: 10.0, right: 10.0, top: 10.0),
-              child: Myparafield(
-                bgColor: bgColor,
-                borderColor: borderColor,
-                borderRadius: borderRadius,
-                borderWidth: borderWidth,
-                controller: _reasonController,
-                hintColor: hintColor,
-                hintText: "why you wanna change room?",
-                noOfLine: 4,
-                textColor: textColor,
-              ),
-            ),
-            Align(
-              alignment: Alignment.centerRight,
-              child: Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: ElevatedButton(
-                  onPressed: () {
-                    submit();
-                  },
-                  style: ButtonStyle(
-                      backgroundColor: WidgetStatePropertyAll(buttonColor)),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  height: 10,
+                ),
+                Padding(
+                  padding:
+                      const EdgeInsets.only(left: 20.0, right: 10.0, top: 10.0),
                   child: Text(
-                    "Apply",
-                    style: GoogleFonts.inter(
-                        color: buttonTextColor, fontWeight: FontWeight.w600),
+                    "Reason:",
+                    style: GoogleFonts.inter(fontWeight: FontWeight.w600),
                   ),
                 ),
-              ),
-            )
-          ],
-        ),
+                Padding(
+                  padding:
+                      const EdgeInsets.only(left: 10.0, right: 10.0, top: 10.0),
+                  child: Myparafield(
+                    bgColor: bgColor,
+                    borderColor: borderColor,
+                    borderRadius: borderRadius,
+                    borderWidth: borderWidth,
+                    controller: _reasonController,
+                    hintColor: hintColor,
+                    hintText: "why you wanna change room?",
+                    noOfLine: 4,
+                    textColor: textColor,
+                  ),
+                ),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        submit();
+                      },
+                      style: ButtonStyle(
+                          backgroundColor: WidgetStatePropertyAll(buttonColor)),
+                      child: Text(
+                        "Apply",
+                        style: GoogleFonts.inter(
+                            color: buttonTextColor,
+                            fontWeight: FontWeight.w600),
+                      ),
+                    ),
+                  ),
+                )
+              ],
+            ),
+          )
+        ],
       );
     } else if (status == "pending") {
-      return Container(
-        height: 300,
-        width: width * 0.85,
-        decoration: BoxDecoration(
-          color: Color.fromRGBO(66, 66, 66, 1),
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              height: 200,
-              child: Image(
-                image: AssetImage("assets/images/waiting$img.png"),
-              ),
+      return Wrap(
+        children: [
+          Container(
+            height: 290,
+            width: width * 0.8,
+            decoration: BoxDecoration(
+              color: Color.fromRGBO(66, 66, 66, 1),
+              borderRadius: BorderRadius.circular(20),
             ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                "your request is still pending..",
-                style: GoogleFonts.inter(color: textColor),
-              ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  height: 200,
+                  child: Image(
+                    image: AssetImage("assets/images/waiting$img.png"),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    "your request is still pending..",
+                    style: GoogleFonts.inter(color: textColor),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       );
     } else if (status == "approved") {
-      return Container(
-        height: 170,
-        width: width * 0.75,
-        decoration: BoxDecoration(
-          color: bgColor,
-          borderRadius: BorderRadius.circular(30),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.only(left: 15.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(
-                height: 20,
-              ),
-              Text(
-                "your request has been approved",
-                style: GoogleFonts.inter(color: Colors.lightGreen),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 8.0),
-                child: Text(
-                  "new room no: $roomno",
-                  style: GoogleFonts.inter(fontWeight: FontWeight.w600),
-                ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Align(
-                alignment: Alignment.centerRight,
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 20.0),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      accept();
-                    },
-                    style: ButtonStyle(
-                      backgroundColor: WidgetStatePropertyAll(buttonColor),
-                    ),
+      return Wrap(
+        children: [
+          Container(
+            width: width * 0.75,
+            decoration: BoxDecoration(
+              color: bgColor,
+              borderRadius: BorderRadius.circular(30),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.only(left: 15.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Text(
+                    "your request has been approved",
+                    style: GoogleFonts.inter(color: Colors.lightGreen),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 8.0),
                     child: Text(
-                      "accept",
-                      style: GoogleFonts.inter(
-                          color: buttonTextColor, fontWeight: FontWeight.w600),
+                      "new room no: $roomno",
+                      style: GoogleFonts.inter(fontWeight: FontWeight.w600),
                     ),
                   ),
-                ),
-              )
-            ],
-          ),
-        ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 20.0, bottom: 10),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          accept();
+                        },
+                        style: ButtonStyle(
+                          backgroundColor: WidgetStatePropertyAll(buttonColor),
+                        ),
+                        child: Text(
+                          "accept",
+                          style: GoogleFonts.inter(
+                              color: buttonTextColor,
+                              fontWeight: FontWeight.w600),
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          )
+        ],
       );
     } else if (status == "denied") {
-      return Container(
-        height: 170,
-        width: width * 0.75,
-        decoration: BoxDecoration(
-          color: bgColor,
-          borderRadius: BorderRadius.circular(30),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.only(left: 15.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(
-                height: 20,
-              ),
-              Text(
-                "your request has been denied",
-                style: GoogleFonts.inter(color: Colors.red),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 8.0),
-                child: Text(
-                  "reason: $reason",
-                  style: GoogleFonts.inter(fontWeight: FontWeight.w600),
-                ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Align(
-                alignment: Alignment.centerRight,
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 20.0),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      accept();
-                    },
-                    style: ButtonStyle(
-                      backgroundColor: WidgetStatePropertyAll(buttonColor),
-                    ),
+      return Wrap(
+        children: [
+          Container(
+            width: width * 0.75,
+            decoration: BoxDecoration(
+              color: bgColor,
+              borderRadius: BorderRadius.circular(30),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.only(left: 15.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Text(
+                    "Request has been denied",
+                    style: GoogleFonts.inter(color: Colors.red),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 10.0, right: 10.0),
                     child: Text(
-                      "OK",
-                      style: GoogleFonts.inter(
-                          color: buttonTextColor, fontWeight: FontWeight.w600),
+                      "reason: $reason",
+                      style: GoogleFonts.inter(fontWeight: FontWeight.w600),
                     ),
                   ),
-                ),
-              )
-            ],
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 20.0, bottom: 10),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          accept();
+                        },
+                        style: ButtonStyle(
+                          backgroundColor: WidgetStatePropertyAll(buttonColor),
+                        ),
+                        child: Text(
+                          "OK",
+                          style: GoogleFonts.inter(
+                              color: buttonTextColor,
+                              fontWeight: FontWeight.w600),
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
           ),
-        ),
+        ],
       );
     } else {
       return Container(
@@ -305,7 +324,7 @@ class _RoomchangeState extends State<Roomchange> {
               .doc(user.uid);
           docRef.set(
             {
-              'Reason': _reasonController.text,
+              'description': _reasonController.text,
               'name': name,
               'status': "pending",
             },

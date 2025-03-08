@@ -136,6 +136,7 @@ class _VacateState extends State<Vacate> {
                           height: height * 0.02,
                         ),
                         Mydate(
+                          blockPastDates: true,
                           hinttext: "Vacating date?",
                           bgColor: bgColor,
                           borderColor: borderColor,
@@ -242,10 +243,6 @@ class _VacateState extends State<Vacate> {
     String address = _addressController.text.trim();
     if (date.isEmpty || address.isEmpty || reason == null) {
       _showSnackBar("please fill in all fields", isError: true);
-      return false;
-    }
-    if ((DateTime.parse(date)).isBefore(DateTime.parse(today))) {
-      _showSnackBar("check the date stupid");
       return false;
     }
     if (await showAlert(context) == false) {

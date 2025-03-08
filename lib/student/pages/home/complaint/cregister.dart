@@ -152,11 +152,6 @@ class _CregisterState extends State<Cregister> {
                               WidgetStateProperty.all(buttonColor)),
                       onPressed: () {
                         submit();
-                        Future.delayed(Duration(seconds: 1), () {
-                          if (context.mounted) {
-                            Navigator.pop(context);
-                          }
-                        });
                       },
                       child: Text(
                         "SUBMIT",
@@ -202,6 +197,11 @@ class _CregisterState extends State<Cregister> {
           },
         );
         _showSnackBar("request send");
+        Future.delayed(Duration(seconds: 1), () {
+          if (context.mounted) {
+            Navigator.pop(context);
+          }
+        });
       } catch (e) {
         _showSnackBar("request failed");
       }
