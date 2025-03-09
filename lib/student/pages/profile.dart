@@ -9,6 +9,7 @@ import 'package:minipro/authentication/loginpage.dart';
 import 'package:minipro/Theme/appcolors.dart';
 import 'package:minipro/student/components/custom_route.dart';
 import 'package:minipro/student/components/customProfilepopUp.dart';
+import 'package:minipro/student/components/menucolortoggle.dart';
 import 'package:minipro/student/pages/profile/editprofile.dart';
 import 'package:minipro/student/pages/profile/help.dart';
 import 'package:minipro/student/pages/profile/roomchange.dart';
@@ -460,13 +461,13 @@ class _ProfileState extends State<Profile> {
                                       Padding(
                                         padding:
                                             const EdgeInsets.only(left: 12.0),
-                                        child: Icon(LucideIcons.gitBranch),
+                                        child: Icon(LucideIcons.palette),
                                       ),
                                       Padding(
                                         padding:
                                             const EdgeInsets.only(left: 8.0),
                                         child: Text(
-                                          "Version",
+                                          "Change Menu Color?",
                                           style:
                                               GoogleFonts.poppins(fontSize: 18),
                                         ),
@@ -476,12 +477,7 @@ class _ProfileState extends State<Profile> {
                                 ),
                               ),
                               onTap: () {
-                                Navigator.push(
-                                  context,
-                                  myRoute(
-                                    Help(),
-                                  ),
-                                );
+                                //showMenuColorChange(context);
                                 HapticFeedback.heavyImpact();
                               },
                             ),

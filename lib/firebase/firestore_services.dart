@@ -44,21 +44,24 @@ class FirestoreServices {
     }
   }
 
-  Future<String> getUserRole() async {
+  Future<List> getUserRoleandVerified() async {
     Map<String, dynamic>? user = await getCachedUserData();
     String role = "";
+    bool isVerified = false;
     try {
       if (user != null) {
         role = user["role"];
+        isVerified = user["isApproved"];
       } else {
         await getUserData();
         user = await getCachedUserData();
         role = user!["role"];
+        isVerified = user["isApproved"];
       }
     } catch (e) {
       print("error :$e");
     }
-    return role;
+    return [role, isVerified];
   }
 
   Future<Map<String, dynamic>?> getUserDetails() async {

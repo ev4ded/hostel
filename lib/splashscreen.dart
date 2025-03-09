@@ -1,6 +1,9 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:minipro/student/components/custom_route.dart';
 import 'package:minipro/student/pages/navigator.dart';
+import 'package:minipro/notverfied.dart';
 import 'package:minipro/warden/pages/navigation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:minipro/firebase/firestore_services.dart';
@@ -24,13 +27,18 @@ class _SplashscreenState extends State<Splashscreen> {
   Future<void> checkLoginStatus() async {
     final prefs = await SharedPreferences.getInstance();
     bool isLoggedIn = prefs.getBool("isLoggedIn") ?? false;
-    String Role = await FirestoreServices().getUserRole();
+    List roleandVerified = await FirestoreServices().getUserRoleandVerified();
+    String role = roleandVerified[0];
+    bool isVerified = roleandVerified[1];
     //await Future.delayed(Duration(seconds: 2));
+    print("$isVerified");
     if (!mounted) return;
     Widget page;
-    if (isLoggedIn && Role == "warden") {
+    if (isLoggedIn && !isVerified) {
+      page = Studentnotverfied();
+    } else if (isLoggedIn && role == "warden") {
       page = MyNavigation();
-    } else if (isLoggedIn && Role == "student") {
+    } else if (isLoggedIn && role == "student") {
       page = MainNavigator();
     } else {
       page = LoginPage();

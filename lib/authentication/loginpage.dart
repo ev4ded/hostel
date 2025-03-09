@@ -241,7 +241,7 @@ class LoginPageState extends State<LoginPage> {
       final UserCredential user = await _auth.signInWithEmailAndPassword(
           email: email, password: password);
       await FirestoreServices().getUserData();
-      await FirestoreServices().getUserRole();
+      //await FirestoreServices().getUserRole();
       if (!mounted) return;
       saveLoginState(true);
       _showSnackBar("login successful!!");

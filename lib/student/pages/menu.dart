@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:minipro/firebase/firestore_services.dart';
 import 'package:minipro/student/Student_queries/queries.dart';
 import 'package:minipro/student/components/mysnackbar.dart';
+import 'package:minipro/student/menuColor.dart';
 
 class Menu extends StatefulWidget {
   const Menu({super.key});
@@ -12,10 +13,11 @@ class Menu extends StatefulWidget {
 }
 
 class _MenuState extends State<Menu> {
-  Color iconC = Color.fromRGBO(255, 189, 109, 1);
-  Color menuC = Color.fromRGBO(213, 185, 145, 1); //123, 114, 218
-  Color innerC = Color.fromRGBO(224, 199, 174, 1);
-  Color text = Color.fromRGBO(120, 47, 32, 1);
+  Menucolor menucolor = Menucolor();
+  late Color iconC;
+  late Color menuC; //123, 114, 218
+  late Color innerC;
+  late Color text;
   List<String>? breakfast;
   List<String>? lunch;
   List<String>? snacks;
@@ -26,6 +28,10 @@ class _MenuState extends State<Menu> {
   @override
   void initState() {
     super.initState();
+    iconC = menucolor.currentTheme["iconC"]!;
+    menuC = menucolor.currentTheme["menuC"]!;
+    innerC = menucolor.currentTheme["innerC"]!;
+    text = menucolor.currentTheme["text"]!;
     loadMenu();
   }
 

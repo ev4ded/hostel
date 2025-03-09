@@ -10,7 +10,7 @@ import 'package:minipro/student/components/customProfilepopUp.dart';
 import 'package:minipro/student/components/myContainer.dart';
 import 'package:minipro/student/pages/home/complaint/complaint.dart';
 import 'package:minipro/student/pages/home/maintenance/maintenance.dart';
-import 'package:minipro/student/pages/home/leave_application/leaveApplication.dart';
+import 'package:minipro/student/pages/home/leaveApplication.dart';
 import 'package:minipro/student/pages/home/payment.dart';
 import 'package:minipro/student/pages/home/vacate.dart';
 

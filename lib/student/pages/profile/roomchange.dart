@@ -159,7 +159,7 @@ class _RoomchangeState extends State<Roomchange> {
             height: 290,
             width: width * 0.8,
             decoration: BoxDecoration(
-              color: Color.fromRGBO(66, 66, 66, 1),
+              color: AppColors.getAlertWindowC(context),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Column(
