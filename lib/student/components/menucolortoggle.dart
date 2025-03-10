@@ -1,9 +1,8 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:minipro/Theme/appcolors.dart';
-import 'package:minipro/student/menucolor.dart';
+import 'package:minipro/Theme/menucolor.dart';
 import 'package:provider/provider.dart';
 
 void showMenuColorChange(BuildContext context) {
@@ -27,13 +26,13 @@ void showMenuColorChange(BuildContext context) {
       Color.fromRGBO(255, 255, 255, 1),
     ]
   };
+
   showDialog(
     context: context,
     barrierDismissible: true,
-    builder: (BuildContext dialogContext) {
+    builder: (BuildContext context) {
       return Consumer<Menucolor>(
-        // ✅ Use Consumer instead
-        builder: (context, menucolor, child) {
+        builder: (context, menuColorProvider, child) {
           return Stack(
             children: [
               BackdropFilter(
@@ -57,16 +56,15 @@ void showMenuColorChange(BuildContext context) {
                         style: GoogleFonts.inter(fontSize: 18),
                       ),
                       SizedBox(height: 5),
-                      Text("Tap on a theme set to apply",
+                      Text("Tap on a theme to apply",
                           style: GoogleFonts.inter()),
                       SizedBox(height: 10),
                       Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: List.generate(themeColors.length, (index) {
+                        children: List.generate(3, (index) {
                           return GestureDetector(
                             onTap: () {
-                              menucolor
-                                  .setTheme(index); // ✅ Safe provider access
+                              // ✅ Toggle theme when tapped
+                              context.read<Menucolor>().setTheme(index);
                               Navigator.of(context).pop();
                             },
                             child: Container(
@@ -79,37 +77,43 @@ void showMenuColorChange(BuildContext context) {
                                 padding: const EdgeInsets.all(10.0),
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
-                                  children: List.generate(4, (i) {
-                                    return Container(
-                                      height: 40,
-                                      width: 40,
-                                      margin:
-                                          EdgeInsets.symmetric(horizontal: 5),
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: themeColors[index]![i],
-                                        border: Border.all(
-                                          color:
-                                              AppColors.getTextColor(context),
-                                          width: 1.5,
+                                  children: themeColors[index]!.map((color) {
+                                    return Padding(
+                                      padding: const EdgeInsets.only(right: 10),
+                                      child: Container(
+                                        height: 40,
+                                        width: 40,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: color,
+                                          border: Border.all(
+                                            color:
+                                                AppColors.getTextColor(context),
+                                            width: 1.5,
+                                          ),
                                         ),
                                       ),
                                     );
-                                  }),
+                                  }).toList(),
                                 ),
                               ),
                             ),
                           );
                         }),
                       ),
+                      SizedBox(height: 10),
                       Align(
                         alignment: Alignment.centerRight,
                         child: TextButton(
-                          onPressed: () => Navigator.of(context).pop(),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
                           child: Text(
                             "Cancel",
                             style: GoogleFonts.inter(
-                                color: Colors.red, fontWeight: FontWeight.w600),
+                              color: Colors.red,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ),
                       ),

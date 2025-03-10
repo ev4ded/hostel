@@ -292,6 +292,10 @@ class _EditprofileState extends State<Editprofile> {
               'gender': gender,
             },
           );
+          FirebaseFirestore.instance.collection("users").doc(user.uid).update({
+            'username': name,
+            'college': college,
+          });
           _showSnackBar("upated successfully");
           Future.delayed(Duration(seconds: 1), () {
             if (context.mounted) {

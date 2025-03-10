@@ -1,9 +1,10 @@
+import 'dart:async';
 import 'dart:ui';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:minipro/Theme/appcolors.dart';
-import 'package:minipro/student/menucolor.dart';
-import 'package:provider/provider.dart';
+import 'package:minipro/student/components/mysnackbar.dart';
 
 void showPendingDialog(BuildContext context) {
   Color buttonColor = AppColors.buttonColor;
@@ -159,6 +160,104 @@ void showResolvedDialog(BuildContext context, String status) {
             ),
           ],
         ),
+      );
+    },
+  );
+}
+
+Future<void> showEmailVerifictionDialog(BuildContext context) async {
+  User? user = FirebaseAuth.instance.currentUser;
+  if (user == null) return;
+  await user.sendEmailVerification();
+  void showSnackBar(String message, {bool isError = false}) {
+    Mysnackbar.show(context, message, isError: isError);
+  }
+
+  Completer<void> completer = Completer<void>(); // ✅ Keeps dialog open
+  Timer? timer;
+  if (!context.mounted) return;
+  showDialog(
+    context: context,
+    barrierDismissible: false, // ✅ Prevents closing until verified
+    builder: (BuildContext context) {
+      return AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(30),
+        ),
+        title: Text("Verify your Email"),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            CircularProgressIndicator(),
+            SizedBox(height: 10),
+            Text("Waiting for email to be verified..."),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () async {
+              await user.sendEmailVerification();
+              showSnackBar("Email verified successfully");
+            },
+            child: Text("Resend Email"),
+          ),
+        ],
+      );
+    },
+  );
+
+  /// **🔹 Keep checking if the email is verified**
+  timer = Timer.periodic(Duration(seconds: 3), (timer) async {
+    await FirebaseAuth.instance.currentUser?.reload(); // Refresh user data
+    User? updatedUser = FirebaseAuth.instance.currentUser;
+    print("Updated emailVerified: ${updatedUser?.emailVerified}");
+    if (updatedUser != null && updatedUser.emailVerified) {
+      timer.cancel(); // ✅ Stop checking
+      if (!context.mounted) return;
+      Navigator.of(context).pop(); // ✅ Close dialog
+
+      completer.complete(); // ✅ Mark function as complete
+    }
+  });
+
+  return completer.future; // ✅ Ensures function waits until verification
+}
+
+Future<void> passwordResetDialog(BuildContext context) async {
+  User? user = FirebaseAuth.instance.currentUser;
+  if (user == null) return;
+  await user.sendEmailVerification();
+  void showSnackBar(String message, {bool isError = false}) {
+    Mysnackbar.show(context, message, isError: isError);
+  }
+
+  if (!context.mounted) return;
+  showDialog(
+    context: context,
+    barrierDismissible: false, // ✅ Prevents closing until verified
+    builder: (BuildContext context) {
+      return AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(30),
+        ),
+        title: Text("Verify your Email"),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            CircularProgressIndicator(),
+            SizedBox(height: 10),
+            Text("Waiting for email to be verified..."),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () async {
+              await user.sendEmailVerification();
+              showSnackBar("Email verified successfully");
+            },
+            child: Text("Resend Email"),
+          ),
+        ],
       );
     },
   );

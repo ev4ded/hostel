@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 //import 'package:flutter/rendering.dart'; // debug
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:minipro/Theme/menucolor.dart';
 //import 'package:get_it/get_it.dart';
 import 'package:minipro/authentication/authprovider.dart';
 import 'package:minipro/Theme/theme.dart';
@@ -22,7 +23,12 @@ void main() async {
       //options: DefaultFirebaseOptions.currentPlatform,
       );
   await dotenv.load(fileName: ".env");
-  runApp(MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => Menucolor(),
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -33,6 +39,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => Authprovider()),
+        ChangeNotifierProvider(create: (_) => Menucolor()),
       ],
       child: MaterialApp(
         home: Splashscreen(),

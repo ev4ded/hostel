@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:async';
 
 class Menucolor extends ChangeNotifier {
   int _option = 0;
+  final Completer<void> _isLoaded = Completer<void>();
   static final Map<int, Map<String, Color>> themes = {
     0: {
       "iconC": Color.fromRGBO(255, 189, 109, 1),
@@ -36,6 +38,8 @@ class Menucolor extends ChangeNotifier {
     notifyListeners();
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setInt("menuCardColor", themeIndex); // Save to storage
+    debugPrint("theme loaded:$_option");
+    _isLoaded.complete();
   }
 
   Future<void> _loadTheme() async {
@@ -45,8 +49,6 @@ class Menucolor extends ChangeNotifier {
   }
 
   Future<void> init() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    _option = prefs.getInt("menuCardColor") ?? 0;
-    notifyListeners();
+    await _isLoaded.future;
   }
 }

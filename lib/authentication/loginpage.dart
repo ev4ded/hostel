@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:minipro/authentication/fcmtoken.dart';
+import 'package:minipro/authentication/forgotpassword.dart';
 import 'package:minipro/firebase/firestore_services.dart';
 import 'package:minipro/authentication/signuppage.dart';
 import 'package:minipro/Theme/appcolors.dart';
@@ -71,9 +72,10 @@ class LoginPageState extends State<LoginPage> {
     final double height = MediaQuery.of(context).size.height;
     final double width = MediaQuery.of(context).size.width;
     return Scaffold(
-        resizeToAvoidBottomInset: true,
-        backgroundColor: backboxColor,
-        body: LayoutBuilder(builder: (context, constraints) {
+      resizeToAvoidBottomInset: true,
+      backgroundColor: backboxColor,
+      body: LayoutBuilder(
+        builder: (context, constraints) {
           return SingleChildScrollView(
             physics: ClampingScrollPhysics(),
             child: ConstrainedBox(
@@ -169,7 +171,10 @@ class LoginPageState extends State<LoginPage> {
                               alignment: Alignment.centerRight,
                               child: GestureDetector(
                                 onTap: () {
-                                  print('forhot');
+                                  Navigator.push(
+                                    context,
+                                    myRoute(Forgotpassword()),
+                                  );
                                 },
                                 child: Text(
                                   "forgot your password?",
@@ -227,7 +232,9 @@ class LoginPageState extends State<LoginPage> {
               ),
             ),
           );
-        }));
+        },
+      ),
+    );
   }
 
   void login() async {

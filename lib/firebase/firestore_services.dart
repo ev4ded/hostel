@@ -104,3 +104,25 @@ class FirestoreServices {
     return [""];
   }
 }
+
+void listenToUserUpdates() {
+  User? user = FirebaseAuth.instance.currentUser;
+  if (user == null) {
+    print("null");
+    return;
+  }
+  FirebaseFirestore.instance
+      .collection('users') // Change to your collection
+      .doc(user.uid) // Replace with the actual user ID
+      .snapshots()
+      .listen((snapshot) async {
+    if (snapshot.exists) {
+      Map<String, dynamic> updatedValue = snapshot.data() as Map<String,
+          dynamic>; // Replace 'key' with the field name in Firestore
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('userData', jsonEncode(updatedValue));
+      print('SharedPreferences updated');
+    }
+  });
+}

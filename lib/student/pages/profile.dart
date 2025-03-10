@@ -9,7 +9,9 @@ import 'package:minipro/authentication/loginpage.dart';
 import 'package:minipro/Theme/appcolors.dart';
 import 'package:minipro/student/components/custom_route.dart';
 import 'package:minipro/student/components/customProfilepopUp.dart';
+import 'package:minipro/student/components/home.dart';
 import 'package:minipro/student/components/menucolortoggle.dart';
+import 'package:minipro/student/pages/profile/changepassword.dart';
 import 'package:minipro/student/pages/profile/editprofile.dart';
 import 'package:minipro/student/pages/profile/help.dart';
 import 'package:minipro/student/pages/profile/roomchange.dart';
@@ -34,6 +36,7 @@ class _ProfileState extends State<Profile> {
     super.initState();
     fetchUserData();
     _loadProfileImage();
+    listenToUserUpdates();
   }
 
   void fetchUserData() async {
@@ -122,23 +125,23 @@ class _ProfileState extends State<Profile> {
                                       children: [
                                         // Role
                                         Container(
-                                          height: 38,
-                                          width: 100,
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(20),
-                                            color: detailsC,
-                                          ),
-                                          child: Center(
-                                            child: Text(
-                                              userData!["role"] ??
-                                                  "Role", // Safely handle null
-                                              style: GoogleFonts.poppins(
-                                                  fontSize: 18,
-                                                  color: buttonTextC),
+                                            height: 38,
+                                            width: 100,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                              color: detailsC,
                                             ),
-                                          ),
-                                        ),
+                                            child: Center(
+                                              child: Text(
+                                                userData!["college"] ??
+                                                    userData![
+                                                        "role"], // Safely handle null
+                                                style: GoogleFonts.poppins(
+                                                    fontSize: 18,
+                                                    color: buttonTextC),
+                                              ),
+                                            )),
                                         SizedBox(width: 8),
                                         Container(
                                           height: 38,
@@ -302,6 +305,10 @@ class _ProfileState extends State<Profile> {
                                 ),
                               ),
                               onTap: () {
+                                Navigator.push(
+                                  context,
+                                  myRoute(Changepassword()),
+                                );
                                 HapticFeedback.heavyImpact();
                               },
                             ),
@@ -477,7 +484,7 @@ class _ProfileState extends State<Profile> {
                                 ),
                               ),
                               onTap: () {
-                                //showMenuColorChange(context);
+                                showMenuColorChange(context);
                                 HapticFeedback.heavyImpact();
                               },
                             ),

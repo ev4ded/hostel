@@ -3,6 +3,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:minipro/firebase/firestore_services.dart';
 import 'package:minipro/Theme/appcolors.dart';
+import 'package:minipro/student/components/alertwindow.dart';
 import 'package:minipro/student/components/custom_route.dart';
 import 'package:minipro/student/components/emailtextfield.dart';
 import 'package:minipro/student/components/myclipper.dart';
@@ -75,7 +76,7 @@ class _SignupPageState extends State<SignupPage> {
     final Color inputtextColor = Color.fromRGBO(240, 237, 235, 1);
     final Color buttonColor = Color.fromRGBO(230, 128, 78, 1);
     final Color hintColor = Color.fromRGBO(139, 139, 139, 0.5);
-    List<String> roleList = ['student', 'warden', 'admin'];
+    List<String> roleList = ['student', 'warden'];
 
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
@@ -182,7 +183,7 @@ class _SignupPageState extends State<SignupPage> {
                                 child: Mytextfield(
                                     hintColor: hintColor,
                                     hasError: _errors['username'] ?? false,
-                                    hinttext: 'Username',
+                                    hinttext: 'Full Name',
                                     controller: _controllers["username"],
                                     bgColor: inputtextColor),
                               ),
@@ -311,17 +312,18 @@ class _SignupPageState extends State<SignupPage> {
         _showSnackBar('Passwords do not match', isError: true);
         return;
       }
-      /*if(user.user!.emailVerified == false){
-        await user.user!.sendEmailVerification();
-      }*/
       UserCredential userCredential = await _auth
           .createUserWithEmailAndPassword(email: email, password: password);
       //await FirestoreServices().getUserData();
       await _auth.currentUser?.reload();
-      //User? user = _auth.currentUser;
+      User? user = _auth.currentUser;
+      if (user != null && !user.emailVerified) {
+        //_showSnackBar("Verification email sent.Please check your inbox.");
+        if (!mounted) return;
+        await showEmailVerifictionDialog(context);
+      }
       String uid = userCredential.user!.uid;
       FirebaseMessaging messaging = FirebaseMessaging.instance;
-
       String? token = await messaging.getToken();
 
       await _firestore.collection("users").doc(uid).set(
