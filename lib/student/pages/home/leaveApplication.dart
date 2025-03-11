@@ -48,14 +48,13 @@ class _LeaveapplicationState extends State<Leaveapplication> {
           status = localstatus;
           isloading = false;
         });
-        print("Status: $status");
         if (status == "pending" && mounted) {
           showPendingDialog(context); // Show dialog automatically
         } else if ((status == "approved" || status == "denied") && mounted) {
           showResolvedDialog(context, status); // Show dialog automatically
         }
       } else {
-        _showSnackBar("Failed to fetch status");
+        _showSnackBar("First leave application...");
       }
     } catch (e) {
       _showSnackBar("Error fetching leave status: ${e.toString()}");
@@ -72,6 +71,7 @@ class _LeaveapplicationState extends State<Leaveapplication> {
     Color textColor = AppColors.getTextColor(context);
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.transparent,
         leading: IconButton(
             onPressed: () {
               Navigator.pop(context);
@@ -90,7 +90,7 @@ class _LeaveapplicationState extends State<Leaveapplication> {
               physics: ClampingScrollPhysics(),
               child: Padding(
                 padding: const EdgeInsets.only(
-                    left: 15.0, right: 15.0, bottom: 15.0, top: 20.0),
+                    left: 15.0, right: 15.0, bottom: 15.0, top: 10.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

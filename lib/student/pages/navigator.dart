@@ -1,4 +1,8 @@
+import 'dart:async';
+
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'homepage.dart';
@@ -16,11 +20,27 @@ class _MainNavigatorState extends State<MainNavigator> {
   int _selectedIndex = 0;
   Color iconC = Color.fromRGBO(255, 179, 0, 1);
   Color active = Color.fromRGBO(109, 121, 134, 1);
+  late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
   static const List<Widget> _pages = <Widget>[
     Homepage(),
     Menu(),
     Profile(),
   ];
+  @override
+  void initState() {
+    super.initState();
+    /*WidgetsBinding.instance.addPostFrameCallback((_) {
+      checkNetworkStatus();
+    });*/
+  }
+
+  @override
+  void dispose() {
+    _connectivitySubscription
+        .cancel(); // Cancel subscription when widget is disposed
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -68,4 +88,45 @@ class _MainNavigatorState extends State<MainNavigator> {
       ),
     );
   }
+
+  /*void checkNetworkStatus() {
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+    void networkSnackBar(ScaffoldMessengerState scaffoldMessenger) {
+      SnackBar(
+        behavior: SnackBarBehavior.fixed,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(15),
+            topRight: Radius.circular(15),
+          ),
+        ),
+        content: Text(
+          "No Internet Connection..",
+          style: GoogleFonts.inter(),
+        ),
+        duration: Duration.zero,
+      );
+    }
+
+    Connectivity()
+        .onConnectivityChanged
+        .listen((List<ConnectivityResult> result) {
+      if (result.contains(ConnectivityResult.none)) {
+        print(" not connected");
+        networkSnackBar(scaffoldMessenger);
+      }
+    });
+    _connectivitySubscription = Connectivity()
+        .onConnectivityChanged
+        .listen((List<ConnectivityResult> result) {
+      if (result.contains(ConnectivityResult.none)) {
+        print("not connected");
+        networkSnackBar(scaffoldMessenger);
+      } else {
+        print(" connected");
+        scaffoldMessenger
+            .hideCurrentSnackBar(); // Hide when network is restored
+      }
+    });
+  }*/
 }

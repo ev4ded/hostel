@@ -25,15 +25,12 @@ class _ForgotpasswordState extends State<Forgotpassword> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(
-              height: 10,
-            ),
             Text(
               "enter your email address",
               style: GoogleFonts.poppins(),
             ),
             SizedBox(
-              height: 10,
+              height: 15,
             ),
             Emailtextfield(
               bgColor: AppColors.getAlertWindowC(context),
@@ -46,7 +43,7 @@ class _ForgotpasswordState extends State<Forgotpassword> {
               hintColor: AppColors.hintColor,
             ),
             SizedBox(
-              height: 10,
+              height: 15,
             ),
             Text(
               "You will receive a password reset request on this account.",

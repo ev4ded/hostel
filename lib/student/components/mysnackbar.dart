@@ -9,19 +9,12 @@ class Mysnackbar {
           message,
           style: TextStyle(color: Colors.white, fontSize: 16),
         ),
-        backgroundColor: isError ? Colors.redAccent : Colors.green,
+        backgroundColor: isError ? Colors.redAccent : Colors.teal,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15),
         ),
-        duration: Duration(seconds: 2),
-        action: SnackBarAction(
-          label: 'OK',
-          textColor: Colors.white,
-          onPressed: () {
-            // Optional: Add functionality for the action button
-          },
-        ),
+        duration: Duration(seconds: 3),
       ),
     );
   }

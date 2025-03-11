@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:minipro/Theme/appcolors.dart';
 import 'package:minipro/authentication/forgotpassword.dart';
+import 'package:minipro/student/components/custom_route.dart';
 import 'package:minipro/student/components/mysnackbar.dart';
 import 'package:minipro/student/components/mytextfield.dart';
 
@@ -39,9 +40,6 @@ class _ChangepasswordState extends State<Changepassword> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(
-                height: 10,
-              ),
               Text(
                 "Change Password",
                 style: GoogleFonts.inter(fontSize: 20),
@@ -50,7 +48,7 @@ class _ChangepasswordState extends State<Changepassword> {
                 height: 5,
               ),
               Text(
-                "our password must be at least 8 characters long, with a mix of uppercase, lowercase, numbers, and special characters (e.g., @, #, \$). Avoid common words and reuse.",
+                "The password must be at least 8 characters long, with a mix of uppercase, lowercase, numbers, and special characters (e.g., @, #, \$). Avoid common words and reuse.",
                 softWrap: true,
                 style: GoogleFonts.inter(fontSize: 15),
               ),
@@ -101,7 +99,12 @@ class _ChangepasswordState extends State<Changepassword> {
               ),
               TextButton(
                 onPressed: () {
-                  Forgotpassword();
+                  Navigator.push(
+                    context,
+                    myRoute(
+                      Forgotpassword(),
+                    ),
+                  );
                 },
                 child: Text(
                   "forgot password?",
