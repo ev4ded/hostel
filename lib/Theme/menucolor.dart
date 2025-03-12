@@ -39,7 +39,9 @@ class Menucolor extends ChangeNotifier {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setInt("menuCardColor", themeIndex); // Save to storage
     debugPrint("theme loaded:$_option");
+    if (!_isLoaded.isCompleted) {
     _isLoaded.complete();
+  }
   }
 
   Future<void> _loadTheme() async {

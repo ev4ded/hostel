@@ -3,6 +3,8 @@ import 'package:minipro/Theme/menucolor.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     final menuColorProvider = Provider.of<Menucolor>(context);

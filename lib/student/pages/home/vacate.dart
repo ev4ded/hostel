@@ -10,8 +10,8 @@ import 'package:minipro/student/components/mydate.dart';
 import 'package:minipro/student/components/mydropdownmenu.dart';
 import 'package:minipro/student/components/myparafield.dart';
 import 'package:minipro/student/components/mysnackbar.dart';
-import 'package:slider_button/slider_button.dart';
 import 'package:minipro/firebase/firestore_services.dart';
+import 'package:slide_to_act/slide_to_act.dart';
 
 class Vacate extends StatefulWidget {
   const Vacate({super.key});
@@ -49,6 +49,7 @@ class _VacateState extends State<Vacate> {
   User? user = FirebaseAuth.instance.currentUser;
   bool isloading = true;
   bool isApplied = false;
+  bool isSlid = true;
   @override
   void initState() {
     super.initState();
@@ -194,36 +195,11 @@ class _VacateState extends State<Vacate> {
                           height: height * 0.05,
                         ),
                         Center(
-                          child: SliderButton(
-                            action: () async {
-                              bool success = await submit();
-                              if (success) {
-                                Future.delayed(
-                                  Duration(seconds: 1),
-                                  () {
-                                    if (context.mounted) {
-                                      Navigator.pop(context);
-                                    }
-                                  },
-                                );
-                                return true;
-                              }
-                              return false;
+                          child: SlideAction(
+                            text: "Slide to Confirm",
+                            onSubmit: () {
+                              submit();
                             },
-                            label: Text(
-                              "Slide to apply",
-                              style: GoogleFonts.inter(
-                                  fontWeight: FontWeight.w500),
-                            ),
-                            backgroundColor: bgColor,
-                            icon: Icon(
-                              LucideIcons.chevronsRight,
-                              color: buttonTextColor,
-                              size: width * 0.1,
-                            ),
-                            buttonColor: buttonColor,
-                            baseColor: textColor,
-                            highlightedColor: buttonTextColor,
                           ),
                         ),
                       ],
@@ -263,6 +239,11 @@ class _VacateState extends State<Vacate> {
           },
         );
         _showSnackBar("vacate request send");
+        Future.delayed(Duration(seconds: 1), () {
+          if (context.mounted) {
+            Navigator.pop(context);
+          }
+        });
         return true;
       } catch (e) {
         _showSnackBar("request failed:$e");
