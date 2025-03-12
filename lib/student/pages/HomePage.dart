@@ -11,7 +11,7 @@ import 'package:minipro/student/components/myContainer.dart';
 import 'package:minipro/student/pages/home/complaint/complaint.dart';
 import 'package:minipro/student/pages/home/maintenance/maintenance.dart';
 import 'package:minipro/student/pages/home/leaveApplication.dart';
-import 'package:minipro/student/pages/home/payment.dart';
+//import 'package:minipro/student/pages/home/payment.dart';
 import 'package:minipro/student/pages/home/vacate.dart';
 
 class Homepage extends StatefulWidget {
@@ -141,7 +141,7 @@ class _HomepageState extends State<Homepage> {
           ),
           GestureDetector(
             onTap: () {
-              Navigator.push(context, myRoute(Payment()));
+            //  Navigator.push(context, myRoute(Payment()));
             },
             child: Mycontainer(
               height: cheight,
