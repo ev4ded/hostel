@@ -9,7 +9,6 @@ import 'package:minipro/authentication/loginpage.dart';
 import 'package:minipro/Theme/appcolors.dart';
 import 'package:minipro/student/components/custom_route.dart';
 import 'package:minipro/student/components/customProfilepopUp.dart';
-import 'package:minipro/student/components/home.dart';
 import 'package:minipro/student/components/menucolortoggle.dart';
 import 'package:minipro/student/pages/profile/changepassword.dart';
 import 'package:minipro/student/pages/profile/editprofile.dart';

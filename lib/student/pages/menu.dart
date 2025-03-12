@@ -4,7 +4,6 @@ import 'package:minipro/Theme/menucolor.dart';
 import 'package:minipro/firebase/firestore_services.dart';
 import 'package:minipro/student/Student_queries/queries.dart';
 import 'package:minipro/student/components/mysnackbar.dart';
-import 'package:provider/provider.dart';
 
 class Menu extends StatefulWidget {
   const Menu({super.key});
