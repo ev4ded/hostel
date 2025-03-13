@@ -31,6 +31,7 @@ class _VacateState extends State<Vacate> {
   Color buttonTextColor = AppColors.buttonTextColor;
   Color highlightColor = Colors.blueAccent;
   String today = DateFormat("yyyy-MM-dd").format(DateTime.now());
+  final GlobalKey<SlideActionState> _slidekey = GlobalKey();
   List<String> reasons = [
     "Graduation Completed",
     "End of Semester Break",
@@ -49,7 +50,7 @@ class _VacateState extends State<Vacate> {
   User? user = FirebaseAuth.instance.currentUser;
   bool isloading = true;
   bool isApplied = false;
-  bool isSlid = true;
+  bool isComplete = false;
   @override
   void initState() {
     super.initState();
@@ -195,12 +196,35 @@ class _VacateState extends State<Vacate> {
                           height: height * 0.05,
                         ),
                         Center(
-                          child: SlideAction(
-                            text: "Slide to Confirm",
-                            onSubmit: () {
-                              submit();
-                            },
-                          ),
+                          child: (isComplete)
+                              ? Center(
+                                  child: Container(
+                                    height: 65,
+                                    width: 65,
+                                    decoration: BoxDecoration(
+                                        shape: BoxShape.circle, color: bgColor),
+                                    child: Icon(LucideIcons.check),
+                                  ),
+                                )
+                              : SlideAction(
+                                  key: _slidekey,
+                                  sliderButtonIcon: Icon(
+                                    LucideIcons.chevronRight,
+                                    color: Colors.black,
+                                  ),
+                                  outerColor: bgColor,
+                                  //enabled: false,
+                                  text: "Slide to Confirm",
+                                  textStyle: GoogleFonts.inter(
+                                      fontSize: 22, color: hintColor),
+                                  onSubmit: () {
+                                    setState(() {
+                                      isComplete = false;
+                                    });
+                                    submit();
+                                    //return null;
+                                  },
+                                ),
                         ),
                       ],
                     ),
@@ -219,6 +243,9 @@ class _VacateState extends State<Vacate> {
     String address = _addressController.text.trim();
     if (date.isEmpty || address.isEmpty || reason == null) {
       _showSnackBar("please fill in all fields", isError: true);
+      Future.delayed(Duration(seconds: 1), () {
+        _slidekey.currentState?.reset();
+      });
       return false;
     }
     if (await showAlert(context) == false) {
@@ -247,6 +274,9 @@ class _VacateState extends State<Vacate> {
         return true;
       } catch (e) {
         _showSnackBar("request failed:$e");
+        Future.delayed(Duration(seconds: 1), () {
+          _slidekey.currentState?.reset();
+        });
         return false;
       }
     }
