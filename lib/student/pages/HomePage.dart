@@ -141,7 +141,7 @@ class _HomepageState extends State<Homepage> {
           ),
           GestureDetector(
             onTap: () {
-              Navigator.push(context, myRoute(Payment()));
+             Navigator.push(context, myRoute(Payment()));
             },
             child: Mycontainer(
               height: cheight,

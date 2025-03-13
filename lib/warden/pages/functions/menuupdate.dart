@@ -67,45 +67,32 @@ class _UpdateMessMenuState extends State<UpdateMessMenu> {
     }
 
     try {
-      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+      await FirebaseFirestore.instance
           .collection("mess_menu")
-          .where("hostelId", isEqualTo: hostelId)
-          .limit(1)
-          .get();
+          .doc(hostelId) // Use correct hostel ID
+          .set({
+        "breakfast": _breakfastController.text,
+        "lunch": _lunchController.text,
+        "snacks":_snacksController.text,
+        "dinner": _dinnerController.text
+      });
 
-      if (querySnapshot.docs.isNotEmpty) {
-        String docId = querySnapshot.docs.first.id; // Get the correct document ID
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Mess menu updated successfully!")),
+      );
 
-        await FirebaseFirestore.instance
-            .collection("mess_menu")
-            .doc(docId) // Update only the correct hostel's menu
-            .update({
-          "breakfast":FieldValue.arrayUnion([_breakfastController.text]),
-          "lunch": FieldValue.arrayUnion([_lunchController.text]),
-          "snacks": FieldValue.arrayUnion([_snacksController.text]),
-          "dinner":FieldValue.arrayUnion([ _dinnerController.text]),
-        });
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Mess menu updated successfully!")),
-        );
-
-        // Clear the text fields after updating
-        _breakfastController.clear();
-        _lunchController.clear();
-        _snacksController.clear();
-        _dinnerController.clear();
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("No mess menu found for this hostel.")),
-        );
-      }
+      _breakfastController.clear();
+      _lunchController.clear();
+      _snacksController.clear();
+      _dinnerController.clear();
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Error updating menu: $error")),
       );
     }
   }
+  
+  
 
   @override
   Widget build(BuildContext context) {
@@ -119,10 +106,10 @@ class _UpdateMessMenuState extends State<UpdateMessMenu> {
           child: Column(
          
             children: [
-               _buildMealCard("Breakfast", _breakfastController, Icons.free_breakfast),
-              _buildMealCard("Lunch", _lunchController, Icons.restaurant),
-              _buildMealCard("Snacks", _snacksController, Icons.fastfood),
-              _buildMealCard("Dinner", _dinnerController, Icons.dinner_dining),
+               _buildMealCard("breakfast", _breakfastController, Icons.free_breakfast),
+              _buildMealCard("lunch", _lunchController, Icons.restaurant),
+              _buildMealCard("snacks", _snacksController, Icons.fastfood),
+              _buildMealCard("dinner", _dinnerController, Icons.dinner_dining),
         
               SizedBox(height: 20),
             ],

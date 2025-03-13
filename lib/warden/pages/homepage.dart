@@ -7,6 +7,8 @@ import 'package:minipro/warden/pages/functions/allocate.dart';
 import 'package:minipro/warden/pages/functions/complaints.dart';
 import 'package:minipro/warden/pages/functions/maintenance.dart';
 import 'package:minipro/warden/pages/functions/menuupdate.dart';
+import 'package:minipro/warden/pages/functions/roomchange.dart';
+import 'package:minipro/warden/pages/functions/studentapprove.dart';
 
 
 
@@ -94,12 +96,22 @@ class _HomePageState extends State<HomePage> {
                     
 
                      _buildMenuItem(
-                      Ionicons.bed_outline,
-                      "Room Allotment",
+                      Ionicons.people_circle_outline,
+                      "Student Approval",
                       () => Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) =>RoomAllotment(), // Go to next page
+                          builder: (context) =>StudentApproval(), // Go to next page
+                        ),
+                      ),
+                    ),
+                     _buildMenuItem(
+                      Ionicons.bed_outline,
+                      "Room Change",
+                      () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>RoomChange(), // Go to next page
                         ),
                       ),
                     ),
