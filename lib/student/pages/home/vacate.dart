@@ -196,36 +196,39 @@ class _VacateState extends State<Vacate> {
                           height: height * 0.05,
                         ),
                         Center(
-                          child: (isComplete)
-                              ? Center(
-                                  child: Container(
-                                    height: 65,
-                                    width: 65,
-                                    decoration: BoxDecoration(
-                                        shape: BoxShape.circle, color: bgColor),
-                                    child: Icon(LucideIcons.check),
-                                  ),
-                                )
-                              : SlideAction(
-                                  key: _slidekey,
-                                  sliderButtonIcon: Icon(
-                                    LucideIcons.chevronRight,
-                                    color: Colors.black,
-                                  ),
-                                  outerColor: bgColor,
-                                  //enabled: false,
-                                  text: "Slide to Confirm",
-                                  textStyle: GoogleFonts.inter(
-                                      fontSize: 22, color: hintColor),
-                                  onSubmit: () {
-                                    setState(() {
-                                      isComplete = false;
-                                    });
-                                    submit();
-                                    //return null;
-                                  },
-                                ),
-                        ),
+                            child: (isComplete)
+                                ? Center(
+                                    child: Container(
+                                      height: 65,
+                                      width: 65,
+                                      decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: bgColor),
+                                      child: Icon(LucideIcons.check),
+                                    ),
+                                  )
+                                : Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: SlideAction(
+                                      key: _slidekey,
+                                      sliderButtonIcon: Icon(
+                                        LucideIcons.chevronRight,
+                                        color: Colors.black,
+                                      ),
+                                      outerColor: bgColor,
+                                      innerColor: buttonColor,
+                                      text: "Slide to Confirm",
+                                      textStyle: GoogleFonts.inter(
+                                          fontSize: 22, color: hintColor),
+                                      onSubmit: () {
+                                        setState(() {
+                                          isComplete = false;
+                                        });
+                                        submit();
+                                        return null;
+                                      },
+                                    ),
+                                  )),
                       ],
                     ),
                   ),
@@ -291,7 +294,7 @@ class _VacateState extends State<Vacate> {
         return PopScope(
           canPop: false,
           child: AlertDialog(
-            backgroundColor: AppColors.getContainerColor(context),
+            backgroundColor: AppColors.getAlertWindowC(context),
             title: Text("Already Applied"),
             content: Column(
               mainAxisSize: MainAxisSize.min,
