@@ -103,6 +103,23 @@ class FirestoreServices {
     }
     return [""];
   }
+
+  Future<Map<String, dynamic>?> getHostelDetails(String hostelId) async {
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user == null) return null;
+      DocumentSnapshot userDoc =
+          await _firestore.collection("hostels").doc(hostelId).get();
+      if (userDoc.exists) {
+        return userDoc.data() as Map<String, dynamic>;
+      } else {
+        print("No user found");
+      }
+    } catch (e) {
+      print("getUserData: $e");
+    }
+    return null;
+  }
 }
 
 void listenToUserUpdates() {
