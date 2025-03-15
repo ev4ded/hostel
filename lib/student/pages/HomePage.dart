@@ -1,10 +1,14 @@
+import 'dart:async';
 import 'dart:math';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:lucide_icons/lucide_icons.dart';
 import 'package:minipro/Theme/appcolors.dart';
 import 'package:minipro/Theme/fonts.dart';
+import 'package:minipro/firebase/firestore_services.dart';
+import 'package:minipro/student/components/alertwindow.dart';
 import 'package:minipro/student/components/custom_route.dart';
 import 'package:minipro/student/components/customProfilepopUp.dart';
 import 'package:minipro/student/components/myContainer.dart';
@@ -22,6 +26,57 @@ class Homepage extends StatefulWidget {
 }
 
 class _HomepageState extends State<Homepage> {
+  Map<String, dynamic>? userData;
+  StreamSubscription? _userSubscription;
+  bool _profileDialogShown = false;
+  String? _currentUserId;
+  void startUserProfileListener() {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+    if (_currentUserId != user.uid) {
+      _profileDialogShown = false;
+      _currentUserId = user.uid;
+    }
+    _userSubscription?.cancel();
+    _userSubscription = FirebaseFirestore.instance
+        .collection("users")
+        .doc(user.uid)
+        .snapshots()
+        .listen((snapshot) {
+      if (snapshot.exists) {
+        Map<String, dynamic> newUserData =
+            snapshot.data() as Map<String, dynamic>;
+
+        if (mounted) {
+          setState(() {
+            userData = newUserData;
+          });
+        }
+
+        // Show edit profile only once when profileUpdated is false
+        if (newUserData["profileUpdated"] == false) {
+          //_profileDialogShown = true; // Prevent multiple triggers
+          editProfile(context);
+        }
+        if (newUserData["profileUpdated"] == true) {
+          _userSubscription?.cancel(); // Stop listening once profile is updated
+        }
+      }
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    startUserProfileListener();
+  }
+
+  @override
+  void dispose() {
+    _userSubscription?.cancel();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     Color containerColor = AppColors.getContainerColor(context);
@@ -65,162 +120,147 @@ class _HomepageState extends State<Homepage> {
     }
     //double width = MediaQuery.of(context).size.width;
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          "DASHBOARD",
-          style: GoogleFonts.nunito(
-              textStyle: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+        appBar: AppBar(
+          title: Text(
+            "DASHBOARD",
+            style: GoogleFonts.nunito(
+                textStyle:
+                    TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+          ),
+          automaticallyImplyLeading: false,
+          actions: [
+            IconButton(
+              onPressed: () {
+                customPopup(context, "This is a notification", popfuction);
+              },
+              icon: Icon(
+                Ionicons.notifications,
+                size: 30,
+                color: iconC,
+              ),
+            )
+          ],
         ),
-        automaticallyImplyLeading: false,
-        actions: [
-          IconButton(
-            onPressed: () {
-              customPopup(context, "This is a notification", popfuction);
-            },
-            icon: Icon(
-              Ionicons.notifications,
-              size: 30,
-              color: iconC,
-            ),
-          )
-        ],
-      ),
-      body: ListView(
-        padding: EdgeInsets.all(8),
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(bottom: 30, top: 20),
-            child: Text(
-              wish,
-              style: GoogleFonts.nunito(
-                textStyle: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+        body: ListView(
+          padding: EdgeInsets.all(8),
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(bottom: 30, top: 20),
+              child: Text(
+                wish,
+                style: GoogleFonts.nunito(
+                  textStyle:
+                      TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+                ),
               ),
             ),
-          ),
-          GestureDetector(
-            onTap: () {
-              Navigator.push(context, myRoute(Maintenance()));
-            },
-            child: Mycontainer(
-              height: cheight,
-              color: containerColor,
-              child: Row(
-                children: [
-                  Icon(Ionicons.construct_outline),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 20),
-                    child: Text(
-                      "Maintenance Request",
-                      style: AppFonts.body,
+            GestureDetector(
+              onTap: () {
+                Navigator.push(context, myRoute(Maintenance()));
+              },
+              child: Mycontainer(
+                height: cheight,
+                color: containerColor,
+                child: Row(
+                  children: [
+                    Icon(Ionicons.construct_outline),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 20),
+                      child: Text(
+                        "Maintenance Request",
+                        style: AppFonts.body,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-          GestureDetector(
-            onTap: () {
-              Navigator.push(context, myRoute(Leaveapplication()));
-            },
-            child: Mycontainer(
-              height: cheight,
-              color: containerColor,
-              child: Row(
-                children: [
-                  Icon(Ionicons.calendar_outline),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 20),
-                    child: Text(
-                      "Leave Application",
-                      style: AppFonts.body,
+            GestureDetector(
+              onTap: () {
+                Navigator.push(context, myRoute(Leaveapplication()));
+              },
+              child: Mycontainer(
+                height: cheight,
+                color: containerColor,
+                child: Row(
+                  children: [
+                    Icon(Ionicons.calendar_outline),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 20),
+                      child: Text(
+                        "Leave Application",
+                        style: AppFonts.body,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-          GestureDetector(
-            onTap: () {
-             Navigator.push(context, myRoute(Payment()));
-            },
-            child: Mycontainer(
-              height: cheight,
-              color: containerColor,
-              child: Row(
-                children: [
-                  Icon(Ionicons.card_outline),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 20),
-                    child: Text(
-                      "Payment",
-                      style: AppFonts.body,
+            GestureDetector(
+              onTap: () {
+                Navigator.push(context, myRoute(Payment()));
+              },
+              child: Mycontainer(
+                height: cheight,
+                color: containerColor,
+                child: Row(
+                  children: [
+                    Icon(Ionicons.card_outline),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 20),
+                      child: Text(
+                        "Payment",
+                        style: AppFonts.body,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-          GestureDetector(
-            child: Mycontainer(
-              height: cheight,
-              color: containerColor,
-              child: Row(
-                children: [
-                  Icon(Ionicons.flag_outline),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 20),
-                    child: Text(
-                      "Complaint registration",
-                      style: AppFonts.body,
+            GestureDetector(
+              child: Mycontainer(
+                height: cheight,
+                color: containerColor,
+                child: Row(
+                  children: [
+                    Icon(Ionicons.flag_outline),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 20),
+                      child: Text(
+                        "Complaint registration",
+                        style: AppFonts.body,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
+              onTap: () {
+                Navigator.push(context, myRoute(Complaint()));
+              },
             ),
-            onTap: () {
-              Navigator.push(context, myRoute(Complaint()));
-            },
-          ),
-          GestureDetector(
-            onTap: () {
-              Navigator.push(context, myRoute(Vacate()));
-            },
-            child: Mycontainer(
-              height: cheight,
-              color: containerColor,
-              child: Row(
-                children: [
-                  Icon(Icons.luggage),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 20),
-                    child: Text(
-                      "Vacate",
-                      style: AppFonts.body,
+            GestureDetector(
+              onTap: () {
+                Navigator.push(context, myRoute(Vacate()));
+              },
+              child: Mycontainer(
+                height: cheight,
+                color: containerColor,
+                child: Row(
+                  children: [
+                    Icon(Icons.luggage),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 20),
+                      child: Text(
+                        "Vacate",
+                        style: AppFonts.body,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          )
-        ],
-      ),
-      floatingActionButton: SizedBox(
-        width: 60,
-        height: 60,
-        child: FloatingActionButton(
-          onPressed: () {},
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-          tooltip: "scanner",
-          backgroundColor: iconC,
-          child: Icon(
-            LucideIcons.qrCode,
-            size: 45,
-            color: Colors.black,
-          ),
-        ),
-      ),
-    );
+            )
+          ],
+        ));
   }
 
   int generateRandomNumber() {

@@ -335,6 +335,7 @@ class _SignupPageState extends State<SignupPage> {
           'room_no': '',
           'isApproved': false,
           'FCM_tokens': token,
+          'profileUpdated': false,
         },
       );
       await FirestoreServices().getUserData();

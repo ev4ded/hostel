@@ -21,6 +21,7 @@ class _EditprofileState extends State<Editprofile> {
   final _nameController = TextEditingController();
   final _dateController = TextEditingController();
   final _collageNameController = TextEditingController();
+  final _phoneController = TextEditingController();
   String degree = "";
   String gender = "";
   String yearOfStudy = "";
@@ -53,6 +54,7 @@ class _EditprofileState extends State<Editprofile> {
         degree = userDetails["degree"] ?? "";
         yearOfStudy = userDetails["year_of_study"] ?? "";
         _dateController.text = userDetails["dob"] ?? "";
+        _phoneController.text = userDetails["phone_no"] ?? 0;
         gender = userDetails["gender"] ?? "";
         isloading = false;
       });
@@ -194,6 +196,27 @@ class _EditprofileState extends State<Editprofile> {
                       height: 20,
                     ),
                     Text(
+                      "Phone no:",
+                      style: GoogleFonts.inter(),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Mytextfield(
+                      type: TextInputType.number,
+                      bgColor: bgColor,
+                      borderColor: borderColor,
+                      borderRadius: borderRadius,
+                      borderWidth: borderWidth,
+                      controller: _phoneController,
+                      hintColor: hintColor,
+                      hinttext: "Enter phone no",
+                      textColor: textColor,
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Text(
                       "DOB:",
                       style: GoogleFonts.inter(),
                     ),
@@ -269,12 +292,14 @@ class _EditprofileState extends State<Editprofile> {
     String name = _nameController.text;
     String college = _collageNameController.text;
     String dob = _dateController.text;
+    String phone = _phoneController.text;
     if (name.isEmpty ||
         college.isEmpty ||
         dob.isEmpty ||
         degree.isEmpty ||
         yearOfStudy.isEmpty ||
-        gender.isEmpty) {
+        gender.isEmpty ||
+        phone.isEmpty) {
       _showSnackBar("please fill in all fields", isError: true);
     } else {
       User? user = FirebaseAuth.instance.currentUser;
@@ -290,11 +315,15 @@ class _EditprofileState extends State<Editprofile> {
               'year_of_study': yearOfStudy,
               'dob': dob,
               'gender': gender,
+              'phone_no': phone,
             },
           );
           FirebaseFirestore.instance.collection("users").doc(user.uid).update({
             'username': name,
             'college': college,
+          });
+          _firestoreService.userDocument.update({
+            "profileUpdated": true, // Mark as updated
           });
           _showSnackBar("upated successfully");
           Future.delayed(Duration(seconds: 1), () {

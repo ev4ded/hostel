@@ -4,7 +4,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:minipro/Theme/appcolors.dart';
+import 'package:minipro/student/components/custom_route.dart';
 import 'package:minipro/student/components/mysnackbar.dart';
+import 'package:minipro/student/pages/profile/editprofile.dart';
 
 void showPendingDialog(BuildContext context) {
   Color buttonColor = AppColors.buttonColor;
@@ -258,6 +260,75 @@ Future<void> passwordResetDialog(BuildContext context) async {
             child: Text("Resend Email"),
           ),
         ],
+      );
+    },
+  );
+}
+
+void editProfile(BuildContext context) {
+  Color buttonColor = AppColors.buttonColor;
+  Color buttonText = AppColors.buttonTextColor;
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+      return PopScope(
+        canPop: false,
+        child: Stack(
+          children: [
+            BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
+                child: Container(
+                  color: Colors.black.withAlpha(10),
+                )),
+            Dialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30),
+              ),
+              backgroundColor: AppColors.getAlertWindowC(context),
+              child: Container(
+                width: MediaQuery.of(context).size.width * 0.8,
+                padding: EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      "Please edit the profile first",
+                      style: GoogleFonts.inter(fontSize: 18),
+                    ),
+                    SizedBox(height: 20),
+                    Text(
+                      softWrap: true,
+                      "After editing the pop up still there please try relaunching the app",
+                      style: GoogleFonts.inter(fontSize: 14),
+                    ),
+                    SizedBox(height: 20),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: ElevatedButton(
+                        style: ButtonStyle(
+                          backgroundColor: WidgetStatePropertyAll(buttonColor),
+                        ),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            myRoute(Editprofile()),
+                          );
+                        },
+                        child: Text(
+                          "edit",
+                          style: GoogleFonts.inter(
+                              color: buttonText, fontWeight: FontWeight.w600),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       );
     },
   );
