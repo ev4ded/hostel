@@ -3,12 +3,13 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
 
 import 'package:minipro/warden/components/my_drawer.dart';
-import 'package:minipro/warden/pages/functions/allocate.dart';
+//import 'package:minipro/warden/pages/functions/allocate.dart';
 import 'package:minipro/warden/pages/functions/complaints.dart';
 import 'package:minipro/warden/pages/functions/maintenance.dart';
 import 'package:minipro/warden/pages/functions/menuupdate.dart';
 import 'package:minipro/warden/pages/functions/roomchange.dart';
 import 'package:minipro/warden/pages/functions/studentapprove.dart';
+import 'package:minipro/warden/pages/functions/studentlist.dart';
 
 
 
@@ -112,6 +113,16 @@ class _HomePageState extends State<HomePage> {
                         context,
                         MaterialPageRoute(
                           builder: (context) =>RoomChange(), // Go to next page
+                        ),
+                      ),
+                    ),
+                     _buildMenuItem(
+                      Ionicons.man_outline,
+                      "Student List",
+                      () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>StudentList(), // Go to next page
                         ),
                       ),
                     ),
