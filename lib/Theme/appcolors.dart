@@ -4,7 +4,7 @@ class AppColors {
   //dark
   static Color textColorDark = Colors.white;
   static Color containerColorDark = Color.fromRGBO(40, 40, 40, 1);
-  static Color alretWindowColorDark = Color.fromRGBO(55, 55, 55, 1);
+  static Color alretWindowColorDark = Color.fromRGBO(85, 85, 85, 1);
   static Color tileColorDark = Color.fromRGBO(78, 68, 64, 1);
   static Color detailsCDark = Color.fromRGBO(180, 195, 210, 1);
   //light

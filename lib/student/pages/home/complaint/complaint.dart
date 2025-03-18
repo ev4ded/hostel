@@ -110,7 +110,7 @@ class _ComplaintState extends State<Complaint> {
                   }
                   if (!snapshot.hasData || snapshot.data!.isEmpty) {
                     return Center(
-                      child: Text("No maintenance requests found"),
+                      child: Text("No Complaints yet"),
                     );
                   }
                   List<QueryDocumentSnapshot> requests = snapshot.data!;

@@ -31,21 +31,19 @@ Future<List<QueryDocumentSnapshot>> getStudentComplaint(String uid) async {
   }
 }
 
-Future<Map<String, List<String>>> getMenu(String hostelId) async {
+Future<Map<String, String>> getMenu(String hostelId) async {
   try {
-    QuerySnapshot maintenance = await FirebaseFirestore.instance
+    DocumentSnapshot menu = await FirebaseFirestore.instance
         .collection('mess_menu')
-        .where('hostelId',
-            isEqualTo: hostelId) // Replace with actual student ID  user.uid
+        .doc(hostelId) // Replace with actual student ID  user.uid
         .get();
-    if (maintenance.docs.isNotEmpty) {
-      var doc = maintenance.docs.first;
-      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+    if (menu.exists) {
+      Map<String, dynamic> data = menu.data() as Map<String, dynamic>;
       return {
-        "breakfast": List<String>.from(data["breakfast"] ?? []),
-        "lunch": List<String>.from(data["lunch"] ?? []),
-        "dinner": List<String>.from(data["dinner"] ?? []),
-        "snacks": List<String>.from(data["snacks"] ?? []),
+        "breakfast": data["breakfast"] ?? "",
+        "lunch": data["lunch"] ?? "",
+        "dinner": data["dinner"] ?? "",
+        "snacks": data["snacks"] ?? "",
       };
     } else {
       print("No menu found");
