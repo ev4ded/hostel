@@ -68,7 +68,7 @@ class _StudentListState extends State<StudentList> {
               _buildInfoRow(Ionicons.mail_unread_outline, 'Email', student['email']),
               _buildInfoRow(Ionicons.call_outline, 'Phone', student['phone_no']),
               _buildInfoRow(Icons.cake_outlined, 'Date of Birth', student['dob']),
-              _buildInfoRow(Ionicons.school, 'College', student['college']),
+              _buildInfoRow(Ionicons.school, 'College', student['college_name']),
               _buildInfoRow(Ionicons.book, 'Course', student['degree']),
               _buildInfoRow(Ionicons.calendar_clear_outline, 'Year', student['year_of_study']),
               SizedBox(height: 10),

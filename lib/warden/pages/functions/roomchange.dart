@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:minipro/warden/services/FCMservices.dart';
 import 'package:minipro/warden/wardenQueries/queries.dart';
 
 
@@ -138,14 +139,15 @@ class RequestsList extends StatelessWidget {
   );
   }
   
- void approveRequest(String studentId, BuildContext context) async {
+Future< void> approveRequest(String studentId, BuildContext context) async {
   String? newRoom = await selectRoom(context);
   if (newRoom == null || newRoom.isEmpty) return;
 
   try {
     // Fetch student details from users collection
-    DocumentSnapshot studentDoc = await _firestore.collection("users").doc(studentId).get();
-    
+    DocumentSnapshot studentDoc =
+      await FirebaseFirestore.instance.collection("users").doc(studentId).get();
+  
     if (!studentDoc.exists) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Student not found!")));
       return;
@@ -161,9 +163,25 @@ class RequestsList extends StatelessWidget {
     await _firestore.collection("users").doc(studentId).update({
       "room_no": newRoom,
     });
+    String fcmToken = studentDoc["FCM_tokens"] ?? [];
+    if (fcmToken.isNotEmpty) {
+     await FCMService.sendNotification(
+      fcmToken: fcmToken,
+      title: "Room Change Approved",
+      body: "Your room change request has been approved! Your new room is $newRoom.",
+    );
+    }
+     await FCMService.showLocalNotification(
+      title: "Room Change Approved",
+      body: "Your room change request has been approved! New Room: $newRoom.",
+    );
 
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Room changed successfully!")));
-  } catch (e) {
+    if (context.mounted) {  // ✅ Ensure context is valid
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Room changed successfully!"), backgroundColor: Colors.green),
+      );
+    }
+    } catch (e) {
     debugPrint("❌ Error updating room: $e");
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error updating room!")));
   }
@@ -174,10 +192,28 @@ class RequestsList extends StatelessWidget {
     String reason = await getDenialReason(context);
     if (reason.isEmpty) return;
 
+    DocumentSnapshot studentDoc =
+      await FirebaseFirestore.instance.collection("users").doc(studentId).get();
+  final fcmToken = studentDoc["FCM_tokens"] ?? [];
+    if (!studentDoc.exists) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Student not found!")));
+      return;
+    }
     await _firestore.collection("room_change").doc(studentId).update({
       "status": "denied",
       "reason": reason,
     });
+     if (fcmToken.isNotEmpty) {
+    await FCMService.sendNotification(
+      fcmToken: fcmToken,
+      title: "Room Change Denied",
+      body: "Your room change request has been denied. Reason: $reason",
+    );
+  }
+   await FCMService.showLocalNotification(
+      title: "Room Change Denied",
+      body: "Your room change request has been denied. Reason: $reason",
+    );
 
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Request denied!")));
   }

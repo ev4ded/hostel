@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -25,98 +27,112 @@ class NotificationServices {
     print("✅ Permission status: ${settings.authorizationStatus}");
   }
 
-  Future<void> setupFlutterNotifications() async {
-    if (_isFlutterLocalNotificationInitialized) return;
+Future<void> setupFlutterNotifications(BuildContext context) async {
+  if (_isFlutterLocalNotificationInitialized) return;
 
-    // Android Notification Channel
-    const AndroidNotificationChannel channel = AndroidNotificationChannel(
-      "high_importance_channel",
-      "High Importance Notifications",
-      description: "This channel is used for important notifications.",
-      importance: Importance.high,
-    );
+  const AndroidNotificationChannel channel = AndroidNotificationChannel(
+    "high_importance_channel",
+    "High Importance Notifications",
+    description: "This channel is used for important notifications.",
+    importance: Importance.high,
+  );
 
-    // Create the notification channel for Android
-    await _localNotifications.resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
-        ?.createNotificationChannel(channel);
+  await _localNotifications.resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin>()
+      ?.createNotificationChannel(channel);
 
-    // Android Initialization Settings
-    const AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
+  const AndroidInitializationSettings initializationSettingsAndroid =
+      AndroidInitializationSettings('@mipmap/ic_launcher');
 
-    // iOS Initialization Settings
-    /*final DarwinInitializationSettings initializationSettingsDarwin =
-        DarwinInitializationSettings(
-      onDidReceiveLocalNotification: (id, title, body, payload) async {
-        // Handle iOS local notification
-        print("📩 iOS Notification Received: $title");
-      },
-    );*/
+  final InitializationSettings initializationSettings = InitializationSettings(
+    android: initializationSettingsAndroid,
+  );
 
-    // Full Initialization Settings
-    final InitializationSettings initializationSettings = InitializationSettings(
-      android: initializationSettingsAndroid,
-     // iOS: initializationSettingsDarwin,
-    );
+  await _localNotifications.initialize(
+    initializationSettings,
+    onDidReceiveNotificationResponse: (NotificationResponse response) {
+      if (response.payload != null) {
+        // Convert JSON string back to Map
+        Map<String, dynamic> data = jsonDecode(response.payload!);
+        RemoteMessage message = RemoteMessage(data: data);
+        handleNotificationClick(message, context); // ✅ Handle local notification click
+      }
+    },
+  );
 
-    await _localNotifications.initialize(
-      initializationSettings,
-    );
+  _isFlutterLocalNotificationInitialized = true;
+}
 
-    _isFlutterLocalNotificationInitialized = true;
-  }
+
 
   Future<void> showNotification(RemoteMessage message) async {
-    RemoteNotification? notification = message.notification;
-    AndroidNotification? android = message.notification?.android;
+  RemoteNotification? notification = message.notification;
+  AndroidNotification? android = message.notification?.android;
 
-    if (notification != null && android != null) {
-      const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
-        "high_importance_channel",
-        "High Importance Notifications",
-        channelDescription: "This channel is used for important notifications.",
-        importance: Importance.max,
-        priority: Priority.high,
-      );
+  if (notification != null && android != null) {
+    const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
+      "high_importance_channel",
+      "High Importance Notifications",
+      channelDescription: "This channel is used for important notifications.",
+      importance: Importance.max,
+      priority: Priority.high,
+    );
 
-      const NotificationDetails platformDetails = NotificationDetails(
-        android: androidDetails,
-      );
+    const NotificationDetails platformDetails = NotificationDetails(
+      android: androidDetails,
+    );
 
-      await _localNotifications.show(
-        notification.hashCode,
-        notification.title,
-        notification.body,
-        platformDetails,
-        payload: message.data.toString(),
-      );
-    }
+    await _localNotifications.show(
+      notification.hashCode,
+      notification.title,
+      notification.body,
+      platformDetails,
+      payload: jsonEncode(message.data), // ✅ Store notification data
+    );
   }
+}
+
 
   void handleNotificationClick(RemoteMessage message, BuildContext context) {
     if (message.data["type"] == "complaint_update") {
-      String complaintId = message.data["complaintId"];
-      Navigator.pushNamed(context, "complaints", arguments: complaintId);
+      String complaintId = message.data["request_id"];
+      Navigator.pushNamed(context, "Complaints", arguments: complaintId);
     }
+    else if (message.data["type"] == "maintenance_update") {
+      String maintenanceId = message.data["request_id"];
+      Navigator.pushNamed(context, "Maintenance", arguments: maintenanceId);
+  }
+   else if (message.data["type"] == "room_change") {
+    String requestId = message.data['requestId'];
+    Navigator.pushNamed(context, "RoomChange", arguments: requestId);
+  }
   }
 
+void listenToFCM() {
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    print("📩 Foreground Notification: ${message.notification?.title}");
+    showNotification(message);
+  });
 
-  void listenToFCM() {
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      print("📩 Foreground Notification: ${message.notification?.title}");
-      showNotification(message);
-    });
+  FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+    print("📩 Notification Clicked: ${message.notification?.title}");
 
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      print("📩 Notification Clicked: ${message.notification?.title}");
-    });
+    // Instead of context-based navigation, store the last notification
+    lastNotification = message; 
+  });
 
-    FirebaseMessaging.instance.getInitialMessage().then((RemoteMessage? message) {
-      if (message != null) {
-        print("📩 Opened from Terminated State: ${message.notification?.title}");
-      }
-    });
-  }
+  FirebaseMessaging.instance.getInitialMessage().then((RemoteMessage? message) {
+    if (message != null) {
+      print("📩 Opened from Terminated State: ${message.notification?.title}");
+      lastNotification = message; 
+    }
+  });
 }
+
+// Add a variable to store last notification
+RemoteMessage? lastNotification;
+
+
+    }
+  
 

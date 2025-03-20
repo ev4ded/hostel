@@ -88,10 +88,10 @@ class StudentRequestsList extends StatelessWidget {
                 child: ListTile(
                   contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   leading: CircleAvatar(
-                    radius: 24,
-                    child: Text(studentName[0].toUpperCase(), style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                    radius: 24,                  
                     backgroundColor: Colors.blueAccent,
                     foregroundColor: Colors.white,
+                     child: Text(studentName[0].toUpperCase(), style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                   ),
                   title: Text("Name: $studentName", style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w500)),
                   trailing: Row(
