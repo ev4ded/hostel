@@ -92,13 +92,13 @@ class _ProfileState extends State<Profile> {
                                     }
                                   },
                                   child: CircleAvatar(
-                                    radius: 60,
+                                    radius: 55,
                                     backgroundColor:
                                         Color.fromRGBO(93, 101, 95, 1),
                                     key: ValueKey(name),
                                     backgroundImage: name.isNotEmpty
                                         ? Image.asset(
-                                                "assets/images/profile/$name.png")
+                                                "assets/images/profile/$name.jpg")
                                             .image
                                         : Image.asset(
                                                 "assets/images/profile/profile.png")
@@ -132,7 +132,7 @@ class _ProfileState extends State<Profile> {
                                             ),
                                             child: Center(
                                               child: Text(
-                                                userData!["college"] ??
+                                                userData!["college_name"] ??
                                                     userData![
                                                         "role"], // Safely handle null
                                                 style: GoogleFonts.poppins(

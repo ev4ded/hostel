@@ -49,13 +49,14 @@ Future<String?> customImageSuggest(BuildContext context) async {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Container(
         width: width,
-        height: height * 0.45, // Slightly adjusted for better spacing
+        height: height * 0.5, // Slightly adjusted for better spacing
         //: EdgeInsets.all(16),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
         ),
         child: Center(
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
@@ -67,9 +68,9 @@ Future<String?> customImageSuggest(BuildContext context) async {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  profileOption(context, "anagha"),
-                  profileOption(context, "anand"),
-                  profileOption(context, "ann"),
+                  profileOption(context, "1"),
+                  profileOption(context, "2"),
+                  profileOption(context, "3"),
                 ],
               ),
               SizedBox(height: 10),
@@ -77,9 +78,9 @@ Future<String?> customImageSuggest(BuildContext context) async {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  profileOption(context, "arun"),
-                  profileOption(context, "azhar"),
-                  profileOption(context, "cecil"),
+                  profileOption(context, "4"),
+                  profileOption(context, "5"),
+                  profileOption(context, "6"),
                 ],
               ),
               SizedBox(height: 10),
@@ -87,9 +88,19 @@ Future<String?> customImageSuggest(BuildContext context) async {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  profileOption(context, "sanjay"), // Fixed incorrect names
-                  profileOption(context, "shervi"), // Fixed incorrect names
-                  profileOption(context, "aravind"),
+                  profileOption(context, "7"), // Fixed incorrect names
+                  profileOption(context, "8"), // Fixed incorrect names
+                  profileOption(context, "9"),
+                ],
+              ),
+              SizedBox(height: 10),
+              // Third Row
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  profileOption(context, "10"), // Fixed incorrect names
+                  profileOption(context, "11"), // Fixed incorrect names
+                  profileOption(context, "12"),
                 ],
               ),
             ],
@@ -105,8 +116,8 @@ Widget profileOption(BuildContext context, String imageName) {
     child: Padding(
       padding: EdgeInsets.only(left: 5),
       child: CircleAvatar(
-        radius: 43,
-        backgroundImage: AssetImage("assets/images/profile/$imageName.png"),
+        radius: 40,
+        backgroundImage: AssetImage("assets/images/profile/$imageName.jpg"),
       ),
     ),
     onTap: () {

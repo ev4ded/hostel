@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 Future<List<QueryDocumentSnapshot>> getStudentMaintenance(String uid) async {
   try {
     QuerySnapshot maintenance = await FirebaseFirestore.instance
-        .collection('maintenance_request')
+        .collection("maintenance_request")
         .where('student_id',
             isEqualTo: uid) // Replace with actual student ID  user.uid
         .orderBy('created_at', descending: true)
@@ -19,7 +19,7 @@ Future<List<QueryDocumentSnapshot>> getStudentMaintenance(String uid) async {
 Future<List<QueryDocumentSnapshot>> getStudentComplaint(String uid) async {
   try {
     QuerySnapshot complaints = await FirebaseFirestore.instance
-        .collection('complaints')
+        .collection("complaints")
         .where('student_id',
             isEqualTo: uid) // Replace with actual student ID  user.uid
         .orderBy('created_at', descending: true)

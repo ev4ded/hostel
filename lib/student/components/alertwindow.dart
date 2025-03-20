@@ -176,6 +176,7 @@ Future<void> showEmailVerifictionDialog(BuildContext context) async {
   }
 
   Completer<void> completer = Completer<void>(); // ✅ Keeps dialog open
+  // ignore: unused_local_variable
   Timer? timer;
   if (!context.mounted) return;
   showDialog(

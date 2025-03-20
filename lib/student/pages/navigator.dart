@@ -4,7 +4,6 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:minipro/firebase/firestore_services.dart';
 import 'homepage.dart';
 import 'menu.dart';
 import 'profile.dart';
@@ -26,7 +25,6 @@ class _MainNavigatorState extends State<MainNavigator> {
     Menu(),
     Profile(),
   ];
-  final FirestoreServices _firestoreService = FirestoreServices();
   Map<String, dynamic>? userData;
   @override
   void initState() {
