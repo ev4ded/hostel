@@ -25,6 +25,7 @@ class _MainNavigatorState extends State<MainNavigator> {
     Menu(),
     Profile(),
   ];
+  Map<String, dynamic>? userData;
   @override
   void initState() {
     super.initState();

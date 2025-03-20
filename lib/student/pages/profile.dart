@@ -9,7 +9,6 @@ import 'package:minipro/authentication/loginpage.dart';
 import 'package:minipro/Theme/appcolors.dart';
 import 'package:minipro/student/components/custom_route.dart';
 import 'package:minipro/student/components/customProfilepopUp.dart';
-import 'package:minipro/student/components/menucolortoggle.dart';
 import 'package:minipro/student/pages/profile/changepassword.dart';
 import 'package:minipro/student/pages/profile/editprofile.dart';
 import 'package:minipro/student/pages/profile/help.dart';
@@ -81,7 +80,7 @@ class _ProfileState extends State<Profile> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 GestureDetector(
-                                  onLongPress: () async {
+                                  onTap: () async {
                                     HapticFeedback.vibrate();
                                     String? imagename =
                                         await customImageSuggest(context);
@@ -93,13 +92,13 @@ class _ProfileState extends State<Profile> {
                                     }
                                   },
                                   child: CircleAvatar(
-                                    radius: 60,
+                                    radius: 55,
                                     backgroundColor:
                                         Color.fromRGBO(93, 101, 95, 1),
                                     key: ValueKey(name),
                                     backgroundImage: name.isNotEmpty
                                         ? Image.asset(
-                                                "assets/images/profile/$name.png")
+                                                "assets/images/profile/$name.jpg")
                                             .image
                                         : Image.asset(
                                                 "assets/images/profile/profile.png")
@@ -133,7 +132,7 @@ class _ProfileState extends State<Profile> {
                                             ),
                                             child: Center(
                                               child: Text(
-                                                userData!["college"] ??
+                                                userData!["college_name"] ??
                                                     userData![
                                                         "role"], // Safely handle null
                                                 style: GoogleFonts.poppins(
@@ -167,28 +166,35 @@ class _ProfileState extends State<Profile> {
                               ],
                             ),
                             SizedBox(height: 30),
-                            /*Container(
-                              height: 150,
-                              width: 150,
-                              decoration: BoxDecoration(
-                                color: flipC,
-                                borderRadius: BorderRadius.circular(10),
+                            GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  present = !present;
+                                });
+                              },
+                              child: Container(
+                                height: 150,
+                                width: 150,
+                                decoration: BoxDecoration(
+                                  color: flipC,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: (present)
+                                      ? Image(
+                                          image: Image.asset(
+                                                  "assets/images/cutepng.png",
+                                                  fit: BoxFit.contain)
+                                              .image)
+                                      : Image(
+                                          image: Image.asset(
+                                                  "assets/images/dead.png",
+                                                  fit: BoxFit.contain)
+                                              .image),
+                                ),
                               ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(10.0),
-                                child: (present)
-                                    ? Image(
-                                        image: Image.asset(
-                                                "assets/images/cutepng.png",
-                                                fit: BoxFit.contain)
-                                            .image)
-                                    : Image(
-                                        image: Image.asset(
-                                                "assets/images/dead.png",
-                                                fit: BoxFit.contain)
-                                            .image),
-                              ),
-                            ),*/
+                            ),
                             SizedBox(height: 30),
                             GestureDetector(
                               child: Container(
@@ -467,13 +473,13 @@ class _ProfileState extends State<Profile> {
                                       Padding(
                                         padding:
                                             const EdgeInsets.only(left: 12.0),
-                                        child: Icon(LucideIcons.palette),
+                                        child: Icon(LucideIcons.users2),
                                       ),
                                       Padding(
                                         padding:
                                             const EdgeInsets.only(left: 8.0),
                                         child: Text(
-                                          "Change Menu Color?",
+                                          "Room Mates",
                                           style:
                                               GoogleFonts.poppins(fontSize: 18),
                                         ),
@@ -483,7 +489,6 @@ class _ProfileState extends State<Profile> {
                                 ),
                               ),
                               onTap: () {
-                                showMenuColorChange(context);
                                 HapticFeedback.heavyImpact();
                               },
                             ),

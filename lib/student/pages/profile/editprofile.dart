@@ -21,6 +21,7 @@ class _EditprofileState extends State<Editprofile> {
   final _nameController = TextEditingController();
   final _dateController = TextEditingController();
   final _collageNameController = TextEditingController();
+  final _phoneController = TextEditingController();
   String degree = "";
   String gender = "";
   String yearOfStudy = "";
@@ -39,10 +40,38 @@ class _EditprofileState extends State<Editprofile> {
   @override
   void initState() {
     super.initState();
-    fetchUserDetails();
+    fetchUserData();
   }
 
-  void fetchUserDetails() async {
+  void fetchUserData() async {
+    setState(() {
+      isloading = true;
+    });
+    Map<String, dynamic>? cachedUserData =
+        await _firestoreService.getCachedUserData();
+    if (cachedUserData == null) {
+      await _firestoreService.getUserData();
+      cachedUserData = await _firestoreService.getCachedUserData();
+    }
+    if (cachedUserData != null) {
+      setState(() {
+        _nameController.text = cachedUserData?["username"] ?? "";
+        _collageNameController.text = cachedUserData?["college_name"] ?? "";
+        _dateController.text = cachedUserData?["dob"] ?? "";
+        degree = cachedUserData?["degree"] ?? "";
+        yearOfStudy = cachedUserData?["year_of_study"] ?? "";
+        _dateController.text = cachedUserData?["dob"] ?? "";
+        _phoneController.text = (cachedUserData?["phone_no"] ?? "").toString();
+        gender = cachedUserData?["gender"] ?? "";
+        isloading = false;
+      });
+    } else {
+      setState(() {
+        isloading = false;
+      });
+    }
+  }
+  /*void fetchUserDetails() async {
     Map<String, dynamic>? userDetails =
         await _firestoreService.getUserDetails();
     if (userDetails != null) {
@@ -53,6 +82,7 @@ class _EditprofileState extends State<Editprofile> {
         degree = userDetails["degree"] ?? "";
         yearOfStudy = userDetails["year_of_study"] ?? "";
         _dateController.text = userDetails["dob"] ?? "";
+        _phoneController.text = userDetails["phone_no"] ?? 0;
         gender = userDetails["gender"] ?? "";
         isloading = false;
       });
@@ -61,7 +91,7 @@ class _EditprofileState extends State<Editprofile> {
         isloading = false;
       });
     }
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -194,6 +224,27 @@ class _EditprofileState extends State<Editprofile> {
                       height: 20,
                     ),
                     Text(
+                      "Phone no:",
+                      style: GoogleFonts.inter(),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Mytextfield(
+                      type: TextInputType.number,
+                      bgColor: bgColor,
+                      borderColor: borderColor,
+                      borderRadius: borderRadius,
+                      borderWidth: borderWidth,
+                      controller: _phoneController,
+                      hintColor: hintColor,
+                      hinttext: "Enter phone no",
+                      textColor: textColor,
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Text(
                       "DOB:",
                       style: GoogleFonts.inter(),
                     ),
@@ -265,38 +316,41 @@ class _EditprofileState extends State<Editprofile> {
     );
   }
 
-  void submit() {
+  Future<void> submit() async {
     String name = _nameController.text;
     String college = _collageNameController.text;
     String dob = _dateController.text;
+    String phone = _phoneController.text;
     if (name.isEmpty ||
         college.isEmpty ||
         dob.isEmpty ||
         degree.isEmpty ||
         yearOfStudy.isEmpty ||
-        gender.isEmpty) {
+        gender.isEmpty ||
+        phone.isEmpty) {
       _showSnackBar("please fill in all fields", isError: true);
     } else {
       User? user = FirebaseAuth.instance.currentUser;
       if (user != null) {
         try {
           DocumentReference docRef =
-              FirebaseFirestore.instance.collection("Udetails").doc(user.uid);
-          docRef.set(
+              FirebaseFirestore.instance.collection("users").doc(user.uid);
+          await docRef.update(
             {
-              'full_name': name,
+              'username': name,
               'college_name': college,
               'degree': degree,
               'year_of_study': yearOfStudy,
               'dob': dob,
               'gender': gender,
+              'phone_no': phone,
+              "profileUpdated": true
             },
           );
-          FirebaseFirestore.instance.collection("users").doc(user.uid).update({
-            'username': name,
-            'college': college,
-          });
-          _showSnackBar("upated successfully");
+          /*_firestoreService.userDocument.update({
+            "profileUpdated": true, // Mark as updated
+          });*/
+          _showSnackBar("Upated successfully");
           Future.delayed(Duration(seconds: 1), () {
             if (context.mounted) {
               Navigator.pop(context);

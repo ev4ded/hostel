@@ -5,6 +5,12 @@ import 'dart:convert';
 
 class FirestoreServices {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  DocumentReference<Map<String, dynamic>> get userDocument {
+    String uid = FirebaseAuth.instance.currentUser?.uid ?? "";
+    return _firestore.collection("users").doc(uid);
+  }
+
   Future<void> getUserData() async {
     try {
       User? user = FirebaseAuth.instance.currentUser;

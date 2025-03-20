@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:lucide_icons/lucide_icons.dart';
-import 'package:minipro/Theme/appcolors.dart';
 import 'package:minipro/Theme/menucolor.dart';
 import 'package:minipro/firebase/firestore_services.dart';
 import 'package:minipro/student/Student_queries/queries.dart';
