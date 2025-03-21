@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:minipro/warden/wardenQueries/queries.dart';
 
@@ -9,6 +10,8 @@ class StudentList extends StatefulWidget {
   @override
   _StudentListState createState() => _StudentListState();
 }
+
+
 
 class _StudentListState extends State<StudentList> {
   String? hostelId;
@@ -33,6 +36,23 @@ class _StudentListState extends State<StudentList> {
       ),
     );
   }
+
+  @override
+  void initState() {
+    super.initState();
+   someFunction();
+  }
+  void someFunction() async {
+  String? fetchedHostelId = await fetchHostelId();
+  if (fetchedHostelId != null) {
+    setState(() {
+      hostelId = fetchedHostelId; // ✅ Update state
+    });
+    debugPrint("🏠 Found Hostel ID: $hostelId");
+  } else {
+    debugPrint("❌ Could not fetch Hostel ID.");
+  }
+}
 
   void _showStudentBottomSheet(BuildContext context, Map<String, dynamic> student) {
     showModalBottomSheet(
@@ -88,16 +108,16 @@ class _StudentListState extends State<StudentList> {
   
   }
 
-   @override
-  void initState() {
-    super.initState();
-   someFunction();
-  }
+ 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Student Listing')),
-      body: Column(
+      appBar: AppBar(title: Text('Student Listing', style: GoogleFonts.inter(fontWeight: FontWeight.w600)), 
+       backgroundColor: Colors.indigo.shade700,
+        foregroundColor: Colors.white,),
+      body: (hostelId == null)
+        ? Center(child: CircularProgressIndicator()) 
+      : Column(
         children: [
           // Search Field
           Padding(
@@ -133,8 +153,8 @@ class _StudentListState extends State<StudentList> {
             child: StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
                   .collection('users')
-                  .where('hostelId',isEqualTo:hostelId )
                   .where('role', isEqualTo: 'student')
+                  .where('hostelId',isEqualTo:hostelId )
                   .where('isApproved', isEqualTo: true)
                   .where('profileUpdated', isEqualTo: true)
                   .snapshots(),
@@ -142,6 +162,9 @@ class _StudentListState extends State<StudentList> {
                 if (!snapshot.hasData) {
                   return Center(child: CircularProgressIndicator());
                 }
+                if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        }
                 var students = snapshot.data!.docs.where((doc) {
                   var name = doc['username'].toString().toLowerCase();
                   return name.contains(searchQuery);
@@ -184,15 +207,5 @@ class _StudentListState extends State<StudentList> {
     );
     
   }
-  void someFunction() async {
-  String? fetchedHostelId = await fetchHostelId();
-  if (fetchedHostelId != null) {
-    setState(() {
-      hostelId = fetchedHostelId; // ✅ Update state
-    });
-    debugPrint("🏠 Found Hostel ID: $hostelId");
-  } else {
-    debugPrint("❌ Could not fetch Hostel ID.");
-  }
-}
+ 
 }

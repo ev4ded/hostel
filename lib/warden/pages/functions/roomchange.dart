@@ -26,7 +26,10 @@ class _RoomChangeState extends State<RoomChange> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Room Change Requests", style: GoogleFonts.inter())),
+      appBar: AppBar(title: Text("Room Change Requests",  style: GoogleFonts.inter(fontWeight: FontWeight.w600)),
+        backgroundColor: Colors.indigo.shade700,
+        foregroundColor: Colors.white,
+      ),
       body: hostelId == null
           ? Center(child: CircularProgressIndicator())
           : RequestsList(hostelId: hostelId!),
@@ -83,19 +86,22 @@ class RequestsList extends StatelessWidget {
             String studentId = request.id;
            
 
-             return FutureBuilder<DocumentSnapshot>(
-              future: _firestore.collection("users").doc(studentId).get(),
-              builder: (context, userSnapshot) {
+           return FutureBuilder<DocumentSnapshot>(
+          future: _firestore.collection("users").doc(request.id).get(),
+          builder: (context, userSnapshot) {
+            if (userSnapshot.connectionState == ConnectionState.waiting) {
+              return SizedBox(); // Avoid unnecessary UI updates while loading
+            }
 
-                 if (userSnapshot.connectionState == ConnectionState.waiting) {
-                            return SizedBox(); // Prevent unnecessary UI updates while loading
-                     }
-                
+            if (!userSnapshot.hasData || !userSnapshot.data!.exists) {
+              return SizedBox();
+            }
 
-                var userData = userSnapshot.data!.data() as Map<String, dynamic>;
-                if (userData.isEmpty || userData["hostelId"] != hostelId) {
-                      return SizedBox(); // Skip if hostel ID does not match
-                    }
+            var userData = userSnapshot.data!.data() as Map<String, dynamic>;
+
+            if (userData["hostelId"] != hostelId) {
+              return SizedBox(); // Ignore requests from other hostels
+            }
                 String studentName = userData["username"] ?? "Unknown";
                 String currentRoom = userData["room_no"] ?? "Not Assigned";
                 
@@ -139,82 +145,99 @@ class RequestsList extends StatelessWidget {
   );
   }
   
-Future< void> approveRequest(String studentId, BuildContext context) async {
+Future<void> approveRequest(String studentId, BuildContext context) async {
+  if (!context.mounted) return;  // ✅ Prevent error if widget is deactivated
+
   String? newRoom = await selectRoom(context);
   if (newRoom == null || newRoom.isEmpty) return;
 
   try {
-    // Fetch student details from users collection
     DocumentSnapshot studentDoc =
-      await FirebaseFirestore.instance.collection("users").doc(studentId).get();
-  
+        await FirebaseFirestore.instance.collection("users").doc(studentId).get();
+
     if (!studentDoc.exists) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Student not found!")));
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Student not found!")));
+      }
       return;
     }
 
-    // Update room_change collection
-    await _firestore.collection("room_change").doc(studentId).update({
+    await FirebaseFirestore.instance.collection("room_change").doc(studentId).update({
       "status": "approved",
       "approved_room": newRoom,
     });
 
-    // Update users collection (assign new room)
-    await _firestore.collection("users").doc(studentId).update({
+    await FirebaseFirestore.instance.collection("users").doc(studentId).update({
       "room_no": newRoom,
     });
-    String fcmToken = studentDoc["FCM_tokens"] ?? [];
-    if (fcmToken.isNotEmpty) {
-     await FCMService.sendNotification(
-      fcmToken: fcmToken,
-      title: "Room Change Approved",
-      body: "Your room change request has been approved! Your new room is $newRoom.",
-    );
+
+    List<String> fcmToken = (studentDoc["FCM_tokens"] as List<dynamic>?)
+            ?.map((e) => e.toString())
+            .toList() ??
+        [];
+
+   if (fcmToken.isNotEmpty) {
+      print("✅ Sending FCM Notification...");
+      await FCMService.sendNotification(
+        fcmToken: fcmToken,
+        title: "Room Change Approved",
+        body: "Your room change request has been approved! Your new room is $newRoom.",
+      );
+
+     
     }
-     await FCMService.showLocalNotification(
-      title: "Room Change Approved",
-      body: "Your room change request has been approved! New Room: $newRoom.",
-    );
 
     if (context.mounted) {  // ✅ Ensure context is valid
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Room changed successfully!"), backgroundColor: Colors.green),
       );
     }
-    } catch (e) {
+  } catch (e) {
     debugPrint("❌ Error updating room: $e");
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error updating room!")));
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error updating room!")));
+    }
   }
 }
 
 
-  void denyRequest(String studentId, BuildContext context) async {
-    String reason = await getDenialReason(context);
-    if (reason.isEmpty) return;
+void denyRequest(String studentId, BuildContext context) async {
+  if (!context.mounted) return;  // ✅ Prevent error if widget is deactivated
 
-    DocumentSnapshot studentDoc =
+  String reason = await getDenialReason(context);
+  if (reason.isEmpty) return;
+
+  DocumentSnapshot studentDoc =
       await FirebaseFirestore.instance.collection("users").doc(studentId).get();
-  final fcmToken = studentDoc["FCM_tokens"] ?? [];
-    if (!studentDoc.exists) {
+  List<String> fcmToken = (studentDoc["FCM_tokens"] as List<dynamic>?)
+          ?.map((e) => e.toString())
+          .toList() ??
+      [];
+
+  if (!studentDoc.exists) {
+    if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Student not found!")));
-      return;
     }
-    await _firestore.collection("room_change").doc(studentId).update({
-      "status": "denied",
-      "reason": reason,
-    });
-     if (fcmToken.isNotEmpty) {
+    return;
+  }
+
+  await FirebaseFirestore.instance.collection("room_change").doc(studentId).update({
+    "status": "denied",
+    "reason": reason,
+  });
+
+  if (fcmToken.isNotEmpty) {
+    print("✅ Sending FCM Notification...");
     await FCMService.sendNotification(
       fcmToken: fcmToken,
       title: "Room Change Denied",
       body: "Your room change request has been denied. Reason: $reason",
     );
-  }
-   await FCMService.showLocalNotification(
-      title: "Room Change Denied",
-      body: "Your room change request has been denied. Reason: $reason",
-    );
 
+  if (context.mounted) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Request denied!")));
   }
+}
+
+}
 }

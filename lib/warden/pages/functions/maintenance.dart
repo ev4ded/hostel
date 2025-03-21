@@ -30,9 +30,12 @@ class _MaintenanceState extends State<Maintenance>
       appBar: AppBar(
           title: Text(
             "Maintenance Requests",
-            style: GoogleFonts.inter(),
+             style: GoogleFonts.inter(fontWeight: FontWeight.w600),
           ),
-          bottom: _buildTabBar()),
+          bottom: _buildTabBar(),
+            backgroundColor: Colors.indigo.shade700,
+        foregroundColor: Colors.white,
+        ),
       body: hostelId == null
           ? Center(child: CircularProgressIndicator())
           : TabBarView(
@@ -42,6 +45,7 @@ class _MaintenanceState extends State<Maintenance>
                 RequestsList(status: "Approved", hostel_id: hostelId!),
                 RequestsList(status: "Denied", hostel_id: hostelId!),
               ],
+              
             ),
     );
   }
