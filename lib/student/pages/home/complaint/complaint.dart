@@ -94,8 +94,8 @@ class _ComplaintState extends State<Complaint> {
                 color: containerColor,
                 borderRadius: BorderRadius.circular(15),
               ),
-              child: FutureBuilder<List<QueryDocumentSnapshot>>(
-                future:
+              child: StreamBuilder<List<QueryDocumentSnapshot>>(
+                stream:
                     getStudentComplaint(FirebaseAuth.instance.currentUser!.uid),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {

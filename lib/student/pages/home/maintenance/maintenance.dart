@@ -96,8 +96,8 @@ class _MaintenanceState extends State<Maintenance> {
                 color: containerColor,
                 borderRadius: BorderRadius.circular(15),
               ),
-              child: FutureBuilder<List<QueryDocumentSnapshot>>(
-                future: getStudentMaintenance(
+              child: StreamBuilder<List<QueryDocumentSnapshot>>(
+                stream: getStudentMaintenance(
                     FirebaseAuth.instance.currentUser!.uid),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {

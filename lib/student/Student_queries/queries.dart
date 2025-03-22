@@ -1,34 +1,24 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-Future<List<QueryDocumentSnapshot>> getStudentMaintenance(String uid) async {
-  try {
-    QuerySnapshot maintenance = await FirebaseFirestore.instance
-        .collection("maintenance_request")
-        .where('student_id',
-            isEqualTo: uid) // Replace with actual student ID  user.uid
-        .orderBy('created_at', descending: true)
-        .get();
-    return maintenance.docs;
-  } catch (e) {
-    print("error:$e");
-    return [];
-  }
+Stream<List<QueryDocumentSnapshot>> getStudentMaintenance(String uid) {
+  return FirebaseFirestore.instance
+      .collection("maintenance_request")
+      .where('student_id',
+          isEqualTo: uid) // Replace with actual student ID  user.uid
+      .orderBy('created_at', descending: true)
+      .snapshots()
+      .map((snapshot) => snapshot.docs);
 }
 
-Future<List<QueryDocumentSnapshot>> getStudentComplaint(String uid) async {
-  try {
-    QuerySnapshot complaints = await FirebaseFirestore.instance
-        .collection("complaints")
-        .where('student_id',
-            isEqualTo: uid) // Replace with actual student ID  user.uid
-        .orderBy('created_at', descending: true)
-        .get();
-    return complaints.docs;
-  } catch (e) {
-    print("error:$e");
-    return [];
-  }
+Stream<List<QueryDocumentSnapshot>> getStudentComplaint(String uid) {
+  return FirebaseFirestore.instance
+      .collection("complaints")
+      .where('student_id',
+          isEqualTo: uid) // Replace with actual student ID  user.uid
+      .orderBy('created_at', descending: true)
+      .snapshots()
+      .map((snapshot) => snapshot.docs);
 }
 
 Future<Map<String, String>> getMenu(String hostelId) async {

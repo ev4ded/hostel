@@ -4,9 +4,9 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'homepage.dart';
-import 'menu.dart';
-import 'profile.dart';
+import 'package:minipro/student/pages/homepage.dart';
+import 'package:minipro/student/pages/menu.dart';
+import 'package:minipro/student/pages/profile.dart';
 import 'package:ionicons/ionicons.dart';
 
 class MainNavigator extends StatefulWidget {

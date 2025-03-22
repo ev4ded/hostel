@@ -9,7 +9,7 @@ void customPopup(BuildContext context, String content, Function function) {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Container(
         //width: 20, // Small size
-        padding: EdgeInsets.all(16),
+        padding: EdgeInsets.all(8),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -18,19 +18,37 @@ void customPopup(BuildContext context, String content, Function function) {
             SizedBox(height: 10),
             Text(content),
             SizedBox(height: 20),
-            ElevatedButton(
-              style: ButtonStyle(
-                  backgroundColor:
-                      WidgetStatePropertyAll(AppColors.buttonColor)),
-              onPressed: () {
-                function();
-              },
-              child: Text(
-                "YES",
-                style: GoogleFonts.inter(
-                    color: AppColors.buttonTextColor,
-                    fontWeight: FontWeight.w600),
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                ElevatedButton(
+                  style: ButtonStyle(
+                      backgroundColor:
+                          WidgetStatePropertyAll(AppColors.buttonColor)),
+                  onPressed: () {
+                    function();
+                  },
+                  child: Text(
+                    "YES",
+                    style: GoogleFonts.inter(
+                        color: AppColors.buttonTextColor,
+                        fontWeight: FontWeight.w600),
+                  ),
+                ),
+                SizedBox(
+                  width: 5,
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text(
+                    "NO",
+                    style: GoogleFonts.inter(
+                        color: Colors.red, fontWeight: FontWeight.w600),
+                  ),
+                )
+              ],
             )
           ],
         ),

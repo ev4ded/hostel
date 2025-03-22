@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:minipro/Theme/appcolors.dart';
 import 'package:minipro/authentication/forgotpassword.dart';
 import 'package:minipro/student/components/custom_route.dart';
@@ -31,6 +32,11 @@ class _ChangepasswordState extends State<Changepassword> {
     Color bgColor = AppColors.getContainerColor(context);
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: Icon(LucideIcons.chevronLeft)),
         backgroundColor: Colors.transparent,
       ),
       body: SingleChildScrollView(

@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
- Future<String?> fetchHostelId() async {
+Future<String?> fetchHostelId() async {
   try {
     User? user = FirebaseAuth.instance.currentUser; // Get logged-in user
     if (user == null) {
@@ -14,7 +14,7 @@ import 'package:google_fonts/google_fonts.dart';
 
     QuerySnapshot snapshot = await FirebaseFirestore.instance
         .collection("users")
-        .where("email", isEqualTo: user.email) // Fetch warden by email
+        //.where("email", isEqualTo: user.email) // Fetch warden by email
         .where("role", isEqualTo: "warden")
         .limit(1)
         .get();
@@ -32,7 +32,6 @@ import 'package:google_fonts/google_fonts.dart';
     return null;
   }
 }
-
 
 Future<String> getDenialReason(BuildContext context) async {
   TextEditingController reasonController = TextEditingController();
@@ -74,6 +73,7 @@ Future<String> getDenialReason(BuildContext context) async {
       ) ??
       "";
 }
+
 /*Future<String?> selectRoom(BuildContext context, String hostelId) async {
   String? selectedRoom;
   List<String> availableRooms = [];

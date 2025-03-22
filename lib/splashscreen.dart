@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
+import 'package:minipro/Admin/wardenlisting.dart';
+import 'package:minipro/deleted.dart';
 import 'package:minipro/student/components/custom_route.dart';
-import 'package:minipro/student/pages/navigator.dart';
 import 'package:minipro/notverfied.dart';
+import 'package:minipro/student/pages/navigator.dart';
 import 'package:minipro/warden/pages/navigation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:minipro/firebase/firestore_services.dart';
@@ -28,11 +31,17 @@ class _SplashscreenState extends State<Splashscreen> {
     List roleandVerified = await FirestoreServices().getUserRoleandVerified();
     String role = roleandVerified[0];
     bool isVerified = roleandVerified[1];
+    bool deleted = roleandVerified[2];
     //await Future.delayed(Duration(seconds: 2));
     print("$isVerified");
     if (!mounted) return;
     Widget page;
-    if (isLoggedIn && !isVerified) {
+    print("deleted:$deleted");
+    if (deleted) {
+      page = Deleted();
+    } else if (isLoggedIn && role == "admin") {
+      page = Wardenlisting();
+    } else if (isLoggedIn && !isVerified) {
       page = Studentnotverfied();
     } else if (isLoggedIn && role == "warden") {
       page = MyNavigation();

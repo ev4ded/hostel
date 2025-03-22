@@ -317,11 +317,11 @@ class _SignupPageState extends State<SignupPage> {
       //await FirestoreServices().getUserData();
       await _auth.currentUser?.reload();
       User? user = _auth.currentUser;
-      if (user != null && !user.emailVerified) {
+      /*if (user != null && !user.emailVerified) {
         //_showSnackBar("Verification email sent.Please check your inbox.");
         if (!mounted) return;
         await showEmailVerifictionDialog(context);
-      }
+      }*/
       String uid = userCredential.user!.uid;
       FirebaseMessaging messaging = FirebaseMessaging.instance;
       String? token = await messaging.getToken();

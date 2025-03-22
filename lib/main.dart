@@ -10,15 +10,10 @@ import 'package:minipro/splashscreen.dart';
 import 'package:minipro/warden/services/FCMservices.dart';
 import 'package:provider/provider.dart';
 
-/*final GetIt getIt = GetIt.instance;
-void setupLocator() {
-  getIt.registerLazySingleton<AnalyticService>(() => AnalyticService());
-}*/
-
 void main() async {
   //debugPaintSizeEnabled = true;
   //bool loggedIn = await isLoggedIn();
- 
+
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
       //options: DefaultFirebaseOptions.currentPlatform,
@@ -27,7 +22,7 @@ void main() async {
   await FCMService.initLocalNotifications();
   await FCMService.configureFCM();
   FCMService.listenToFCM();
- 
+
   runApp(
     ChangeNotifierProvider(
       create: (context) => Menucolor(),

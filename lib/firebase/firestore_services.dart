@@ -54,20 +54,25 @@ class FirestoreServices {
     Map<String, dynamic>? user = await getCachedUserData();
     String role = "";
     bool isVerified = false;
+    bool deleted = false;
     try {
       if (user != null) {
-        role = user["role"];
-        isVerified = user["isApproved"];
+        role = user["role"] ?? "";
+        isVerified = user["isApproved"] ?? false;
+        deleted = user["deleted"] ?? false;
+        print("delete inside query:${user["deleted"]}");
       } else {
         await getUserData();
         user = await getCachedUserData();
-        role = user!["role"];
-        isVerified = user["isApproved"];
+        role = user!["role"] ?? "";
+        isVerified = user["isApproved"] ?? false;
+        deleted = user["deleted"] ?? false;
+        print("delete inside query:${user["deleted"]}");
       }
     } catch (e) {
       print("error :$e");
     }
-    return [role, isVerified];
+    return [role, isVerified, deleted];
   }
 
   Future<Map<String, dynamic>?> getUserDetails() async {

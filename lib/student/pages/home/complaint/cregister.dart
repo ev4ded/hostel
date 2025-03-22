@@ -23,8 +23,8 @@ class _CregisterState extends State<Cregister> {
   final double borderRadius = 15;
   final Color borderColor = Color.fromRGBO(74, 85, 104, 1);
   Color hintColor = AppColors.hintColor;
-  Color buttonColor = Color.fromRGBO(255, 189, 109, 1);
-  Color buttonTextColor = Color.fromRGBO(18, 18, 18, 1);
+  Color buttonColor = AppColors.buttonColor;
+  Color buttonTextColor = AppColors.buttonTextColor;
   final int year = DateTime.now().year;
   final FirestoreServices _firestoreService = FirestoreServices();
   Map<String, dynamic>? userData;
