@@ -98,7 +98,10 @@ class _UpdateMessMenuState extends State<UpdateMessMenu> {
   Widget build(BuildContext context) {
     return Scaffold(
     
-      appBar: AppBar(title: Text("Update Mess Menu",style:GoogleFonts.inter())),
+      appBar: AppBar(title: Text("Update Mess Menu", style: GoogleFonts.inter(fontWeight: FontWeight.w600)),
+        backgroundColor: Colors.indigo.shade700,
+        foregroundColor: Colors.white,
+      ),
       body: SingleChildScrollView(
         physics: BouncingScrollPhysics(),
         child: Padding(

@@ -28,7 +28,10 @@ class _ComplaintsState extends State<Complaints>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Complaints",style: GoogleFonts.inter(),), bottom: _buildTabBar()),
+      appBar: AppBar(title: Text("Complaints", style: GoogleFonts.inter(fontWeight: FontWeight.w600)), bottom: _buildTabBar(),
+        backgroundColor: Colors.indigo.shade700,
+        foregroundColor: Colors.white,
+      ),
       body: hostelId == null
           ? Center(child: CircularProgressIndicator())
           : TabBarView(

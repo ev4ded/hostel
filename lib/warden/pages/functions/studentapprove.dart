@@ -35,7 +35,10 @@ class _StudentApprovalState extends State<StudentApproval> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Student Approval", style: GoogleFonts.inter()),
+        title: Text("Student Approval",  style: GoogleFonts.inter(fontWeight: FontWeight.w600)),
+          backgroundColor: Colors.indigo.shade700,
+        foregroundColor: Colors.white,
+        
       ),
       body: hostelId == null
           ? Center(child: CircularProgressIndicator())
@@ -56,6 +59,7 @@ class StudentRequestsList extends StatelessWidget {
       stream: _firestore
           .collection("users")
           .where("isApproved", isEqualTo: false)
+          .where("role", isEqualTo: "student")
           .where("hostelId", isEqualTo: hostelId)
           .snapshots(),
       builder: (context, snapshot) {
