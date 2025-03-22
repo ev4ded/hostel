@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
 import 'package:minipro/Admin/wardenlisting.dart';
 import 'package:minipro/deleted.dart';
 import 'package:minipro/student/components/custom_route.dart';
@@ -36,7 +35,7 @@ class _SplashscreenState extends State<Splashscreen> {
     print("$isVerified");
     if (!mounted) return;
     Widget page;
-    print("deleted:$deleted");
+    //print("deleted:$deleted");
     if (deleted) {
       page = Deleted();
     } else if (isLoggedIn && role == "admin") {

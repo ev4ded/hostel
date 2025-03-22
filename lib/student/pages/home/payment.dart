@@ -52,6 +52,7 @@ class _PaymentState extends State<Payment> {
     Map<String, dynamic>? hostelDetails =
         await _firestoreService.getHostelDetails(user?["hostelId"]);
     //print(hostelDetails?["hostel_rent"]);
+    print("user:$userDetails");
     if (mounted) {
       setState(() {
         userData = userDetails;
@@ -161,7 +162,7 @@ class _PaymentState extends State<Payment> {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           Text(
-                            "Name : ${userData!["full_name"]}",
+                            "Name : ${userData!["username"]}",
                             overflow: TextOverflow.clip,
                             softWrap: true,
                             style: GoogleFonts.poppins(

@@ -7,7 +7,6 @@ import 'package:minipro/Theme/menucolor.dart';
 import 'package:minipro/authentication/authprovider.dart';
 import 'package:minipro/Theme/theme.dart';
 import 'package:minipro/splashscreen.dart';
-import 'package:minipro/warden/services/FCMservices.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
@@ -19,10 +18,6 @@ void main() async {
       //options: DefaultFirebaseOptions.currentPlatform,
       );
   await dotenv.load(fileName: ".env");
-  await FCMService.initLocalNotifications();
-  await FCMService.configureFCM();
-  FCMService.listenToFCM();
-
   runApp(
     ChangeNotifierProvider(
       create: (context) => Menucolor(),

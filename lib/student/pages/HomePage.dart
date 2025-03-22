@@ -6,7 +6,6 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:minipro/Theme/appcolors.dart';
 import 'package:minipro/Theme/fonts.dart';
 import 'package:minipro/student/components/custom_route.dart';
-import 'package:minipro/student/components/customProfilepopUp.dart';
 import 'package:minipro/student/components/myContainer.dart';
 import 'package:minipro/student/pages/home/complaint/complaint.dart';
 import 'package:minipro/student/pages/home/maintenance/maintenance.dart';
@@ -72,18 +71,6 @@ class _HomepageState extends State<Homepage> {
               textStyle: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
         ),
         automaticallyImplyLeading: false,
-        actions: [
-          IconButton(
-            onPressed: () {
-              customPopup(context, "This is a notification", popfuction);
-            },
-            icon: Icon(
-              Ionicons.notifications,
-              size: 30,
-              color: iconC,
-            ),
-          )
-        ],
       ),
       body: ListView(
         padding: EdgeInsets.all(8),

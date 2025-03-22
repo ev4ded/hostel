@@ -6,6 +6,7 @@ void customPopup(BuildContext context, String content, Function function) {
   showDialog(
     context: context,
     builder: (context) => Dialog(
+      backgroundColor: AppColors.getAlertWindowC(context),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Container(
         //width: 20, // Small size
@@ -19,6 +20,7 @@ void customPopup(BuildContext context, String content, Function function) {
             Text(content),
             SizedBox(height: 20),
             Row(
+              mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 ElevatedButton(

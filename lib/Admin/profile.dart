@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:minipro/Admin/adminqueries.dart';
@@ -40,6 +42,7 @@ class _AdminState extends State<AdminProfile> {
   void initState() {
     super.initState();
     fetchUserData();
+    //checkAndRequestLocationPermission();
   }
 
   void fetchUserData() async {
@@ -228,7 +231,7 @@ class _AdminState extends State<AdminProfile> {
     await prefs.setBool('isLoggedIn', isLoggedIn);
   }
 
-  void submit() {
+  void submit() async {
     String name = nameController.text.trim();
     String address = locationController.text.trim();
     String upi = upiController.text.trim();
@@ -248,18 +251,22 @@ class _AdminState extends State<AdminProfile> {
       _showSnackBar("please fill in all the fields", isError: true);
       return;
     }
+    List<double>? latLong = await getLatLongFromAddress(address);
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       FirebaseFirestore.instance.collection('hostels').doc(hostelID).set({
         'Admin_name': name,
         'hostel_rent': int.tryParse(rent),
         'late_fine': int.tryParse(latefine),
-        'location': address,
+        'address': address,
+        'latitude': latLong![0],
+        'longitude': latLong[1],
         'maintenance_charge': int.tryParse(maintenance),
         'mess_fees': int.tryParse(mess),
         'other_charges': int.tryParse(other),
-        'paid': false,
+        'paid': "",
         'upi': upi,
+        'paymentTime': false
       });
       _showSnackBar("details updated");
       Future.delayed(Duration(seconds: 1), () {
@@ -274,4 +281,72 @@ class _AdminState extends State<AdminProfile> {
     if (!mounted) return;
     Mysnackbar.show(context, message, isError: isError);
   }
+
+  Future<List<double>?> getLatLongFromAddress(String address) async {
+    try {
+      List<Location> locations = await locationFromAddress(address);
+      if (locations.isNotEmpty) {
+        return [locations.first.latitude, locations.first.longitude];
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+    return null;
+  }
+
+  Future<bool> checkAndRequestLocationPermission() async {
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        _showSnackBar("Location permission denied.", isError: true);
+        return false;
+      }
+    }
+    if (permission == LocationPermission.deniedForever) {
+      _showSnackBar(
+          "Location permission permanently denied. Go to settings to enable.",
+          isError: true);
+      return false;
+    }
+    return true;
+  }
+
+  /*Future<Position?> getCurrentLocation() async {
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      _showSnackBar("Location services are disabled.", isError: true);
+      return null;
+    }
+
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        _showSnackBar("Location permission denied.", isError: true);
+        return null;
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      _showSnackBar(
+          "Location permission permanently denied. Enable from settings.",
+          isError: true);
+      return null;
+    }
+    LocationSettings locationSettings =
+        LocationSettings(accuracy: LocationAccuracy.high);
+    return await Geolocator.getCurrentPosition(
+        locationSettings: locationSettings);
+  }
+
+  Future<List?> fetchLocation(BuildContext context) async {
+    Position? position = await getCurrentLocation();
+    if (position != null) {
+      return [position.latitude, position.longitude];
+    } else {
+      _showSnackBar("Could not fetch location.", isError: true);
+    }
+    return null;
+  }*/
 }

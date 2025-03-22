@@ -3,7 +3,6 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:minipro/firebase/firestore_services.dart';
 import 'package:minipro/Theme/appcolors.dart';
-import 'package:minipro/student/components/alertwindow.dart';
 import 'package:minipro/student/components/custom_route.dart';
 import 'package:minipro/student/components/emailtextfield.dart';
 import 'package:minipro/student/components/myclipper.dart';
@@ -336,6 +335,7 @@ class _SignupPageState extends State<SignupPage> {
           'isApproved': false,
           'FCM_tokens': token,
           'profileUpdated': false,
+          'present': true,
         },
       );
       await FirestoreServices().getUserData();

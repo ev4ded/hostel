@@ -10,7 +10,7 @@ class AppColors {
   //light
   static Color textColorLight = Colors.black;
   static Color alretWindowColorLight = Color.fromRGBO(200, 200, 200, 1);
-  static Color containerColorLight = Color.fromRGBO(220, 220, 220, 1);
+  static Color containerColorLight = Color.fromRGBO(200, 200, 200, 1);
   static Color tileColorLight = Color.fromRGBO(210, 200, 195, 1);
   static Color detailsCLight = Color.fromRGBO(155, 165, 180, 1);
   //both

@@ -80,7 +80,7 @@ class FirestoreServices {
       User? user = FirebaseAuth.instance.currentUser;
       if (user == null) return null;
       DocumentSnapshot userDoc =
-          await _firestore.collection("Udetails").doc(user.uid).get();
+          await _firestore.collection("users").doc(user.uid).get();
       if (userDoc.exists) {
         return userDoc.data() as Map<String, dynamic>;
       } else {
