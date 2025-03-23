@@ -14,6 +14,7 @@ Stream<List<QueryDocumentSnapshot>> WardenApproval(String hostelId) {
   return FirebaseFirestore.instance
       .collection("users")
       .where('hostelId', isEqualTo: hostelId)
+      .where('role', isEqualTo: 'warden')
       .where('isApproved', isEqualTo: false)
       .snapshots()
       .map((snapshot) => snapshot.docs);
