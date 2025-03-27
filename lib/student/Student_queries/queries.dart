@@ -81,22 +81,3 @@ Future<String?> getLatestLeaveRequest() async {
     return null;
   }
 }
-/*Future<String?> getBadges() async {
-  try {
-    User? user = FirebaseAuth.instance.currentUser; // Get logged-in user
-    if (user == null) {
-      return null;
-    }
-    DocumentSnapshot snapshot =
-        await FirebaseFirestore.instance.collection("users").doc(uid).get();
-
-    if (snapshot.exists) {
-      String hostelId = snapshot["hostelId"];
-      return hostelId;
-    } else {
-      return null;
-    }
-  } catch (e) {
-    return null;
-  }
-}*/

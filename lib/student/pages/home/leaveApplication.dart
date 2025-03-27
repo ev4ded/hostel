@@ -30,6 +30,7 @@ class _LeaveapplicationState extends State<Leaveapplication> {
   final _reasonController = TextEditingController();
   String status = "";
   bool isloading = true;
+  String type = "";
   @override
   void initState() {
     super.initState();
@@ -159,21 +160,25 @@ class _LeaveapplicationState extends State<Leaveapplication> {
                       height: 10,
                     ),
                     Mydropdownmenu(
-                      bgColor: bgColor,
-                      borderColor: borderColor,
-                      borderRadius: borderRadius,
-                      borderWidth: borderWidth,
-                      hintColor: hintColor,
-                      textColor: textColor,
-                      buttonColor: buttonColor,
-                      list: [
-                        "Casual",
-                        "Medical",
-                        "Exam Leave",
-                        "Vacation Leave",
-                        "Others"
-                      ],
-                    ),
+                        bgColor: bgColor,
+                        borderColor: borderColor,
+                        borderRadius: borderRadius,
+                        borderWidth: borderWidth,
+                        hintColor: hintColor,
+                        textColor: textColor,
+                        buttonColor: buttonColor,
+                        list: [
+                          "Casual",
+                          "Medical",
+                          "Exam Leave",
+                          "Vacation Leave",
+                          "Others"
+                        ],
+                        getvalue: (value) {
+                          setState(() {
+                            type = value;
+                          });
+                        }),
                     SizedBox(
                       height: 20,
                     ),
@@ -221,6 +226,7 @@ class _LeaveapplicationState extends State<Leaveapplication> {
           "to": to,
           "status": "pending",
           "created_at": FieldValue.serverTimestamp(),
+          'type': type,
         });
         _showSnackBar("Leave application submitted successfully");
         Future.delayed(Duration(seconds: 1), () {

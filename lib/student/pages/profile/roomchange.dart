@@ -43,7 +43,7 @@ class _RoomchangeState extends State<Roomchange> {
         await _firestoreServices.getUserDetails();
     if (userDetails != null) {
       setState(() {
-        name = userDetails["full_name"];
+        name = userDetails["username"];
         gender = userDetails["gender"] ?? "";
         if (gender == "" || gender == "Other") {
           img = "cat";

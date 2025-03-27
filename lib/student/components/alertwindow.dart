@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:minipro/Theme/appcolors.dart';
 import 'package:minipro/student/components/custom_route.dart';
 import 'package:minipro/student/components/mysnackbar.dart';
@@ -335,66 +336,122 @@ void editProfile(BuildContext context) {
   );
 }
 
-void badge(BuildContext context, List badges) {
+Future<Map<String, dynamic>?> badge(
+    BuildContext context, List<dynamic> badges) async {
   final Map<String, dynamic> colorsList = {
-    'Newbie': LinearGradient(colors: [Color(0xFF4A148C), Color(0xFF7B1FA2)]),
-    'Resident': LinearGradient(colors: [Color(0xFF263238), Color(0xFF455A64)]),
+    'Newbie': LinearGradient(colors: [Color(0xFF00C9FF), Color(0xFF92FE9D)]),
+    'Resident': LinearGradient(colors: [Color(0xFFFFD700), Color(0xFFFFA500)]),
     'Hostel Elite':
-        LinearGradient(colors: [Color(0xFFFF6D00), Color(0xFFFFD600)])
+        LinearGradient(colors: [Color(0xFFFF6D00), Color(0xFFFFD600)]),
   };
 
-  showDialog(
+  return await showDialog<Map<String, dynamic>>(
     context: context,
     barrierDismissible: false,
     builder: (BuildContext context) {
-      return PopScope(
-        canPop: false,
-        child: Stack(
-          children: [
-            BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
-                child: Container(
-                  color: Colors.black.withAlpha(10),
-                )),
-            Dialog(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30),
-              ),
-              backgroundColor: AppColors.getAlertWindowC(context),
-              child: ListView.builder(
-                itemCount: badges.length,
-                itemBuilder: (context, index) {
-                  return Container(
-                    margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                    padding: EdgeInsets.all(16),
-                    height: 80,
-                    decoration: BoxDecoration(
-                      gradient: colorsList[badges[index]],
-                      borderRadius: BorderRadius.circular(12),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black26,
-                          blurRadius: 4,
-                          spreadRadius: 2,
+      return Stack(
+        children: [
+          BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
+            child: Container(color: Colors.black.withAlpha(10)),
+          ),
+          Dialog(
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+            //backgroundColor: Colors.deepPurpleAccent,
+            child: Container(
+              decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Color(0xFF0F2027),
+                      Color(0xFF203A43),
+                      Color(0xFF2C5364)
+                    ], // Gold → Deep Orange
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(30)),
+              padding: EdgeInsets.all(16),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(height: 10),
+                  Row(
+                    children: [
+                      Icon(LucideIcons.award),
+                      SizedBox(width: 5),
+                      Text(
+                        "User Badges",
+                        style: GoogleFonts.poppins(
+                            fontWeight: FontWeight.bold, fontSize: 18),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: badges.length,
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.pop(context, {
+                              'badgeName': badges[index],
+                              'gradient': colorsList[badges[index]],
+                            });
+                          },
+                          child: Container(
+                            height: 50,
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.black),
+                              gradient: colorsList[badges[index]],
+                              borderRadius: BorderRadius.circular(12),
+                              boxShadow: [
+                                BoxShadow(
+                                    color: Colors.black26,
+                                    blurRadius: 4,
+                                    spreadRadius: 2),
+                              ],
+                            ),
+                            child: Center(
+                              child: Text(
+                                badges[index],
+                                style: GoogleFonts.inter(
+                                    color: Colors.black, fontSize: 16),
+                              ),
+                            ),
+                          ),
                         ),
-                      ],
-                    ),
-                    child: Center(
+                      );
+                    },
+                  ),
+                  SizedBox(height: 15),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(
+                            context); // Close the dialog without selecting
+                      },
+                      style: ButtonStyle(
+                        backgroundColor:
+                            WidgetStatePropertyAll(Colors.amberAccent),
+                      ),
                       child: Text(
-                        badges[index]['title'],
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        "Close",
+                        style: GoogleFonts.inter(
+                            color: Colors.black, fontWeight: FontWeight.w500),
                       ),
                     ),
-                  );
-                },
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       );
     },
   );

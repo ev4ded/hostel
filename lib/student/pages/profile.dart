@@ -37,10 +37,13 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
   Color flipC = Color.fromRGBO(237, 208, 176, 1);
   bool present = true;
   String name = "profile";
+  List<dynamic> collectBadges = [];
   static const double allowedRadius = 500;
   late AnimationController _animationController;
   late Animation<double> _animation;
   bool isloading = false;
+  String? badgeText;
+  LinearGradient? badgeGradient;
   @override
   void initState() {
     super.initState();
@@ -74,6 +77,9 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
     setState(() {
       present = userData!['present'] ?? true;
       name = userData!["dp"] ?? "profile";
+      collectBadges = userData!['badges'];
+      badgeText = userData!['badgeName'];
+      badgeGradient = userData!['badgeGradient'];
     });
     Map<String, dynamic>? temp = await getHostelDetails(userData!["hostelId"]);
     if (temp != null) {
@@ -163,22 +169,49 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                                       children: [
                                         // Role
                                         GestureDetector(
-                                          //onTap: (){badge(context,)},
+                                          onTap: () async {
+                                            List<dynamic> availableBadges = [
+                                              'Newbie',
+                                              'Resident',
+                                              'Hostel Elite'
+                                            ];
+                                            Map<String, dynamic>?
+                                                selectedBadge = await badge(
+                                                    context, availableBadges);
+
+                                            if (selectedBadge != null) {
+                                              print(selectedBadge['gradient']);
+                                              saveBadge(selectedBadge[
+                                                  'badgeName']); //selectedBadge['gradient']
+                                              setState(() {
+                                                badgeGradient =
+                                                    selectedBadge['gradient'];
+                                                badgeText =
+                                                    selectedBadge['badgeName'];
+                                              });
+                                            } else {
+                                              print('No badge selected');
+                                            }
+                                          },
                                           child: Container(
                                             height: 38,
                                             width: 100,
                                             decoration: BoxDecoration(
                                               borderRadius:
                                                   BorderRadius.circular(20),
-                                              color: detailsC,
+                                              gradient: badgeGradient ??
+                                                  LinearGradient(colors: [
+                                                    Color(0xFFFF7E5F),
+                                                    Color(0xFFFFB88C)
+                                                  ]),
                                             ),
                                             child: Center(
                                               child: Text(
-                                                userData!["college_name"] ??
+                                                (badgeText) ??
                                                     userData![
                                                         "role"], // Safely handle null
                                                 style: GoogleFonts.poppins(
-                                                    fontSize: 18,
+                                                    fontSize: 16,
                                                     color: buttonTextC),
                                               ),
                                             ),
@@ -711,13 +744,6 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
       print("errors:$e");
     }
   }
-  /*void _toggleFlip() {
-    Future.delayed(Duration(milliseconds: 250), () {
-      setState(() {
-        present = !present; // Switch content at halfway point
-      });
-    });
-  }*/
 
   @override
   void dispose() {
@@ -733,5 +759,17 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
   void _showCelebrate(String message) {
     if (!mounted) return;
     Mysnackbar.celebrate(context, message);
+  }
+
+  void saveBadge(String name) {
+    // LinearGradient color
+    print(name);
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      FirebaseFirestore.instance.collection('users').doc(user.uid).update({
+        'badgeName': name,
+        //'badgeGradient': grad,
+      });
+    }
   }
 }
