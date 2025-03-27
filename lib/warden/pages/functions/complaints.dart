@@ -47,9 +47,9 @@ class _ComplaintsState extends State<Complaints>
   PreferredSizeWidget _buildTabBar() {
     return TabBar(
       controller: _tabController,
-      labelColor: const Color.fromARGB(255, 250, 244, 244).withRed(3),
-      unselectedLabelColor: Color(0xFFDCC8C8),
-      indicatorColor: const Color.fromARGB(255, 250, 244, 244).withRed(3),
+      labelColor:Colors.yellowAccent[200],
+      unselectedLabelColor: Colors.grey[400],
+      indicatorColor:Colors.yellowAccent[100],
       indicatorWeight: 3,
       tabs: [
          Tab(child:Text( "Pending",style: GoogleFonts.dmSans(),)),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:minipro/firebase/firestore_services.dart';
+import 'package:minipro/student/pages/profile/changepassword.dart';
 import 'package:minipro/warden/pages/functions/editprofile.dart';
 
 class MyProfile extends StatefulWidget {
@@ -173,9 +174,12 @@ await _firestoreService.getUserData();
                               Ionicons.lock_closed_outline,
                               "Update your security credentials",
                               () {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text("Change Password coming soon!"))
-                                );
+                                Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => Changepassword(),
+                                ),
+                              );
                               },
                             ),
                           
