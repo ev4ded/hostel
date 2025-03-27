@@ -38,7 +38,8 @@ class _WardenlistingState extends State<Wardenlisting>
   }
 
   void getWardenDetails() async {
-    String? id = await fetchAdminHostelId();
+    String uid = FirebaseAuth.instance.currentUser!.uid;
+    String? id = await fetchAdminHostelId(uid);
     if (id != null) {
       setState(() {
         hostelID = id;
@@ -279,7 +280,7 @@ class _WardenlistingState extends State<Wardenlisting>
               }
               if (!snapshot.hasData || snapshot.data!.isEmpty) {
                 return Center(
-                  child: Text("There are no wardens in your hostel"),
+                  child: Text("No new recruitments.."),
                 );
               }
               List<QueryDocumentSnapshot> list = snapshot.data!;

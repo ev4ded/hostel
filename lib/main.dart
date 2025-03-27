@@ -11,7 +11,6 @@ import 'package:provider/provider.dart';
 
 void main() async {
   //debugPaintSizeEnabled = true;
-  //bool loggedIn = await isLoggedIn();
 
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(

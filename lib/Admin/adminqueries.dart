@@ -54,20 +54,17 @@ Future<List<Map<String, dynamic>>?> getWardens(String hostelId) async {
   }
 }
 
-Future<String?> fetchAdminHostelId() async {
+Future<String?> fetchAdminHostelId(String uid) async {
   try {
     User? user = FirebaseAuth.instance.currentUser; // Get logged-in user
     if (user == null) {
       return null;
     }
-    QuerySnapshot snapshot = await FirebaseFirestore.instance
-        .collection("users")
-        .where("role", isEqualTo: "admin")
-        .limit(1)
-        .get();
+    DocumentSnapshot snapshot =
+        await FirebaseFirestore.instance.collection("users").doc(uid).get();
 
-    if (snapshot.docs.isNotEmpty) {
-      String hostelId = snapshot.docs.first["hostelId"];
+    if (snapshot.exists) {
+      String hostelId = snapshot["hostelId"];
       return hostelId;
     } else {
       return null;

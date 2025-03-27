@@ -334,3 +334,68 @@ void editProfile(BuildContext context) {
     },
   );
 }
+
+void badge(BuildContext context, List badges) {
+  final Map<String, dynamic> colorsList = {
+    'Newbie': LinearGradient(colors: [Color(0xFF4A148C), Color(0xFF7B1FA2)]),
+    'Resident': LinearGradient(colors: [Color(0xFF263238), Color(0xFF455A64)]),
+    'Hostel Elite':
+        LinearGradient(colors: [Color(0xFFFF6D00), Color(0xFFFFD600)])
+  };
+
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+      return PopScope(
+        canPop: false,
+        child: Stack(
+          children: [
+            BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
+                child: Container(
+                  color: Colors.black.withAlpha(10),
+                )),
+            Dialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30),
+              ),
+              backgroundColor: AppColors.getAlertWindowC(context),
+              child: ListView.builder(
+                itemCount: badges.length,
+                itemBuilder: (context, index) {
+                  return Container(
+                    margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                    padding: EdgeInsets.all(16),
+                    height: 80,
+                    decoration: BoxDecoration(
+                      gradient: colorsList[badges[index]],
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black26,
+                          blurRadius: 4,
+                          spreadRadius: 2,
+                        ),
+                      ],
+                    ),
+                    child: Center(
+                      child: Text(
+                        badges[index]['title'],
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      );
+    },
+  );
+}

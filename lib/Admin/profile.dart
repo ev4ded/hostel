@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
@@ -35,6 +36,8 @@ class _AdminState extends State<AdminProfile> {
   final upiController = TextEditingController();
   final nameController = TextEditingController();
   bool isloading = true;
+  double numberOfRooms = 1.0;
+  double capacity = 1.0;
   String? hostelID;
 
   @override
@@ -46,7 +49,8 @@ class _AdminState extends State<AdminProfile> {
   }
 
   void fetchUserData() async {
-    String? id = await fetchAdminHostelId();
+    String uid = FirebaseAuth.instance.currentUser!.uid;
+    String? id = await fetchAdminHostelId(uid);
     setState(() {
       hostelID = id;
     });
@@ -55,7 +59,7 @@ class _AdminState extends State<AdminProfile> {
       print(temp);
       setState(() {
         nameController.text = temp!['Admin_name'] ?? "";
-        locationController.text = temp["location"] ?? "";
+        locationController.text = temp["address"] ?? "";
         upiController.text = temp['upi'] ?? "";
         rentController.text = temp["hostel_rent"].toString();
         latefineController.text = temp["late_fine"].toString();
@@ -63,6 +67,8 @@ class _AdminState extends State<AdminProfile> {
             temp["maintenance_charge"].toString();
         messfeesController.text = temp["mess_fees"].toString();
         otherchargesController.text = temp["other_charges"].toString();
+        numberOfRooms = (temp['no_of_room'] ?? 1.0).toDouble();
+        capacity = (temp['no_of_room'] ?? 1.0).toDouble();
         isloading = false;
       });
     }
@@ -199,6 +205,57 @@ class _AdminState extends State<AdminProfile> {
                       hintColor: hintColor,
                     ),
                     SizedBox(height: 15),
+                    Row(
+                      children: [
+                        Text("Total number of room:",
+                            style: GoogleFonts.inter()),
+                        Text(" ${numberOfRooms.toInt()}",
+                            style:
+                                GoogleFonts.inter(fontWeight: FontWeight.bold)),
+                      ],
+                    ),
+                    SizedBox(height: 5),
+                    Slider(
+                      min: 1,
+                      max: 20,
+                      divisions: 20,
+                      value: numberOfRooms,
+                      label: numberOfRooms.toInt().toString(),
+                      activeColor: AppColors.buttonColor,
+                      inactiveColor: Colors.grey[300],
+                      thumbColor: AppColors.buttonColor,
+                      onChanged: (double value) {
+                        setState(() {
+                          numberOfRooms = value;
+                        });
+                      },
+                    ),
+                    SizedBox(height: 15),
+                    Row(
+                      children: [
+                        Text("Capacity per room:", style: GoogleFonts.inter()),
+                        Text(" ${capacity.toInt()}",
+                            style:
+                                GoogleFonts.inter(fontWeight: FontWeight.bold)),
+                      ],
+                    ),
+                    SizedBox(height: 5),
+                    Slider(
+                      min: 1,
+                      max: 20,
+                      divisions: 20,
+                      value: capacity,
+                      label: capacity.toInt().toString(),
+                      activeColor: AppColors.buttonColor,
+                      inactiveColor: Colors.grey[300],
+                      thumbColor: AppColors.buttonColor,
+                      onChanged: (double value) {
+                        setState(() {
+                          capacity = value;
+                        });
+                      },
+                    ),
+                    SizedBox(height: 15),
                     Align(
                       alignment: Alignment.centerRight,
                       child: Padding(
@@ -240,6 +297,9 @@ class _AdminState extends State<AdminProfile> {
     String maintenance = maintenanceChargeController.text.trim();
     String mess = messfeesController.text.trim();
     String other = otherchargesController.text.trim();
+    int numerOfrooms = numberOfRooms.toInt();
+    int cap = capacity.toInt();
+
     if (name.isEmpty ||
         address.isEmpty ||
         upi.isEmpty ||
@@ -266,7 +326,9 @@ class _AdminState extends State<AdminProfile> {
         'other_charges': int.tryParse(other),
         'paid': "",
         'upi': upi,
-        'paymentTime': false
+        'paymentTime': false,
+        'no_of_room': numerOfrooms,
+        'capacity': cap,
       });
       _showSnackBar("details updated");
       Future.delayed(Duration(seconds: 1), () {
@@ -311,42 +373,4 @@ class _AdminState extends State<AdminProfile> {
     }
     return true;
   }
-
-  /*Future<Position?> getCurrentLocation() async {
-    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      _showSnackBar("Location services are disabled.", isError: true);
-      return null;
-    }
-
-    LocationPermission permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        _showSnackBar("Location permission denied.", isError: true);
-        return null;
-      }
-    }
-
-    if (permission == LocationPermission.deniedForever) {
-      _showSnackBar(
-          "Location permission permanently denied. Enable from settings.",
-          isError: true);
-      return null;
-    }
-    LocationSettings locationSettings =
-        LocationSettings(accuracy: LocationAccuracy.high);
-    return await Geolocator.getCurrentPosition(
-        locationSettings: locationSettings);
-  }
-
-  Future<List?> fetchLocation(BuildContext context) async {
-    Position? position = await getCurrentLocation();
-    if (position != null) {
-      return [position.latitude, position.longitude];
-    } else {
-      _showSnackBar("Could not fetch location.", isError: true);
-    }
-    return null;
-  }*/
 }

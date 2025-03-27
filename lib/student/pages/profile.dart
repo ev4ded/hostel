@@ -12,6 +12,7 @@ import 'package:minipro/authentication/fcmtoken.dart';
 import 'package:minipro/firebase/firestore_services.dart';
 import 'package:minipro/authentication/loginpage.dart';
 import 'package:minipro/Theme/appcolors.dart';
+import 'package:minipro/student/components/alertwindow.dart';
 import 'package:minipro/student/components/custom_route.dart';
 import 'package:minipro/student/components/customProfilepopUp.dart';
 import 'package:minipro/student/components/mysnackbar.dart';
@@ -72,12 +73,13 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
     }
     setState(() {
       present = userData!['present'] ?? true;
+      name = userData!["dp"] ?? "profile";
     });
     Map<String, dynamic>? temp = await getHostelDetails(userData!["hostelId"]);
     if (temp != null) {
       hostel = temp;
     }
-    print("present::$present");
+    //print("present::$present");
   }
 
   @override
@@ -86,7 +88,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
     Color containerColor = AppColors.getContainerColor(context);
     Color detailsC = AppColors.buttonColor;
     Color buttonTextC = AppColors.buttonTextColor;
-    print("present:::$present");
+    print("present/$present");
     return Scaffold(
       body: userData == null
           ? Center(
@@ -135,7 +137,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                                       key: ValueKey(name),
                                       backgroundImage: name.isNotEmpty
                                           ? Image.asset(
-                                                  "assets/images/profile/${userData!["dp"]}.jpg")
+                                                  "assets/images/profile/$name.jpg")
                                               .image
                                           : Image.asset(
                                                   "assets/images/profile/profile.png")
@@ -160,7 +162,9 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                                     Row(
                                       children: [
                                         // Role
-                                        Container(
+                                        GestureDetector(
+                                          //onTap: (){badge(context,)},
+                                          child: Container(
                                             height: 38,
                                             width: 100,
                                             decoration: BoxDecoration(
@@ -177,7 +181,9 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                                                     fontSize: 18,
                                                     color: buttonTextC),
                                               ),
-                                            )),
+                                            ),
+                                          ),
+                                        ),
                                         SizedBox(width: 8),
                                         Container(
                                           height: 38,
@@ -205,7 +211,9 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                             ),
                             SizedBox(height: 30),
                             GestureDetector(
-                              onTap: updateStudentStatus,
+                              onTap: () {
+                                updateStudentStatus();
+                              },
                               child: AnimatedBuilder(
                                 animation: _animation,
                                 builder: (context, child) {
@@ -220,32 +228,56 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                                       width: 150,
                                       decoration: BoxDecoration(
                                         color: present
-                                            ? Color.fromRGBO(197, 168, 136, 1)
-                                            : Colors.white,
+                                            ? Colors.white
+                                            : Color.fromRGBO(197, 168, 136, 1),
                                         borderRadius: BorderRadius.circular(10),
                                       ),
-                                      child: present
-                                          ? Container(
-                                              decoration: BoxDecoration(
-                                                  border: Border.all(
+                                      child: (isloading)
+                                          ? Center(
+                                              child:
+                                                  CircularProgressIndicator(),
+                                            )
+                                          : (present)
+                                              ? Container(
+                                                  decoration: BoxDecoration(
+                                                    border: Border.all(
                                                       width: 5,
                                                       color: Color.fromRGBO(
-                                                          197, 168, 136, 1)),
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          10)),
-                                              child: Image.asset(
-                                                "assets/images/cutepng.png",
-                                                fit: BoxFit.fill,
-                                              ))
-                                          : Container(
-                                              decoration: BoxDecoration(
-                                                  color: Color.fromRGBO(
-                                                      197, 168, 136, 1),
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          10)),
-                                            ),
+                                                          197, 168, 136, 1),
+                                                    ),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                  ),
+                                                  child: Column(
+                                                    children: [
+                                                      Expanded(
+                                                        flex: 1,
+                                                        child: Image.asset(
+                                                          "assets/images/cutepng.png",
+                                                          fit: BoxFit.contain,
+                                                        ),
+                                                      ),
+                                                      Text(
+                                                        "INSIDE",
+                                                        style:
+                                                            GoogleFonts.inter(
+                                                                color: Colors
+                                                                    .black,
+                                                                fontSize: 12),
+                                                      )
+                                                    ],
+                                                  ),
+                                                )
+                                              : Container(
+                                                  decoration: BoxDecoration(
+                                                    color: Color.fromRGBO(
+                                                        197, 168, 136, 1),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                  ),
+                                                ),
                                     ),
                                   );
                                 },
@@ -588,7 +620,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
   Future<Position?> getCurrentLocation() async {
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
-      print("⚠ Location services are disabled.");
+      _showSnackBar("cant access your location", isError: true);
       return null;
     }
 
@@ -596,13 +628,15 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
-        print("❌ Location permission denied.");
+        _showSnackBar("Location permission denied.", isError: true);
         return null;
       }
     }
 
     if (permission == LocationPermission.deniedForever) {
-      print("⚠ Location permission permanently denied. Enable from settings.");
+      _showSnackBar(
+          "Location permission permanently denied. Enable from settings.",
+          isError: true);
       return null;
     }
 
@@ -614,8 +648,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
   Future<void> updateStudentStatus() async {
     if (isloading) return; // Prevent multiple taps
     setState(() => isloading = true); // Start loading
-    _showSnackBar("please wait ..updating..");
-
+    print("status-$present");
     Position? studentPosition = await getCurrentLocation();
     if (studentPosition == null) {
       setState(() => isloading = false);
@@ -627,27 +660,28 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
       setState(() => isloading = false);
       return;
     }
-    print("present:$present");
-    if (present && !insideHostel) {
-      print("❌ You must be inside the hostel to mark 'IN'.");
+    print("ddpresent:$present");
+    if (!present && !insideHostel) {
+      _showSnackBar("You must be inside the hostel to mark 'PRESENT'",
+          isError: true);
       return; //return false;
-    } else if (!present) {
-      _showSnackBar("Return back safely");
+    } else if (present) {
+      _showCelebrate("Return safely, see you soon!");
       // && insideHostel
       //print("❌ You must be outside the hostel to mark 'OUT'.");
       _animationController.forward().then((_) {
         update(present);
-        setState(() {
-          present = !present; // Flip the state
-        });
+      });
+      setState(() {
+        present = !present; // Flip the state
       });
     } else {
-      _showSnackBar("Status updated to present..Welcome Back");
+      _showCelebrate("Welcome back! You're now checked in.");
       _animationController.reverse().then((_) {
         update(present);
-        setState(() {
-          present = !present; // Flip the state
-        });
+      });
+      setState(() {
+        present = !present; // Flip the state
       });
       // Save status in Firestore or local database
     }
@@ -694,5 +728,10 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
   void _showSnackBar(String message, {bool isError = false}) {
     if (!mounted) return;
     Mysnackbar.show(context, message, isError: isError);
+  }
+
+  void _showCelebrate(String message) {
+    if (!mounted) return;
+    Mysnackbar.celebrate(context, message);
   }
 }

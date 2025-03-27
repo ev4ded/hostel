@@ -191,22 +191,6 @@ class _HomepageState extends State<Homepage> {
           )
         ],
       ),
-      floatingActionButton: SizedBox(
-        width: 60,
-        height: 60,
-        child: FloatingActionButton(
-          onPressed: () {},
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-          tooltip: "scanner",
-          backgroundColor: iconC,
-          child: Icon(
-            LucideIcons.qrCode,
-            size: 45,
-            color: Colors.black,
-          ),
-        ),
-      ),
     );
   }
 

@@ -336,6 +336,7 @@ class _SignupPageState extends State<SignupPage> {
           'FCM_tokens': token,
           'profileUpdated': false,
           'present': true,
+          'badges': ['newbie']
         },
       );
       await FirestoreServices().getUserData();
