@@ -9,7 +9,6 @@ import 'package:minipro/firebase/firestore_services.dart';
 import 'package:minipro/student/components/mysnackbar.dart';
 import 'package:minipro/student/components/mytextfield.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class Payment extends StatefulWidget {
   const Payment({super.key});
@@ -64,8 +63,8 @@ class _PaymentState extends State<Payment> {
         total = rent + messfees + maintenancefees + fine + otherfees;
         amount = total.toString();
         upiId = hostelDetails?["upi"];
-        paymenttime = hostelDetails?["paymentTime"];
-        paid = hostelDetails?["paid"];
+        paymenttime = hostelDetails?["paymentTime"] ?? false;
+        paid = userDetails?["paid"] ?? "";
         isloading = false;
       });
     }
@@ -403,7 +402,23 @@ class _PaymentState extends State<Payment> {
                   "Payment is successfull!!!",
                   style: GoogleFonts.poppins(
                       color: AppColors.getTextColor(context), fontSize: 18),
-                )
+                ),
+                SizedBox(
+                  height: 15,
+                ),
+                /*ElevatedButton(
+                    onPressed: () {
+                      done();
+                      Navigator.pop(context);
+                    },
+                    style: ButtonStyle(
+                        backgroundColor:
+                            WidgetStatePropertyAll(AppColors.buttonColor)),
+                    child: Text(
+                      "Done",
+                      style: GoogleFonts.inter(
+                          color: Colors.black, fontWeight: FontWeight.w500),
+                    ))*/
               ],
             ),
           ),
@@ -431,7 +446,7 @@ class _PaymentState extends State<Payment> {
                 "nothing to pay for yet",
                 style: GoogleFonts.poppins(
                     color: AppColors.getTextColor(context), fontSize: 18),
-              )
+              ),
             ],
           ),
         ),
@@ -441,15 +456,6 @@ class _PaymentState extends State<Payment> {
 
   String getUpiUrl() {
     return "upi://pay?pa=$upiId&pn=$name&am=$amount&cu=INR&mc=5311&mode=04&purpose=00";
-  }
-
-  Future<void> _launchUPI() async {
-    final Uri uri = Uri.parse(getUpiUrl());
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    } else {
-      print("Could not launch UPI payment app.");
-    }
   }
 
   void showQRCode(BuildContext context) {
@@ -573,6 +579,10 @@ class _PaymentState extends State<Payment> {
           'transaction_id': transcationID.text.trim(),
         });
         Navigator.of(context).pop();
+        FirebaseFirestore.instance.collection("users").doc(tuser.uid).update({
+          'paid': 'processing',
+        });
+        Navigator.of(context).pop();
         _showSnackBar("Fess payment processing began..");
       } catch (e) {
         print(e.toString());
@@ -583,5 +593,17 @@ class _PaymentState extends State<Payment> {
   void _showSnackBar(String message, {bool isError = false}) {
     if (!mounted) return;
     Mysnackbar.show(context, message, isError: isError);
+  }
+
+  void done() async {
+    String uid = FirebaseAuth.instance.currentUser!.uid;
+    try {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(uid)
+          .update({'paid': ""});
+    } catch (e) {
+      print("Firestore update failed: $e");
+    }
   }
 }

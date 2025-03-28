@@ -8,11 +8,11 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:minipro/Admin/adminqueries.dart';
-import 'package:minipro/authentication/fcmtoken.dart';
 import 'package:minipro/firebase/firestore_services.dart';
-import 'package:minipro/authentication/loginpage.dart';
 import 'package:minipro/Theme/appcolors.dart';
+import 'package:minipro/student/Student_queries/queries.dart';
 import 'package:minipro/student/components/alertwindow.dart';
+import 'package:minipro/student/components/badges.dart';
 import 'package:minipro/student/components/custom_route.dart';
 import 'package:minipro/student/components/customProfilepopUp.dart';
 import 'package:minipro/student/components/mysnackbar.dart';
@@ -37,7 +37,8 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
   Color flipC = Color.fromRGBO(237, 208, 176, 1);
   bool present = true;
   String name = "profile";
-  List<dynamic> collectBadges = [];
+  List<dynamic> collectBadges = ["student"];
+  List<String> roommates = ["lonely"];
   static const double allowedRadius = 500;
   late AnimationController _animationController;
   late Animation<double> _animation;
@@ -74,14 +75,19 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
         userData = newUserData;
       });
     }
+    List<String>? myMates =
+        await getRoomates(userData!['hostelId'], userData!['room_no']);
+    print("my mates:$myMates");
     setState(() {
       present = userData!['present'] ?? true;
       name = userData!["dp"] ?? "profile";
-      collectBadges = userData!['badges'];
-      badgeText = userData!['badgeName'];
-      badgeGradient = userData!['badgeGradient'];
+      collectBadges = userData!['badges'] ?? ["student"];
+      badgeText = userData!['badgeName'] ?? "Student";
+      badgeGradient = getbadgesColor(badgeText!);
+      roommates = myMates ?? ["dead beat"];
     });
     Map<String, dynamic>? temp = await getHostelDetails(userData!["hostelId"]);
+    print("hostel:$temp");
     if (temp != null) {
       hostel = temp;
     }
@@ -170,24 +176,16 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                                         // Role
                                         GestureDetector(
                                           onTap: () async {
-                                            List<dynamic> availableBadges = [
-                                              'Newbie',
-                                              'Resident',
-                                              'Hostel Elite'
-                                            ];
-                                            Map<String, dynamic>?
-                                                selectedBadge = await badge(
-                                                    context, availableBadges);
-
+                                            String? selectedBadge = await badge(
+                                                context, collectBadges);
                                             if (selectedBadge != null) {
-                                              print(selectedBadge['gradient']);
-                                              saveBadge(selectedBadge[
-                                                  'badgeName']); //selectedBadge['gradient']
+                                              print(selectedBadge);
+                                              saveBadge(
+                                                  selectedBadge); //selectedBadge['gradient']
                                               setState(() {
-                                                badgeGradient =
-                                                    selectedBadge['gradient'];
-                                                badgeText =
-                                                    selectedBadge['badgeName'];
+                                                badgeText = selectedBadge;
+                                                badgeGradient = getbadgesColor(
+                                                    selectedBadge);
                                               });
                                             } else {
                                               print('No badge selected');
@@ -212,7 +210,9 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                                                         "role"], // Safely handle null
                                                 style: GoogleFonts.poppins(
                                                     fontSize: 16,
-                                                    color: buttonTextC),
+                                                    color: buttonTextC,
+                                                    fontWeight:
+                                                        FontWeight.w500),
                                               ),
                                             ),
                                           ),
@@ -351,7 +351,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                                 Navigator.push(
                                   context,
                                   myRoute(
-                                    Editprofile(),
+                                    Studenteditprofile(),
                                   ),
                                 );
                                 HapticFeedback.heavyImpact();
@@ -471,24 +471,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                               ),
                               onTap: () {
                                 HapticFeedback.heavyImpact();
-                                customPopup(
-                                  context,
-                                  "Are you sure to sign out?",
-                                  () {
-                                    FirebaseAuth.instance.signOut();
-                                    saveLoginState(false);
-                                    User? userid =
-                                        FirebaseAuth.instance.currentUser;
-                                    removeFCMToken(userid!.uid);
-                                    Navigator.pushAndRemoveUntil(
-                                      context,
-                                      myRoute(
-                                        LoginPage(),
-                                      ),
-                                      (route) => false,
-                                    );
-                                  },
-                                );
+                                signout(context);
                               },
                             ),
                             SizedBox(height: 5),
@@ -610,6 +593,8 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                                 ),
                               ),
                               onTap: () {
+                                print(roommates);
+                                getroommates(context, roommates);
                                 HapticFeedback.heavyImpact();
                               },
                             ),
@@ -697,6 +682,9 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
     if (!present && !insideHostel) {
       _showSnackBar("You must be inside the hostel to mark 'PRESENT'",
           isError: true);
+      setState(() {
+        isloading = false;
+      });
       return; //return false;
     } else if (present) {
       _showCelebrate("Return safely, see you soon!");

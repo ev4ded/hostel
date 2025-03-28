@@ -16,7 +16,7 @@ class AppColors {
   //both
   static Color hintColor = Color.fromRGBO(139, 139, 139, 0.5);
   static Color borderColor = Color.fromRGBO(74, 85, 104, 1);
-  static Color buttonColor = Color.fromRGBO(255, 189, 109, 1);
+  static Color buttonColor = Color.fromARGB(255, 214, 163, 5);
   static Color buttonTextColor = Color.fromRGBO(18, 18, 18, 1);
 
   static Color getTextColor(BuildContext context) {

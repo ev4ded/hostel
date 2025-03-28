@@ -7,8 +7,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:minipro/Admin/adminqueries.dart';
 import 'package:minipro/Admin/profile.dart';
 import 'package:minipro/Theme/appcolors.dart';
-import 'package:minipro/authentication/fcmtoken.dart';
-import 'package:minipro/authentication/loginpage.dart';
+import 'package:minipro/student/components/alertwindow.dart';
 import 'package:minipro/student/components/customProfilepopUp.dart';
 import 'package:minipro/student/components/custom_route.dart';
 import 'package:minipro/student/pages/profile/changepassword.dart';
@@ -235,6 +234,7 @@ class _WardenlistingState extends State<Wardenlisting>
                                                             ['docId'],
                                                         wardens![index]
                                                             ['hostelId']);
+                                                    Navigator.pop(context);
                                                   },
                                                 );
                                               },
@@ -369,29 +369,42 @@ class _WardenlistingState extends State<Wardenlisting>
 
   void profile(BuildContext context) {
     showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return Stack(
-            children: [
-              BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
-                child: Container(
-                  color: Colors.black.withAlpha(10),
-                ),
+      context: context,
+      builder: (BuildContext context) {
+        return Stack(
+          children: [
+            BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
+              child: Container(
+                color: Colors.black.withAlpha(10),
               ),
-              Dialog(
-                shape: RoundedRectangleBorder(
+            ),
+            Dialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30),
+              ),
+              backgroundColor:
+                  Colors.transparent, // Make dialog background transparent
+              child: Container(
+                width: MediaQuery.of(context).size.width * 0.8,
+                padding: EdgeInsets.only(top: 8, bottom: 15, left: 8, right: 8),
+                decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(30),
+                  gradient: LinearGradient(
+                    colors: [
+                      Color(0xFF232526), // Dark Grayish Black
+                      Color(0xFF414345), // Slightly lighter black with depth
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
                 ),
-                backgroundColor: AppColors.getAlertWindowC(context),
-                child: Container(
-                  width: MediaQuery.of(context).size.width * 0.8,
-                  padding:
-                      EdgeInsets.only(top: 8, bottom: 15, left: 8, right: 8),
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                      top: 8.0, right: 16, left: 16, bottom: 8),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisSize: MainAxisSize.min,
-                    //mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -401,7 +414,10 @@ class _WardenlistingState extends State<Wardenlisting>
                             child: Text(
                               "Select an option",
                               style: GoogleFonts.poppins(
-                                  fontWeight: FontWeight.w600),
+                                fontWeight: FontWeight.w600,
+                                color:
+                                    Colors.white, // Text color for visibility
+                              ),
                             ),
                           ),
                           IconButton(
@@ -410,133 +426,77 @@ class _WardenlistingState extends State<Wardenlisting>
                             },
                             icon: Icon(
                               LucideIcons.xCircle,
-                              color: Colors.red,
+                              color: Colors.redAccent,
                               size: 25,
                             ),
                           ),
                         ],
                       ),
-                      SizedBox(
-                        height: 5,
+                      SizedBox(height: 5),
+                      _optionButton(
+                        context,
+                        "Profile",
+                        LucideIcons.chevronRight,
+                        () => Navigator.push(context, myRoute(AdminProfile())),
                       ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            myRoute(AdminProfile()),
-                          );
-                        },
-                        child: Container(
-                          height: 60,
-                          decoration: BoxDecoration(
-                            color: AppColors.getContainerColor(context),
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(10),
-                            ),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(15.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  "Profile",
-                                  style: GoogleFonts.poppins(),
-                                ),
-                                Icon(LucideIcons.chevronRight),
-                              ],
-                            ),
-                          ),
-                        ),
+                      _optionButton(
+                        context,
+                        "Sign out",
+                        LucideIcons.chevronRight,
+                        () => signout(context),
                       ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          customPopup(
-                            context,
-                            "Are you sure to sign out?",
-                            () {
-                              FirebaseAuth.instance.signOut();
-                              saveLoginState(false);
-                              User? userid = FirebaseAuth.instance.currentUser;
-                              removeFCMToken(userid!.uid);
-                              Navigator.pushAndRemoveUntil(
-                                context,
-                                myRoute(
-                                  LoginPage(),
-                                ),
-                                (route) => false,
-                              );
-                            },
-                          );
-                        },
-                        child: Container(
-                          height: 60,
-                          decoration: BoxDecoration(
-                            color: AppColors.getContainerColor(context),
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(10),
-                            ),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(15.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  "Sign out",
-                                  style: GoogleFonts.poppins(),
-                                ),
-                                Icon(LucideIcons.chevronRight),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            myRoute(
-                              Changepassword(),
-                            ),
-                          );
-                        },
-                        child: Container(
-                          height: 60,
-                          decoration: BoxDecoration(
-                            color: AppColors.getContainerColor(context),
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(10),
-                            ),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(15.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  "Change password",
-                                  style: GoogleFonts.poppins(),
-                                ),
-                                Icon(LucideIcons.chevronRight),
-                              ],
-                            ),
-                          ),
-                        ),
+                      _optionButton(
+                        context,
+                        "Change password",
+                        LucideIcons.chevronRight,
+                        () =>
+                            Navigator.push(context, myRoute(Changepassword())),
                       ),
                     ],
                   ),
                 ),
-              )
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  /// Helper method for creating gradient buttons
+  Widget _optionButton(
+      BuildContext context, String text, IconData icon, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        height: 60,
+        margin: EdgeInsets.symmetric(vertical: 5),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          gradient: LinearGradient(
+            colors: [
+              Colors.white.withOpacity(0.2),
+              Colors.white.withOpacity(0.05)
             ],
-          );
-        });
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                text,
+                style: GoogleFonts.poppins(color: Colors.white),
+              ),
+              Icon(icon, color: Colors.white),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   Future<void> saveLoginState(bool isLoggedIn) async {
