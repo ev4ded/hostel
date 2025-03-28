@@ -10,7 +10,11 @@ import 'package:minipro/student/pages/profile.dart';
 import 'package:ionicons/ionicons.dart';
 
 class MainNavigator extends StatefulWidget {
-  const MainNavigator({super.key});
+  final int pageno;
+  const MainNavigator({
+    super.key,
+    this.pageno = 0,
+  });
   @override
   State<MainNavigator> createState() => _MainNavigatorState();
 }
@@ -29,6 +33,16 @@ class _MainNavigatorState extends State<MainNavigator> {
   @override
   void initState() {
     super.initState();
+    _selectedIndex = widget.pageno;
+    _connectivitySubscription = Connectivity()
+        .onConnectivityChanged
+        .listen((List<ConnectivityResult> results) {
+      // Handle connectivity changes
+      if (results.isNotEmpty) {
+        ConnectivityResult result = results.first; // Take the first result
+        print("Connectivity changed: $result");
+      }
+    });
     /*WidgetsBinding.instance.addPostFrameCallback((_) {
       checkNetworkStatus();
     });*/
@@ -36,8 +50,11 @@ class _MainNavigatorState extends State<MainNavigator> {
 
   @override
   void dispose() {
-    _connectivitySubscription
-        .cancel(); // Cancel subscription when widget is disposed
+    try {
+      _connectivitySubscription.cancel();
+    } catch (e) {
+      debugPrint("Error canceling subscription: $e");
+    }
     super.dispose();
   }
 

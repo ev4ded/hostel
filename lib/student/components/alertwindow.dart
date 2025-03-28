@@ -5,9 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:minipro/Theme/appcolors.dart';
+import 'package:minipro/authentication/fcmtoken.dart';
+import 'package:minipro/authentication/loginpage.dart';
+import 'package:minipro/student/components/badges.dart';
 import 'package:minipro/student/components/custom_route.dart';
 import 'package:minipro/student/components/mysnackbar.dart';
 import 'package:minipro/student/pages/profile/editprofile.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void showPendingDialog(BuildContext context) {
   Color buttonColor = AppColors.buttonColor;
@@ -315,7 +319,7 @@ void editProfile(BuildContext context) {
                         onPressed: () {
                           Navigator.push(
                             context,
-                            myRoute(Editprofile()),
+                            myRoute(Studenteditprofile()),
                           );
                         },
                         child: Text(
@@ -336,16 +340,8 @@ void editProfile(BuildContext context) {
   );
 }
 
-Future<Map<String, dynamic>?> badge(
-    BuildContext context, List<dynamic> badges) async {
-  final Map<String, dynamic> colorsList = {
-    'Newbie': LinearGradient(colors: [Color(0xFF00C9FF), Color(0xFF92FE9D)]),
-    'Resident': LinearGradient(colors: [Color(0xFFFFD700), Color(0xFFFFA500)]),
-    'Hostel Elite':
-        LinearGradient(colors: [Color(0xFFFF6D00), Color(0xFFFFD600)]),
-  };
-
-  return await showDialog<Map<String, dynamic>>(
+Future<String?> badge(BuildContext context, List<dynamic> badges) async {
+  return await showDialog<String>(
     context: context,
     barrierDismissible: false,
     builder: (BuildContext context) {
@@ -398,16 +394,13 @@ Future<Map<String, dynamic>?> badge(
                         padding: const EdgeInsets.only(bottom: 8.0),
                         child: GestureDetector(
                           onTap: () {
-                            Navigator.pop(context, {
-                              'badgeName': badges[index],
-                              'gradient': colorsList[badges[index]],
-                            });
+                            Navigator.pop(context, badges[index]);
                           },
                           child: Container(
                             height: 50,
                             decoration: BoxDecoration(
                               border: Border.all(color: Colors.black),
-                              gradient: colorsList[badges[index]],
+                              gradient: getbadgesColor(badges[index]),
                               borderRadius: BorderRadius.circular(12),
                               boxShadow: [
                                 BoxShadow(
@@ -435,6 +428,186 @@ Future<Map<String, dynamic>?> badge(
                       onPressed: () {
                         Navigator.pop(
                             context); // Close the dialog without selecting
+                      },
+                      style: ButtonStyle(
+                        backgroundColor:
+                            WidgetStatePropertyAll(Colors.amberAccent),
+                      ),
+                      child: Text(
+                        "Close",
+                        style: GoogleFonts.inter(
+                            color: Colors.black, fontWeight: FontWeight.w500),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      );
+    },
+  );
+}
+
+void signout(BuildContext context) {
+  Future<void> saveLoginState(bool isLoggedIn) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isLoggedIn', isLoggedIn);
+  }
+
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (context) {
+      return Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.black, Colors.grey[900]!, Colors.grey[800]!],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          padding: EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                "Confirmation",
+                style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white),
+              ),
+              SizedBox(height: 10),
+              Text(
+                "Are you sure to sign out?",
+                style: TextStyle(fontSize: 16, color: Colors.white70),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child:
+                        Text("Cancel", style: TextStyle(color: Colors.white)),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      FirebaseAuth.instance.signOut();
+                      saveLoginState(false);
+                      User? userid = FirebaseAuth.instance.currentUser;
+                      removeFCMToken(userid!.uid);
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        myRoute(LoginPage()),
+                        (route) => false,
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.buttonColor, // Button Color
+                    ),
+                    child:
+                        Text("Confirm", style: TextStyle(color: Colors.black)),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
+
+Future<void> getroommates(BuildContext context, List<String> mates) async {
+  return await showDialog(
+    context: context,
+    barrierDismissible: true,
+    builder: (BuildContext context) {
+      return Stack(
+        children: [
+          BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
+            child: Container(color: Colors.black.withAlpha(10)),
+          ),
+          Dialog(
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+            child: Container(
+              decoration: BoxDecoration(
+                color: AppColors.getContainerColor(context),
+                borderRadius: BorderRadius.circular(30),
+              ),
+              padding: EdgeInsets.all(16),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(height: 10),
+                  Row(
+                    children: [
+                      Icon(LucideIcons.users2),
+                      SizedBox(width: 5),
+                      Text(
+                        "Your Roommates",
+                        style: GoogleFonts.poppins(
+                            fontWeight: FontWeight.bold, fontSize: 18),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 15),
+                  ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: mates.length,
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                          child: Container(
+                            height: 50,
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.black),
+                              gradient: LinearGradient(
+                                colors: [Color(0xFF3A3A3A), Color(0xFFB0B0B0)],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                              borderRadius: BorderRadius.circular(12),
+                              boxShadow: [
+                                BoxShadow(
+                                    color: Colors.black26,
+                                    blurRadius: 4,
+                                    spreadRadius: 2),
+                              ],
+                            ),
+                            child: Center(
+                              child: Text(
+                                mates[index].toUpperCase(), // Now showing names
+                                style: GoogleFonts.inter(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500),
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                  SizedBox(height: 15),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
                       },
                       style: ButtonStyle(
                         backgroundColor:

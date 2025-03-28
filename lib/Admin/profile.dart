@@ -1,13 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:minipro/Admin/adminqueries.dart';
+import 'package:minipro/Admin/wardenlisting.dart';
 import 'package:minipro/Theme/appcolors.dart';
+import 'package:minipro/student/components/custom_route.dart';
 import 'package:minipro/student/components/myparafield.dart';
 import 'package:minipro/student/components/mysnackbar.dart';
 import 'package:minipro/student/components/mytextfield.dart';
@@ -39,6 +40,7 @@ class _AdminState extends State<AdminProfile> {
   double numberOfRooms = 1.0;
   double capacity = 1.0;
   String? hostelID;
+  bool updated = false;
 
   @override
   @override
@@ -69,6 +71,7 @@ class _AdminState extends State<AdminProfile> {
         otherchargesController.text = temp["other_charges"].toString();
         numberOfRooms = (temp['no_of_room'] ?? 1.0).toDouble();
         capacity = (temp['no_of_room'] ?? 1.0).toDouble();
+        updated = temp['DetailsUpdated'] ?? false;
         isloading = false;
       });
     }
@@ -79,208 +82,220 @@ class _AdminState extends State<AdminProfile> {
     Color bgColor = AppColors.getContainerColor(context);
     Color textColor = AppColors.getTextColor(context);
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon: Icon(LucideIcons.chevronLeft)),
-        title: Text(
-          "Hostel Details",
-          style: GoogleFonts.poppins(fontSize: 22),
-        ),
-        backgroundColor: Colors.transparent,
-      ),
-      body: (isloading)
-          ? Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Full Name",
-                      style: GoogleFonts.poppins(),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Mytextfield(
-                      controller: nameController,
-                      textColor: textColor,
-                      borderRadius: borderRadius,
-                      borderColor: borderColor,
-                      hinttext: "Enter your full name",
-                      bgColor: bgColor,
-                      hintColor: hintColor,
-                    ),
-                    SizedBox(height: 15),
-                    Text(
-                      "Address",
-                      style: GoogleFonts.poppins(),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Myparafield(
-                      controller: locationController,
-                      noOfLine: 4,
-                      textColor: textColor,
-                      borderRadius: borderRadius,
-                      borderColor: borderColor,
-                      hintText: "Exact location",
-                      bgColor: bgColor,
-                      hintColor: hintColor,
-                    ),
-                    SizedBox(height: 15),
-                    Text("UPI ID"),
-                    Mytextfield(
-                      controller: upiController,
-                      textColor: textColor,
-                      borderRadius: borderRadius,
-                      borderColor: borderColor,
-                      hinttext: "UPI ID of the hostel",
-                      bgColor: bgColor,
-                      hintColor: hintColor,
-                    ),
-                    SizedBox(height: 20),
-                    Text(
-                      "Fees Details",
-                      style: GoogleFonts.poppins(),
-                    ),
-                    SizedBox(height: 10),
-                    Mytextfield(
-                      controller: rentController,
-                      type: TextInputType.number,
-                      textColor: textColor,
-                      borderRadius: borderRadius,
-                      borderColor: borderColor,
-                      hinttext: "Rent amount",
-                      bgColor: bgColor,
-                      hintColor: hintColor,
-                    ),
-                    SizedBox(height: 15),
-                    Mytextfield(
-                      controller: latefineController,
-                      type: TextInputType.number,
-                      textColor: textColor,
-                      borderRadius: borderRadius,
-                      borderColor: borderColor,
-                      hinttext: "late fine amount",
-                      bgColor: bgColor,
-                      hintColor: hintColor,
-                    ),
-                    SizedBox(height: 15),
-                    Mytextfield(
-                      controller: maintenanceChargeController,
-                      type: TextInputType.number,
-                      textColor: textColor,
-                      borderRadius: borderRadius,
-                      borderColor: borderColor,
-                      hinttext: "maintenance amount",
-                      bgColor: bgColor,
-                      hintColor: hintColor,
-                    ),
-                    SizedBox(height: 15),
-                    Mytextfield(
-                      controller: messfeesController,
-                      type: TextInputType.number,
-                      textColor: textColor,
-                      borderRadius: borderRadius,
-                      borderColor: borderColor,
-                      hinttext: "mess fees",
-                      bgColor: bgColor,
-                      hintColor: hintColor,
-                    ),
-                    SizedBox(height: 15),
-                    Mytextfield(
-                      controller: otherchargesController,
-                      type: TextInputType.number,
-                      textColor: textColor,
-                      borderRadius: borderRadius,
-                      borderColor: borderColor,
-                      hinttext: "other charges",
-                      bgColor: bgColor,
-                      hintColor: hintColor,
-                    ),
-                    SizedBox(height: 15),
-                    Row(
-                      children: [
-                        Text("Total number of room:",
-                            style: GoogleFonts.inter()),
-                        Text(" ${numberOfRooms.toInt()}",
-                            style:
-                                GoogleFonts.inter(fontWeight: FontWeight.bold)),
-                      ],
-                    ),
-                    SizedBox(height: 5),
-                    Slider(
-                      min: 1,
-                      max: 20,
-                      divisions: 20,
-                      value: numberOfRooms,
-                      label: numberOfRooms.toInt().toString(),
-                      activeColor: AppColors.buttonColor,
-                      inactiveColor: Colors.grey[300],
-                      thumbColor: AppColors.buttonColor,
-                      onChanged: (double value) {
-                        setState(() {
-                          numberOfRooms = value;
-                        });
-                      },
-                    ),
-                    SizedBox(height: 15),
-                    Row(
-                      children: [
-                        Text("Capacity per room:", style: GoogleFonts.inter()),
-                        Text(" ${capacity.toInt()}",
-                            style:
-                                GoogleFonts.inter(fontWeight: FontWeight.bold)),
-                      ],
-                    ),
-                    SizedBox(height: 5),
-                    Slider(
-                      min: 1,
-                      max: 20,
-                      divisions: 20,
-                      value: capacity,
-                      label: capacity.toInt().toString(),
-                      activeColor: AppColors.buttonColor,
-                      inactiveColor: Colors.grey[300],
-                      thumbColor: AppColors.buttonColor,
-                      onChanged: (double value) {
-                        setState(() {
-                          capacity = value;
-                        });
-                      },
-                    ),
-                    SizedBox(height: 15),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: Padding(
-                        padding: const EdgeInsets.only(right: 8.0),
-                        child: ElevatedButton(
-                          onPressed: () {
-                            submit();
-                          },
-                          style: ButtonStyle(
-                              backgroundColor:
-                                  WidgetStatePropertyAll(buttonColor)),
-                          child: Text(
-                            "Submit",
-                            style: GoogleFonts.poppins(
-                                color: buttonTextColor,
-                                fontWeight: FontWeight.w600),
-                          ),
-                        ),
-                      ),
-                    )
-                  ],
+        appBar: AppBar(
+          leading: (updated)
+              ? IconButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      myRoute(Wardenlisting()),
+                    );
+                  },
+                  icon: Icon(LucideIcons.chevronLeft),
+                )
+              : Icon(
+                  LucideIcons.chevronLeft,
+                  color: Colors.grey,
                 ),
-              ),
-            ),
-    );
+          title: Text(
+            "Hostel Details",
+            style: GoogleFonts.poppins(fontSize: 22),
+          ),
+          backgroundColor: Colors.transparent,
+        ),
+        body: PopScope(
+          canPop: updated,
+          child: (isloading)
+              ? Center(child: CircularProgressIndicator())
+              : SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Full Name",
+                          style: GoogleFonts.poppins(),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Mytextfield(
+                          controller: nameController,
+                          textColor: textColor,
+                          borderRadius: borderRadius,
+                          borderColor: borderColor,
+                          hinttext: "Enter your full name",
+                          bgColor: bgColor,
+                          hintColor: hintColor,
+                        ),
+                        SizedBox(height: 15),
+                        Text(
+                          "Address",
+                          style: GoogleFonts.poppins(),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Myparafield(
+                          controller: locationController,
+                          noOfLine: 4,
+                          textColor: textColor,
+                          borderRadius: borderRadius,
+                          borderColor: borderColor,
+                          hintText: "Exact location",
+                          bgColor: bgColor,
+                          hintColor: hintColor,
+                        ),
+                        SizedBox(height: 15),
+                        Text("UPI ID"),
+                        Mytextfield(
+                          controller: upiController,
+                          textColor: textColor,
+                          borderRadius: borderRadius,
+                          borderColor: borderColor,
+                          hinttext: "UPI ID of the hostel",
+                          bgColor: bgColor,
+                          hintColor: hintColor,
+                        ),
+                        SizedBox(height: 20),
+                        Text(
+                          "Fees Details",
+                          style: GoogleFonts.poppins(),
+                        ),
+                        SizedBox(height: 10),
+                        Mytextfield(
+                          controller: rentController,
+                          type: TextInputType.number,
+                          textColor: textColor,
+                          borderRadius: borderRadius,
+                          borderColor: borderColor,
+                          hinttext: "Rent amount",
+                          bgColor: bgColor,
+                          hintColor: hintColor,
+                        ),
+                        SizedBox(height: 15),
+                        Mytextfield(
+                          controller: latefineController,
+                          type: TextInputType.number,
+                          textColor: textColor,
+                          borderRadius: borderRadius,
+                          borderColor: borderColor,
+                          hinttext: "late fine amount",
+                          bgColor: bgColor,
+                          hintColor: hintColor,
+                        ),
+                        SizedBox(height: 15),
+                        Mytextfield(
+                          controller: maintenanceChargeController,
+                          type: TextInputType.number,
+                          textColor: textColor,
+                          borderRadius: borderRadius,
+                          borderColor: borderColor,
+                          hinttext: "maintenance amount",
+                          bgColor: bgColor,
+                          hintColor: hintColor,
+                        ),
+                        SizedBox(height: 15),
+                        Mytextfield(
+                          controller: messfeesController,
+                          type: TextInputType.number,
+                          textColor: textColor,
+                          borderRadius: borderRadius,
+                          borderColor: borderColor,
+                          hinttext: "mess fees",
+                          bgColor: bgColor,
+                          hintColor: hintColor,
+                        ),
+                        SizedBox(height: 15),
+                        Mytextfield(
+                          controller: otherchargesController,
+                          type: TextInputType.number,
+                          textColor: textColor,
+                          borderRadius: borderRadius,
+                          borderColor: borderColor,
+                          hinttext: "other charges",
+                          bgColor: bgColor,
+                          hintColor: hintColor,
+                        ),
+                        SizedBox(height: 15),
+                        Row(
+                          children: [
+                            Text("Total number of room:",
+                                style: GoogleFonts.inter()),
+                            Text(" ${numberOfRooms.toInt()}",
+                                style: GoogleFonts.inter(
+                                    fontWeight: FontWeight.bold)),
+                          ],
+                        ),
+                        SizedBox(height: 5),
+                        Slider(
+                          min: 1,
+                          max: 20,
+                          divisions: 20,
+                          value: numberOfRooms,
+                          label: numberOfRooms.toInt().toString(),
+                          activeColor: AppColors.buttonColor,
+                          inactiveColor: Colors.grey[300],
+                          thumbColor: AppColors.buttonColor,
+                          onChanged: (double value) {
+                            setState(() {
+                              numberOfRooms = value;
+                            });
+                          },
+                        ),
+                        SizedBox(height: 15),
+                        Row(
+                          children: [
+                            Text("Capacity per room:",
+                                style: GoogleFonts.inter()),
+                            Text(" ${capacity.toInt()}",
+                                style: GoogleFonts.inter(
+                                    fontWeight: FontWeight.bold)),
+                          ],
+                        ),
+                        SizedBox(height: 5),
+                        Slider(
+                          min: 1,
+                          max: 20,
+                          divisions: 20,
+                          value: capacity,
+                          label: capacity.toInt().toString(),
+                          activeColor: AppColors.buttonColor,
+                          inactiveColor: Colors.grey[300],
+                          thumbColor: AppColors.buttonColor,
+                          onChanged: (double value) {
+                            setState(() {
+                              capacity = value;
+                            });
+                          },
+                        ),
+                        SizedBox(height: 15),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: ElevatedButton(
+                              onPressed: () {
+                                submit();
+                              },
+                              style: ButtonStyle(
+                                  backgroundColor:
+                                      WidgetStatePropertyAll(buttonColor)),
+                              child: Text(
+                                "Submit",
+                                style: GoogleFonts.poppins(
+                                    color: buttonTextColor,
+                                    fontWeight: FontWeight.w600),
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+        ));
   }
 
   Future<void> saveLoginState(bool isLoggedIn) async {
@@ -329,11 +344,15 @@ class _AdminState extends State<AdminProfile> {
         'paymentTime': false,
         'no_of_room': numerOfrooms,
         'capacity': cap,
+        'DetailsUpdated': true
       });
       _showSnackBar("details updated");
       Future.delayed(Duration(seconds: 1), () {
         if (context.mounted) {
-          Navigator.pop(context);
+          Navigator.push(
+            context,
+            myRoute(Wardenlisting()),
+          );
         }
       });
     }

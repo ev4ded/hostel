@@ -1,8 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:minipro/boardingpage.dart';
 import 'package:minipro/firebase/firestore_services.dart';
 import 'package:minipro/Theme/appcolors.dart';
+import 'package:minipro/splashscreen.dart';
 import 'package:minipro/student/components/custom_route.dart';
 import 'package:minipro/student/components/emailtextfield.dart';
 import 'package:minipro/student/components/myclipper.dart';
@@ -12,7 +14,6 @@ import 'package:minipro/student/components/mysnackbar.dart';
 import 'package:minipro/student/components/mytextfield.dart';
 import 'package:minipro/authentication/loginpage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:minipro/splashscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SignupPage extends StatefulWidget {
@@ -51,7 +52,6 @@ class _SignupPageState extends State<SignupPage> {
   }
 
   String? role;
-  final _formKey = GlobalKey<FormState>();
   void listen(String text) {
     setState(() {
       _errors[text] = false;
@@ -315,7 +315,6 @@ class _SignupPageState extends State<SignupPage> {
           .createUserWithEmailAndPassword(email: email, password: password);
       //await FirestoreServices().getUserData();
       await _auth.currentUser?.reload();
-      User? user = _auth.currentUser;
       /*if (user != null && !user.emailVerified) {
         //_showSnackBar("Verification email sent.Please check your inbox.");
         if (!mounted) return;
@@ -336,7 +335,8 @@ class _SignupPageState extends State<SignupPage> {
           'FCM_tokens': token,
           'profileUpdated': false,
           'present': true,
-          'badges': ['newbie']
+          'boardingPage': false,
+          'badges': ['Student', 'Newbie']
         },
       );
       await FirestoreServices().getUserData();

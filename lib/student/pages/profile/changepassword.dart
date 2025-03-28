@@ -129,7 +129,9 @@ class _ChangepasswordState extends State<Changepassword> {
                         WidgetStatePropertyAll(AppColors.buttonColor)),
                 child: Text(
                   "Reset password",
-                  style: GoogleFonts.poppins(color: AppColors.buttonTextColor),
+                  style: GoogleFonts.poppins(
+                      color: AppColors.buttonTextColor,
+                      fontWeight: FontWeight.w500),
                 ),
               )
             ],

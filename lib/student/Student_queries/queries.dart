@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:minipro/firebase/firestore_services.dart';
 
 Stream<List<QueryDocumentSnapshot>> getStudentMaintenance(String uid) {
   return FirebaseFirestore.instance
@@ -78,6 +79,46 @@ Future<String?> getLatestLeaveRequest() async {
     }
     return null;
   } catch (e) {
+    return null;
+  }
+}
+
+Future<List<String>?> getRoomates(String hostelId, String roomno) async {
+  List<String> mates = [];
+  try {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      DocumentSnapshot doc = await FirebaseFirestore.instance
+          .collection("hostels")
+          .doc(hostelId)
+          .collection('rooms')
+          .doc(roomno)
+          .get();
+      if (doc.exists) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        List occupants = data['occupants'] ?? [];
+        for (var occupant in occupants) {
+          if (occupant != user.uid) {
+            DocumentSnapshot userDoc = await FirebaseFirestore.instance
+                .collection('users')
+                .doc(occupant)
+                .get();
+            if (userDoc.exists) {
+              String name = userDoc['username'] ?? 'Unknown';
+              //print("name:${userDoc['username']}");
+              mates.add(name);
+            } else {
+              mates.add('Unknown');
+            }
+          }
+        }
+      }
+      print("mates:$mates");
+      return mates;
+    }
+    return null;
+  } catch (e) {
+    print("Error fetching roommates: $e");
     return null;
   }
 }

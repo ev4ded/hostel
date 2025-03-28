@@ -66,6 +66,8 @@ dependencies:
   geocoding: ^3.0.0
   geolocator: ^13.0.3
   animated_snack_bar: ^0.4.0
+  smooth_page_indicator: ^1.2.1
+  introduction_screen: ^3.1.17
   
 dev_dependencies:
   flutter_test:

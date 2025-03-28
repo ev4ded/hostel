@@ -196,6 +196,11 @@ class _CregisterState extends State<Cregister> {
             'created_at': FieldValue.serverTimestamp(),
           },
         );
+        print('score:${(userData!['score'] ?? 0) + 5}');
+        FirebaseFirestore.instance
+            .collection("users")
+            .doc(user.uid)
+            .update({'score': ((userData!['score'] ?? 0) + 5)});
         _showSnackBar("request send");
         Future.delayed(Duration(seconds: 1), () {
           if (context.mounted) {

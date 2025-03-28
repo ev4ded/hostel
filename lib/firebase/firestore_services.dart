@@ -15,8 +15,10 @@ class FirestoreServices {
     try {
       User? user = FirebaseAuth.instance.currentUser;
       if (user == null) return;
-      DocumentSnapshot userDoc =
-          await _firestore.collection("users").doc(user.uid).get();
+      DocumentSnapshot userDoc = await _firestore
+          .collection("users")
+          .doc(user.uid)
+          .get(const GetOptions(source: Source.server));
       if (userDoc.exists) {
         Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
         SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -51,28 +53,32 @@ class FirestoreServices {
   }
 
   Future<List> getUserRoleandVerified() async {
+    await getUserData();
     Map<String, dynamic>? user = await getCachedUserData();
     String role = "";
     bool isVerified = false;
     bool deleted = false;
+    bool shown = false;
     try {
       if (user != null) {
         role = user["role"] ?? "";
         isVerified = user["isApproved"] ?? false;
         deleted = user["deleted"] ?? false;
-        print("delete inside query:${user["deleted"]}");
+        shown = user["boardingPage"] ?? false;
+        print("boarding page:$user");
       } else {
         await getUserData();
         user = await getCachedUserData();
         role = user!["role"] ?? "";
         isVerified = user["isApproved"] ?? false;
         deleted = user["deleted"] ?? false;
-        print("delete inside query:${user["deleted"]}");
+        shown = user["boardingPage"] ?? false;
+        print("boarding page:::${user["boardingPage"]}");
       }
     } catch (e) {
       print("error :$e");
     }
-    return [role, isVerified, deleted];
+    return [role, isVerified, deleted, shown];
   }
 
   Future<Map<String, dynamic>?> getUserDetails() async {

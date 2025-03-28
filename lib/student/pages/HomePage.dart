@@ -2,7 +2,6 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:lucide_icons/lucide_icons.dart';
 import 'package:minipro/Theme/appcolors.dart';
 import 'package:minipro/Theme/fonts.dart';
 import 'package:minipro/student/components/custom_route.dart';
@@ -24,13 +23,9 @@ class _HomepageState extends State<Homepage> {
   @override
   Widget build(BuildContext context) {
     Color containerColor = AppColors.getContainerColor(context);
-    Color iconC = AppColors.buttonColor;
     //double height = MediaQuery.of(context).size.height;
     double cheight = 65;
     String wish;
-    void popfuction() {
-      Navigator.of(context).pop();
-    }
 
     var morning = [
       "Good morning! Shine bright today!",

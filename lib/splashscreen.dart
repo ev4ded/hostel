@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:minipro/Admin/wardenlisting.dart';
+import 'package:minipro/boardingpage.dart';
 import 'package:minipro/deleted.dart';
 import 'package:minipro/student/components/custom_route.dart';
 import 'package:minipro/notverfied.dart';
@@ -31,6 +32,7 @@ class _SplashscreenState extends State<Splashscreen> {
     String role = roleandVerified[0];
     bool isVerified = roleandVerified[1];
     bool deleted = roleandVerified[2];
+    bool shown = roleandVerified[3];
     //await Future.delayed(Duration(seconds: 2));
     print("$isVerified");
     if (!mounted) return;
@@ -39,9 +41,12 @@ class _SplashscreenState extends State<Splashscreen> {
     if (deleted) {
       page = Deleted();
     } else if (isLoggedIn && role == "admin") {
-      page = Wardenlisting();
+      print("shown:$shown");
+      (shown) ? (page = Wardenlisting()) : (page = Boardingpage(role: role));
     } else if (isLoggedIn && !isVerified) {
       page = Studentnotverfied();
+    } else if (isLoggedIn && !shown) {
+      page = Boardingpage(role: role);
     } else if (isLoggedIn && role == "warden") {
       page = MyNavigation();
     } else if (isLoggedIn && role == "student") {
