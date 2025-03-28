@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:minipro/Theme/appcolors.dart';
 import 'package:minipro/warden/components/my_drawer.dart';
 import 'package:minipro/warden/pages/functions/Vacate.dart';
 import 'package:minipro/warden/pages/functions/complaints.dart';
 import 'package:minipro/warden/pages/functions/leave.dart';
 import 'package:minipro/warden/pages/functions/maintenance.dart';
 import 'package:minipro/warden/pages/functions/menuupdate.dart';
+import 'package:minipro/warden/pages/functions/paymentlist.dart';
 import 'package:minipro/warden/pages/functions/roomchange.dart';
 import 'package:minipro/warden/pages/functions/studentapprove.dart';
-import 'package:minipro/warden/pages/functions/studentlist.dart';
+//import 'package:minipro/warden/pages/functions/studentlist.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -36,7 +38,7 @@ class _HomePageState extends State<HomePage> {
                 width: double.infinity,
                 padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 20.0),
                 decoration: BoxDecoration(
-                  color:  const Color.fromARGB(255, 40, 130, 203),
+                  color: AppColors.getWardentile(context),
                   borderRadius: BorderRadius.circular(10),
                   boxShadow: [
                     BoxShadow(
@@ -89,7 +91,8 @@ class _HomePageState extends State<HomePage> {
                   _buildMenuItem(Ionicons.fast_food_outline, "Mess Menu Update", () => _navigateTo(context, UpdateMessMenu())),
                   _buildMenuItem(Ionicons.people_circle_outline, "Student Approval", () => _navigateTo(context, StudentApproval())),
                   _buildMenuItem(Ionicons.bed_outline, "Room Change", () => _navigateTo(context, RoomChange())),
-                  _buildMenuItem(Ionicons.man_outline, "Student List", () => _navigateTo(context, StudentList())),
+                  _buildMenuItem(Ionicons.cash_outline, "Payment", () => _navigateTo(context,PaidTransactions())),
+                 // _buildMenuItem(Ionicons.man_outline, "Student List", () => _navigateTo(context, StudentList())),
                   _buildMenuItem(Ionicons.exit_outline, "Vacate Requests", () => _navigateTo(context, VacateRequest())),
                    _buildMenuItem(Ionicons.today_outline, "Leave Request", () => _navigateTo(context, LeaveRequests())),
                 ],
@@ -110,7 +113,7 @@ class _HomePageState extends State<HomePage> {
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: const Color.fromARGB(255, 74, 72, 72),
+          color:AppColors.getWardentile(context),
           borderRadius: BorderRadius.circular(10),
           boxShadow: [
             BoxShadow(color: Colors.black.withOpacity(0.2), spreadRadius: 1, blurRadius: 2, offset: Offset(0, 1)),

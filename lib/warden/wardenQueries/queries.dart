@@ -74,113 +74,73 @@ Future<String> getDenialReason(BuildContext context) async {
       ) ??
       "";
 }
-/*Future<String?> selectRoom(BuildContext context, String hostelId) async {
-  String? selectedRoom;
-  List<String> availableRooms = [];
+Future<void> removeStudent(String docId, String hostelId) async {
+  var docRef = FirebaseFirestore.instance.collection('users').doc(docId);
+  var docSnapshot = await docRef.get();
 
-  try {
-    QuerySnapshot roomSnapshot = await FirebaseFirestore.instance
-        .collection("rooms")
-        .where("hostel_id", isEqualTo: hostelId)
-        .where("is_occupied", isEqualTo: false)
-        .get();
+  if (!docSnapshot.exists) return;
 
-    availableRooms = roomSnapshot.docs.map((doc) => doc["room_no"] as String).toList();
+  var data = docSnapshot.data();
+  if (data == null) return;
 
-    if (availableRooms.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("No available rooms in this hostel.")),
-      );
-      return null;
-    }
-  } catch (e) {
-    debugPrint("❌ Error fetching available rooms: $e");
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("Error fetching rooms.")),
-    );
-    return null;
+  String? roomNo = data['room_no']; // Get student's room number
+
+  // Remove student from the room occupants
+  if (roomNo != null && roomNo.isNotEmpty) {
+    var roomRef = FirebaseFirestore.instance
+        .collection('hostels')
+        .doc(hostelId)
+        .collection('rooms')
+        .doc(roomNo);
+
+    await roomRef.update({
+      'occupants': FieldValue.arrayRemove([docId]) // Remove student ID from room
+    });
   }
 
-  return await showDialog<String>(
-    context: context,
-    builder: (context) {
-      return AlertDialog(
-        title: Text("Select a Room", style: GoogleFonts.inter()),
-        content: DropdownButtonFormField<String>(
-          value: selectedRoom,
-          items: availableRooms.map((room) {
-            return DropdownMenuItem(
-              value: room,
-              child: Text("Room $room"),
-            );
-          }).toList(),
-          onChanged: (value) {
-            selectedRoom = value;
-          },
-          decoration: InputDecoration(
-            labelText: "Available Rooms",
-            border: OutlineInputBorder(),
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, null),
-            child: Text("Cancel", style: GoogleFonts.inter()),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              if (selectedRoom == null) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text("Please select a room")),
-                );
-                return;
-              }
-              Navigator.pop(context, selectedRoom);
-            },
-            child: Text("Confirm", style: GoogleFonts.inter()),
-          ),
-        ],
-      );
-    },
-  );
-}*/
-Future<String?> selectRoom(BuildContext context) async {
-  TextEditingController roomController = TextEditingController();
+  // Clear user fields instead of direct deletion
+  //var updates = {for (var key in data.keys) key: FieldValue.delete()};
+ // await docRef.update(updates);
 
-  return await showDialog<String>(
+  // Mark student as deleted
+  await FirebaseFirestore.instance.collection('users').doc(docId).set({
+    'deleted': true,
+  }, SetOptions(merge: true)); // Preserve other fields
+
+  debugPrint("✅ Student $docId removed successfully.");
+}
+
+
+Future<void> showConfirmationDialog({
+  required BuildContext context,
+  required String title,
+  required String message,
+  required String confirmText,
+  required Color confirmColor,
+  required VoidCallback onConfirm,
+ 
+}) async {
+  return showDialog(
     context: context,
-    builder: (context) {
-      return AlertDialog(
-        title: Text("Enter New Room Number", style: GoogleFonts.inter()),
-        content: TextField(
-          controller: roomController,
-          decoration: InputDecoration(
-            hintText: "Enter room number",
-            border: OutlineInputBorder(),
-          ),
-          keyboardType: TextInputType.number,
+    builder: (context) => AlertDialog(
+      title: Text(title),
+      content: Text(message),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: Text('CANCEL'),
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, null),
-            child: Text("Cancel", style: GoogleFonts.inter()),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              String newRoom = roomController.text.trim();
-              if (newRoom.isEmpty) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text("Please enter a room number")),
-                );
-                return;
-              }
-              Navigator.pop(context, newRoom);
-            },
-            child: Text("Confirm", style: GoogleFonts.inter()),
-          ),
-        ],
-      );
-    },
+        ElevatedButton(
+          onPressed: () {
+            Navigator.pop(context);
+            onConfirm(); // Call the provided function when confirmed
+          },
+          style: ElevatedButton.styleFrom(backgroundColor: confirmColor),
+          child: Text(confirmText.toUpperCase()),
+        ),
+      ],
+    ),
   );
 }
+
 

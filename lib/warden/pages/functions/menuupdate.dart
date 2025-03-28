@@ -109,7 +109,7 @@ class _UpdateMessMenuState extends State<UpdateMessMenu> {
           child: Column(
          
             children: [
-               _buildMealCard("breakfast", _breakfastController, Icons.free_breakfast),
+              _buildMealCard("breakfast", _breakfastController, Icons.free_breakfast),
               _buildMealCard("lunch", _lunchController, Icons.restaurant),
               _buildMealCard("snacks", _snacksController, Icons.fastfood),
               _buildMealCard("dinner", _dinnerController, Icons.dinner_dining),

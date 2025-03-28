@@ -152,7 +152,7 @@ class StudentRequestsList extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Image.asset(
-            'assets/images/empty_state.png', // Add an appropriate empty state image
+            'assets/warden/caughtup.png', // Add an appropriate empty state image
             height: 200,
           ),
           Text(
@@ -239,6 +239,10 @@ class StudentRequestsList extends StatelessWidget {
     );
   }
   void approveStudent(String studentId, String hostelId, BuildContext context) async {
+  
+  
+  
+  
   try {
     // Show room selection dialog
     String? selectedRoomNumber = await _showRoomSelectionDialog(context,hostelId);
@@ -294,14 +298,11 @@ class StudentRequestsList extends StatelessWidget {
 
   /// ❌ Deny Student & Provide Reason
   void denyStudent(String studentId, BuildContext context) async {
-    String reason = await getDenialReason(context);
-    if (reason.isEmpty) return;
+    //String reason = await getDenialReason(context);
+    //if (reason.isEmpty) return;
 
     try {
-      await _firestore.collection("users").doc(studentId).update({
-        "isApproved": false,
-        "reason": reason,
-      });
+      await _firestore.collection("users").doc(studentId).delete();
 
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Student Denied!", style: GoogleFonts.poppins())));
     } catch (error) {

@@ -97,7 +97,7 @@ flutter:
     - assets/images/profile/
     - assets/warden/
     - assets/service-account.json
-    - assets/images/paid.png
+    - assets/images/paid.png 
     - .env
     # Optional (for Android)
   # An image asset can refer to one or more resolution-specific "variants", see

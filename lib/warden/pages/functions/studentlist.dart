@@ -20,15 +20,15 @@ class _StudentListState extends State<StudentList> {
 
   Widget _buildInfoRow(IconData icon, String label, String value) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4), // Space between rows
+      padding: const EdgeInsets.symmetric(vertical: 8.0), // Space between rows
       child: Row(
         children: [
-          Icon(icon, color: Colors.blueGrey, size: 20), // Icon with color
+          Icon(icon, color: Colors.blueGrey, size: 22), // Icon with color
           SizedBox(width: 8), // Space between icon & text
           Expanded(
             child: Text(
               '$label: $value',
-              style: TextStyle(fontSize: 14),
+              style:GoogleFonts.inter(fontSize: 16,fontWeight: FontWeight.w500),
               overflow: TextOverflow.ellipsis, // Prevents overflow
             ),
           ),
@@ -54,7 +54,7 @@ class _StudentListState extends State<StudentList> {
   }
 }
 
-  void _showStudentBottomSheet(BuildContext context, Map<String, dynamic> student) {
+  void _showStudentBottomSheet(BuildContext context, Map<String, dynamic> student,String docId) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -91,13 +91,33 @@ class _StudentListState extends State<StudentList> {
               _buildInfoRow(Ionicons.school, 'College', student['college_name']),
               _buildInfoRow(Ionicons.book, 'Course', student['degree']),
               _buildInfoRow(Ionicons.calendar_clear_outline, 'Year', student['year_of_study']),
+              _buildInfoRow(Ionicons.calendar_clear_outline, 'Present', student['present'] == true ? 'Yes' : 'No'),
               SizedBox(height: 10),
-              Center(
-                child: ElevatedButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: Text('Close'),
-                ),
+             Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly, // Space buttons evenly
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: Text('Close'),
+                    ),
+                  ),
+                  SizedBox(width: 10), // Spacing between buttons
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () async { 
+                       
+                        await removeStudent(docId,hostelId!); // Pass the hostelId here
+                        Navigator.pop(context);
+                      },
+
+                      style: ElevatedButton.styleFrom(backgroundColor: Colors.red), // Optional: Red color for "Remove"
+                      child: Text('Remove'),
+                    ),
+                  ),
+                ],
               ),
+
             ],
           ),
         )
@@ -107,6 +127,38 @@ class _StudentListState extends State<StudentList> {
    } );
   
   }
+  
+
+  Future<void> updatePayment() async {
+  try {
+    String? hostelId = await fetchHostelId(); // Fetch the hostel ID dynamically
+    if (hostelId == null) {
+      debugPrint("❌ Hostel ID not found.");
+      return;
+    }
+
+    await FirebaseFirestore.instance.collection("hostels").doc(hostelId).update({
+      "paymentTime": true,
+    });
+
+    debugPrint("✅ Payment Time set to true.");
+    
+    // Show a success message
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Payment Time Set!"), backgroundColor: Colors.green),
+      );
+    }
+  } catch (e) {
+    debugPrint("❌ Error updating paymentTime: $e");
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Failed to update payment time!"), backgroundColor: Colors.red),
+      );
+    }
+  }
+}
+
 
  
   @override
@@ -167,22 +219,26 @@ class _StudentListState extends State<StudentList> {
         }
                 var students = snapshot.data!.docs.where((doc) {
                   var name = doc['username'].toString().toLowerCase();
+                   
+                   
                   return name.contains(searchQuery);
-                }).toList();
+                })
+                .toList();
 
                 return ListView.builder(
                   itemCount: students.length,
                   itemBuilder: (context, index) {
                     var student = students[index];
+                    String docId = student.id; // Get the document ID
 
                     return Card(
-                      margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                      elevation: 2,
+                       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      elevation: 3,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(15),
                       ),
                       child: ListTile(
-                        onTap: () => _showStudentBottomSheet(context, student.data() as Map<String, dynamic>), // Open Bottom Sheet
+                        onTap: () => _showStudentBottomSheet(context, student.data() as Map<String, dynamic>,docId), // Open Bottom Sheet
                         leading: CircleAvatar(
                           radius: 24,
                           backgroundColor: const Color.fromARGB(255, 47, 240, 92),
@@ -192,7 +248,20 @@ class _StudentListState extends State<StudentList> {
                             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                           ),
                         ),
-                        title: Text(student['username'], style: TextStyle(fontWeight: FontWeight.bold)),
+                        title: Row(
+                            children: [
+                              Text(
+                                student['username'],
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              SizedBox(width: 8), // Spacing
+                              Icon(
+                                student['present'] == false? Icons.circle : Icons.circle, 
+                                color: student['present'] == false ?   Colors.red:Colors.green, 
+                                size: 12, // Small indicator
+                              ),
+                            ],
+                          ),
                         subtitle: Text('Room: ${student['room_no']}'),
                         trailing: Icon(Ionicons.chevron_forward_outline, size: 30, color: Colors.grey),
                       ),
@@ -203,6 +272,16 @@ class _StudentListState extends State<StudentList> {
             ),
           ),
         ],
+      ),
+
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () async {
+    await updatePayment();
+  },
+ 
+        label: Text("Ask Payment"),
+        icon: Icon(Ionicons.save),
+        backgroundColor: Colors.green,
       ),
     );
     

@@ -3,6 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:minipro/firebase/firestore_services.dart';
 import 'package:minipro/student/pages/profile/changepassword.dart';
+import 'package:minipro/student/pages/profile/help.dart';
+import 'package:minipro/student/pages/profile/userguidelines.dart';
 import 'package:minipro/warden/pages/functions/editprofile.dart';
 
 class MyProfile extends StatefulWidget {
@@ -182,6 +184,34 @@ await _firestoreService.getUserData();
                               );
                               },
                             ),
+
+                             _buildSettingsButton(
+                              "User Guidelines",
+                              Ionicons.lock_closed_outline,
+                              "Read the guidelines",
+                              () {
+                                Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => Userguidelines(),
+                                ),
+                              );
+                              },
+                            ),
+                             _buildSettingsButton(
+                              "Help & Support",
+                              Ionicons.help_circle_outline,
+                              
+                              "Contact Support",
+                              () {
+                                Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => Help(),
+                                ),
+                              );
+                              },
+                            ),
                           
                           ],
                         ),
@@ -239,11 +269,7 @@ await _firestoreService.getUserData();
               userData?['hostel_name'] ?? 'Not specified',
             ),
             const Divider(height: 24),
-             _infoItem(
-              Ionicons.location_outline,
-              "Location",
-              userData?['location'] ?? 'Not specified',
-            ),
+             
           ],
         ),
       ),

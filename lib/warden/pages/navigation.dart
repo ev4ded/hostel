@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:minipro/warden/pages/settingspage.dart';
+import 'package:minipro/warden/pages/functions/studentlist.dart';
+import 'package:minipro/warden/pages/profile.dart';
 import 'homepage.dart';
-import 'profile.dart';
+
 
 class MyNavigation extends StatefulWidget {
   const MyNavigation({super.key});
@@ -17,8 +18,9 @@ class _MyNavigationState extends State<MyNavigation> {
   int _selectedIndex = 0;
   static const List<Widget> _pages = <Widget>[
     HomePage(),
+    StudentList(),
     MyProfile(),
-    SettingsPage(),
+  
   ];
 
   @override
@@ -45,13 +47,14 @@ class _MyNavigationState extends State<MyNavigation> {
                 text: 'Home',
               ),
               GButton(
+                icon: Ionicons.man_outline,
+                text: 'Student List',
+              ),
+              GButton(
                 icon: Ionicons.person_outline,
                 text: 'Profile',
               ),
-              GButton(
-                icon: Ionicons.settings_outline,
-                text: 'Settings',
-              ),
+              
             ],
             selectedIndex: _selectedIndex,
             onTabChange: (index) {

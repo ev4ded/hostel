@@ -122,8 +122,18 @@ class RequestsList extends StatelessWidget {
         }
 
         if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-          return Center(child: Text("No $status Requests Found"));
-        }
+          return Center(
+            child:
+          Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Image.asset(
+            'assets/warden/caughtup.png', // Add an appropriate empty state image
+            height: 200,
+          ),
+          
+           Text("No $status Requests Found")],),
+    );}
 
         var requests = snapshot.data!.docs;
         debugPrint("Fetched ${requests.length} documents");

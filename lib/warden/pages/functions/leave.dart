@@ -180,12 +180,21 @@ class _LeaveRequestsState extends State<LeaveRequests> with SingleTickerProvider
         
         if (requests.isEmpty) {
           return Center(
-            child: Text(
-              'No Pending Leave Requests',
-              style: GoogleFonts.roboto(
-                fontSize: 18,
-                color: Colors.grey,
-              ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                  Image.asset(
+                    'assets/warden/caughtup.png', // Add an appropriate empty state image
+                    height: 200,
+                  ),
+                Text(
+                  'No Pending Leave Requests',
+                  style: GoogleFonts.roboto(
+                    fontSize: 18,
+                    color: Colors.grey,
+                  ),
+                ),
+              ],
             ),
           );
         }
@@ -283,12 +292,21 @@ class _LeaveRequestsState extends State<LeaveRequests> with SingleTickerProvider
 
         if (currentlyOnLeave.isEmpty) {
           return Center(
-            child: Text(
-              'No Students Currently on Leave',
-              style: GoogleFonts.roboto(
-                fontSize: 18,
-                color: Colors.grey,
-              ),
+            child: Column(
+               mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                  Image.asset(
+                      'assets/warden/caughtup.png', // Add an appropriate empty state image
+                      height: 200,
+                    ),
+                Text(
+                  'No Students Currently on Leave',
+                  style: GoogleFonts.roboto(
+                    fontSize: 18,
+                    color: Colors.grey,
+                  ),
+                ),
+              ],
             ),
           );
         }

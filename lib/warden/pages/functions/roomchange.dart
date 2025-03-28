@@ -26,13 +26,14 @@ class _RoomChangeState extends State<RoomChange> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Room Change Requests",  style: GoogleFonts.inter(fontWeight: FontWeight.w600)),
+      appBar: AppBar(title: Text("Room Change Requests",style: GoogleFonts.inter(fontWeight: FontWeight.w600,color: Colors.white)),
         backgroundColor: Colors.indigo.shade700,
         foregroundColor: Colors.white,
       ),
       body: hostelId == null
           ? Center(child: CircularProgressIndicator())
           : RequestsList(hostelId: hostelId!),
+    
     );
   }
 
@@ -73,7 +74,13 @@ class RequestsList extends StatelessWidget {
         }
 
         if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-          return Center(child: Text("No Pending Requests Found"));
+          return Center(child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.hourglass_empty, size: 50, color: Colors.grey),
+              Text("No Pending Requests Found"),
+            ],
+          ));
         }
 
         var requests = snapshot.data!.docs;
@@ -144,12 +151,211 @@ class RequestsList extends StatelessWidget {
   }
   );
   }
+
+  Future<String?> _showRoomSelectionDialog(BuildContext context, String hostelId) async {
+    // Retrieve hostel and room details
+    DocumentSnapshot hostelSnapshot = await _firestore.collection("hostels").doc(hostelId).get();
+    Map<String, dynamic> hostelData = hostelSnapshot.data() as Map<String, dynamic>;
+    int totalRooms = hostelData["no_of_room"];
+    int capacity = hostelData["capacity"];
+
+    // Fetch room occupancy data
+    QuerySnapshot occupantsSnapshot = await _firestore
+        .collection("hostels")
+        .doc(hostelId)
+        .collection("rooms")
+        .get();
+
+    Map<String, int> roomOccupantsCount = {};
+    for (var doc in occupantsSnapshot.docs) {
+      String roomId = doc.id;
+      Map<String, dynamic> roomData = doc.data() as Map<String, dynamic>;
+      List<dynamic> occupants = roomData.containsKey("occupants") ? roomData["occupants"] : [];
+      roomOccupantsCount[roomId] = occupants.length;
+    }
+
+    return showModalBottomSheet<String>(
+      context: context,
+      isScrollControlled: true,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20))
+      ),
+      builder: (context) => DraggableScrollableSheet(
+        initialChildSize: 0.7,
+        maxChildSize: 0.9,
+        minChildSize: 0.5,
+        expand: false,
+        builder: (_, controller) => Container(
+          padding: EdgeInsets.all(16),
+          child: Column(
+            children: [
+              Text(
+                'Select Room',
+                style: GoogleFonts.poppins(
+                  fontSize: 20, 
+                  fontWeight: FontWeight.bold
+                ),
+              ),
+              SizedBox(height: 16),
+              Expanded(
+                child: GridView.builder(
+                  controller: controller,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 4,
+                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 10,
+                  ),
+                  itemCount: totalRooms,
+                  itemBuilder: (context, index) {
+                    String roomId = (index + 1).toString();
+                    int occupants = roomOccupantsCount[roomId] ?? 0;
+                    bool isFull = occupants >= capacity;
+
+                    return GestureDetector(
+                      onTap: isFull ? null : () => Navigator.pop(context, roomId),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: isFull 
+                            ? Colors.red.shade100 
+                            : Colors.green.shade100,
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                            color: isFull 
+                              ? Colors.red.shade300 
+                              : Colors.green.shade300,
+                            width: 2
+                          ),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Room $roomId', 
+                              style: GoogleFonts.poppins(
+                                color: isFull 
+                                  ? Colors.red.shade700 
+                                  : Colors.green.shade700,
+                                fontWeight: FontWeight.bold
+                              ),
+                            ),
+                            
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   
 Future<void> approveRequest(String studentId, BuildContext context) async {
-  if (!context.mounted) return;  // ✅ Prevent error if widget is deactivated
+  if (!context.mounted) return;  // ✅ Prevents error if widget is deactivated
 
-  String? newRoom = await selectRoom(context);
+  String? newRoom = await _showRoomSelectionDialog(context, hostelId);
   if (newRoom == null || newRoom.isEmpty) return;
+
+  try {
+    DocumentSnapshot studentDoc =
+        await FirebaseFirestore.instance.collection("users").doc(studentId).get();
+
+    if (!studentDoc.exists) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Student not found!")),
+        );
+      }
+      return;
+    }
+
+    String oldRoom = studentDoc["room_no"] ?? "";
+
+    WriteBatch batch = FirebaseFirestore.instance.batch();
+
+    // ✅ Ensure the new room document exists before updating
+    DocumentReference newRoomRef = FirebaseFirestore.instance
+        .collection("hostels")
+        .doc(hostelId)
+        .collection("rooms")
+        .doc(newRoom);
+
+    DocumentSnapshot newRoomDoc = await newRoomRef.get();
+    if (!newRoomDoc.exists) {
+      batch.set(newRoomRef, {"occupants": []}, SetOptions(merge: true));
+    }
+
+    // ✅ Update student's room number
+    batch.update(FirebaseFirestore.instance.collection("users").doc(studentId), {
+      "room_no": newRoom,
+    });
+
+    // ✅ Remove student from old room occupants list
+    if (oldRoom.isNotEmpty) {
+      DocumentReference oldRoomRef = FirebaseFirestore.instance
+          .collection("hostels")
+          .doc(hostelId)
+          .collection("rooms")
+          .doc(oldRoom);
+
+      batch.update(oldRoomRef, {
+        "occupants": FieldValue.arrayRemove([studentId]),
+      });
+    }
+
+    // ✅ Add student to new room occupants list
+    batch.update(newRoomRef, {
+      "occupants": FieldValue.arrayUnion([studentId]),
+    });
+
+    // ✅ Mark request as approved
+    batch.update(FirebaseFirestore.instance.collection("room_change").doc(studentId), {
+      "status": "approved",
+      "approved_room": newRoom,
+    });
+
+    await batch.commit();
+
+    // ✅ Send FCM Notification
+    List<String> fcmToken = (studentDoc["FCM_tokens"] as List<dynamic>?)
+            ?.map((e) => e.toString())
+            .toList() ?? [];
+
+    if (fcmToken.isNotEmpty) {
+      await FCMService.sendNotification(
+        fcmToken: fcmToken,
+        title: "Room Change Approved",
+        body: "Your room change request has been approved! Your new room is $newRoom.",
+      );
+    }
+
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Room changed successfully!"), backgroundColor: Colors.green),
+      );
+    }
+  } catch (e) {
+    debugPrint("❌ Error updating room: $e");
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error updating room!")),
+      );
+    }
+  }
+}
+
+
+
+
+void denyRequest(String studentId, BuildContext context) async {
+  if (!context.mounted) return;  
+
+  String reason = await getDenialReason(context);
+  if (reason.isEmpty) return;
 
   try {
     DocumentSnapshot studentDoc =
@@ -163,81 +369,34 @@ Future<void> approveRequest(String studentId, BuildContext context) async {
     }
 
     await FirebaseFirestore.instance.collection("room_change").doc(studentId).update({
-      "status": "approved",
-      "approved_room": newRoom,
+      "status": "denied",
+      "reason": reason,
     });
 
-    await FirebaseFirestore.instance.collection("users").doc(studentId).update({
-      "room_no": newRoom,
-    });
-
+    // ✅ Send FCM Notification
     List<String> fcmToken = (studentDoc["FCM_tokens"] as List<dynamic>?)
             ?.map((e) => e.toString())
             .toList() ??
         [];
 
-   if (fcmToken.isNotEmpty) {
+    if (fcmToken.isNotEmpty) {
       print("✅ Sending FCM Notification...");
       await FCMService.sendNotification(
         fcmToken: fcmToken,
-        title: "Room Change Approved",
-        body: "Your room change request has been approved! Your new room is $newRoom.",
+        title: "Room Change Denied",
+        body: "Your room change request has been denied. Reason: $reason",
       );
-
-     
     }
 
-    if (context.mounted) {  // ✅ Ensure context is valid
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Room changed successfully!"), backgroundColor: Colors.green),
-      );
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Request denied!")));
     }
   } catch (e) {
-    debugPrint("❌ Error updating room: $e");
+    debugPrint("❌ Error denying request: $e");
     if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error updating room!")));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error denying request!")));
     }
   }
 }
 
-
-void denyRequest(String studentId, BuildContext context) async {
-  if (!context.mounted) return;  // ✅ Prevent error if widget is deactivated
-
-  String reason = await getDenialReason(context);
-  if (reason.isEmpty) return;
-
-  DocumentSnapshot studentDoc =
-      await FirebaseFirestore.instance.collection("users").doc(studentId).get();
-  List<String> fcmToken = (studentDoc["FCM_tokens"] as List<dynamic>?)
-          ?.map((e) => e.toString())
-          .toList() ??
-      [];
-
-  if (!studentDoc.exists) {
-    if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Student not found!")));
-    }
-    return;
-  }
-
-  await FirebaseFirestore.instance.collection("room_change").doc(studentId).update({
-    "status": "denied",
-    "reason": reason,
-  });
-
-  if (fcmToken.isNotEmpty) {
-    print("✅ Sending FCM Notification...");
-    await FCMService.sendNotification(
-      fcmToken: fcmToken,
-      title: "Room Change Denied",
-      body: "Your room change request has been denied. Reason: $reason",
-    );
-
-  if (context.mounted) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Request denied!")));
-  }
-}
-
-}
 }

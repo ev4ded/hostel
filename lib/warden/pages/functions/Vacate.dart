@@ -29,30 +29,16 @@ class _VacateRequestState extends State<VacateRequest> {
 
   // Show confirmation dialog
   void _showConfirmationDialog(String requestId, String newStatus, String studentId, String studentName) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(newStatus == "approved" ? "Approve Request" : "Deny Request"),
-        content: Text("Are you sure you want to $newStatus the vacate request for $studentName?"),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text('CANCEL'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              _updateRequestStatus(requestId, newStatus, studentId);
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: newStatus == "approved" ? Colors.green : Colors.red,
-            ),
-            child: Text(newStatus.toUpperCase()),
-          ),
-        ],
-      ),
-    );
-  }
+  showConfirmationDialog(
+    context: context,
+    title: newStatus == "approved" ? "Approve Request" : "Deny Request",
+    message: "Are you sure you want to approve the vacate request for $studentName?",
+    confirmText: newStatus,
+    confirmColor: newStatus == "approved" ? Colors.green : Colors.red,
+    onConfirm: () => _updateRequestStatus(requestId, newStatus, studentId),
+  );
+}
+
 
   // Update request status (approve/deny)
   void _updateRequestStatus(String requestId, String newStatus, String studentId) async {
@@ -70,11 +56,8 @@ class _VacateRequestState extends State<VacateRequest> {
 
       if (newStatus == "approved") {
         // Remove student from hostel and room
-        await FirebaseFirestore.instance.collection('users').doc(studentId).update({
-          "room_no": "",
-          "hostelId": "",
-          "role": "ex-student",
-        });
+        await removeStudent(studentId,hostelId!);
+         await FirebaseFirestore.instance.collection('vacate').doc(requestId).delete();
       }
 
       if (mounted) Navigator.pop(context);
@@ -106,7 +89,18 @@ class _VacateRequestState extends State<VacateRequest> {
                   .snapshots(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
-                  return Center(child: CircularProgressIndicator());
+                  return Center(
+            child:
+          Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Image.asset(
+            'assets/warden/caughtup.png', // Add an appropriate empty state image
+            height: 200,
+          ),
+          
+           Text("No pending Requests Found")],),
+    );
                 }
 
                 var requests = snapshot.data!.docs;
@@ -131,6 +125,7 @@ class _VacateRequestState extends State<VacateRequest> {
                            children: [
                             Text('Room: ${requestData['room_no']}'),
                             Text('Reason: ${requestData['reason']}'),
+                            Text('Date: ${requestData['vacatetime']}'),
                           
                            ],
                            ),
