@@ -6,6 +6,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:minipro/Theme/appcolors.dart';
 import 'package:minipro/student/Student_queries/queries.dart';
 import 'package:minipro/student/components/alertWindow.dart';
+import 'package:minipro/student/components/badges.dart';
 import 'package:minipro/student/components/mydate.dart';
 import 'package:minipro/student/components/mydropdownmenu.dart';
 import 'package:minipro/student/components/mysnackbar.dart';
@@ -31,6 +32,7 @@ class _LeaveapplicationState extends State<Leaveapplication> {
   String status = "";
   bool isloading = true;
   String type = "";
+  Map<String, dynamic>? scores;
   @override
   void initState() {
     super.initState();
@@ -55,6 +57,7 @@ class _LeaveapplicationState extends State<Leaveapplication> {
       } else {
         _showSnackBar("First leave application...");
       }
+      scores = await getScore();
     } catch (e) {
       _showSnackBar("Error fetching leave status: ${e.toString()}");
     } finally {
@@ -228,9 +231,22 @@ class _LeaveapplicationState extends State<Leaveapplication> {
           "created_at": FieldValue.serverTimestamp(),
           'type': type,
         });
+        int score = ((scores!['score'] ?? 0) + 5);
+        int leave = ((scores!['leave'] ?? 0) + 1);
+        FirebaseFirestore.instance
+            .collection("points")
+            .doc(user.uid)
+            .update({'score': score, 'leave': leave});
+        String text = getBadges(scores!, 'leave');
         _showSnackBar("Leave application submitted successfully");
-        Future.delayed(Duration(seconds: 1), () {
+        if (text != "") {
+          _celebrate("You've unlocked a new badge!", text);
+        }
+        // ignore: use_build_context_synchronously
+        FocusScope.of(context).unfocus();
+        Future.delayed(Duration(milliseconds: 500), () {
           if (context.mounted) {
+            // ignore: use_build_context_synchronously
             Navigator.pop(context);
           }
         });
@@ -243,5 +259,10 @@ class _LeaveapplicationState extends State<Leaveapplication> {
   void _showSnackBar(String message, {bool isError = false}) {
     if (!mounted) return;
     Mysnackbar.show(context, message, isError: isError);
+  }
+
+  void _celebrate(String message, String special) {
+    if (!mounted) return;
+    Mysnackbar.celebrate(context, message, special);
   }
 }

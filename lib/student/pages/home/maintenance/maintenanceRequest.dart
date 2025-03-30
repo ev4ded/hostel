@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:minipro/firebase/firestore_services.dart';
 import 'package:minipro/Theme/appcolors.dart';
+import 'package:minipro/student/components/badges.dart';
 import 'package:minipro/student/components/myparafield.dart';
 import 'package:minipro/student/components/mysnackbar.dart';
 import 'package:minipro/student/components/mytextfield.dart';
@@ -28,6 +29,7 @@ class _MaintenanceState extends State<MaintenanceRequest> {
   final int year = DateTime.now().year;
   final FirestoreServices _firestoreService = FirestoreServices();
   Map<String, dynamic>? userData;
+  Map<String, dynamic>? scores;
 
   @override
   @override
@@ -51,6 +53,7 @@ class _MaintenanceState extends State<MaintenanceRequest> {
         userData = newUserData;
       });
     }
+    scores = await getScore();
   }
 
   @override
@@ -175,15 +178,22 @@ class _MaintenanceState extends State<MaintenanceRequest> {
           'created_at': FieldValue.serverTimestamp(),
         },
       );
-      print("score:${(userData!['score'] ?? 0) + 5}");
-      int score=((userData!['score'] ?? 0) + 5);
+      int score = ((scores!['score'] ?? 0) + 5);
+      int maintenance = ((scores!['maintenance'] ?? 0) + 1);
       FirebaseFirestore.instance
-          .collection("users")
+          .collection("points")
           .doc(user.uid)
-          .update({'score': score});
+          .update({'score': score, 'maintenance': maintenance});
+      String text = getBadges(scores!, 'maintenance');
       _showSnackBar("request send");
-      Future.delayed(Duration(seconds: 1), () {
+      if (text != "") {
+        _celebrate("You've unlocked a new badge!", text);
+      }
+      // ignore: use_build_context_synchronously
+      FocusScope.of(context).unfocus();
+      Future.delayed(Duration(milliseconds: 500), () {
         if (context.mounted) {
+          // ignore: use_build_context_synchronously
           Navigator.pop(context);
         }
       });
@@ -195,5 +205,10 @@ class _MaintenanceState extends State<MaintenanceRequest> {
   void _showSnackBar(String message, {bool isError = false}) {
     if (!mounted) return;
     Mysnackbar.show(context, message, isError: isError);
+  }
+
+  void _celebrate(String message, String special) {
+    if (!mounted) return;
+    Mysnackbar.celebrate(context, message, special);
   }
 }

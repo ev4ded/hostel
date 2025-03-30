@@ -340,6 +340,7 @@ class _SignupPageState extends State<SignupPage> {
           'badges': ['Student', 'Newbie']
         },
       );
+      await _firestore.collection('points').doc(uid).set({});
       await FirestoreServices().getUserData();
       if (!mounted) return;
       _showSnackBar("Signup successful!!");
@@ -347,7 +348,6 @@ class _SignupPageState extends State<SignupPage> {
       Navigator.pushReplacement(context, myRoute(Splashscreen()));
     } catch (e) {
       if (!mounted) return;
-      print(e.toString());
       _showSnackBar('Signup failed: ${e.toString()}');
     }
   }

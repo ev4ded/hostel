@@ -15,12 +15,12 @@ class Mysnackbar {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15),
         ),
-        duration: Duration(seconds: 2),
+        duration: Duration(seconds: 1),
       ),
     );
   }
 
-  static void celebrate(BuildContext context, String message) {
+  static void celebrate(BuildContext context, String message, String special) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Container(
@@ -33,14 +33,33 @@ class Mysnackbar {
               end: Alignment.bottomRight,
             ),
           ),
-          child: Text(
-            message,
-            style: GoogleFonts.inter(
-              color: Colors.black87,
-              fontSize: 15,
-              fontWeight: FontWeight.w500,
-            ),
-            textAlign: TextAlign.center,
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  message,
+                  style: GoogleFonts.inter(
+                    color: Colors.black87,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w400,
+                  ),
+                  textAlign: TextAlign.center,
+                  softWrap: true,
+                ),
+              ),
+              Expanded(
+                child: Text(
+                  special,
+                  style: GoogleFonts.inter(
+                    color: Colors.black,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  textAlign: TextAlign.center,
+                  softWrap: true,
+                ),
+              ),
+            ],
           ),
         ),
         backgroundColor: Colors.transparent,
@@ -48,7 +67,7 @@ class Mysnackbar {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15),
         ),
-        duration: Duration(seconds: 2),
+        duration: Duration(seconds: 3),
       ),
     );
   }

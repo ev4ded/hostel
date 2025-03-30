@@ -187,7 +187,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                                           },
                                           child: Container(
                                             height: 38,
-                                            width: 100,
+                                            width: 110,
                                             decoration: BoxDecoration(
                                               borderRadius:
                                                   BorderRadius.circular(20),
@@ -203,10 +203,10 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                                                     userData![
                                                         "role"], // Safely handle null
                                                 style: GoogleFonts.poppins(
-                                                    fontSize: 16,
-                                                    color: buttonTextC,
+                                                    fontSize: 14,
+                                                    color: Colors.black,
                                                     fontWeight:
-                                                        FontWeight.w500),
+                                                        FontWeight.w600),
                                               ),
                                             ),
                                           ),
@@ -226,7 +226,8 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                                                   "Room ID", // Safely handle null
                                               style: GoogleFonts.poppins(
                                                   fontSize: 18,
-                                                  color: buttonTextC),
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.w600),
                                             ),
                                           ),
                                         ),
@@ -678,7 +679,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
       });
       return; //return false;
     } else if (present) {
-      _showCelebrate("Return safely, see you soon!");
+      _showCelebrate("Return safely, ", "see you soon!");
       // && insideHostel
       //print("❌ You must be outside the hostel to mark 'OUT'.");
       _animationController.forward().then((_) {
@@ -688,7 +689,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
         present = !present; // Flip the state
       });
     } else {
-      _showCelebrate("Welcome back! You're now checked in.");
+      _showCelebrate("Welcome back! You're now ", "checked in.");
       _animationController.reverse().then((_) {
         update(present);
       });
@@ -735,9 +736,9 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
     Mysnackbar.show(context, message, isError: isError);
   }
 
-  void _showCelebrate(String message) {
+  void _showCelebrate(String message, special) {
     if (!mounted) return;
-    Mysnackbar.celebrate(context, message);
+    Mysnackbar.celebrate(context, message, special);
   }
 
   void saveBadge(String name) {
