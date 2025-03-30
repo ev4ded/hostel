@@ -5,11 +5,14 @@ import 'package:intl/intl.dart';
 import 'package:minipro/warden/wardenQueries/queries.dart';
 
 class LeaveRequests extends StatefulWidget {
+  const LeaveRequests({super.key});
+
   @override
   _LeaveRequestsState createState() => _LeaveRequestsState();
 }
 
-class _LeaveRequestsState extends State<LeaveRequests> with SingleTickerProviderStateMixin {
+class _LeaveRequestsState extends State<LeaveRequests>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
   String? hostelId;
   List<String> studentIds = [];
@@ -30,7 +33,9 @@ class _LeaveRequestsState extends State<LeaveRequests> with SingleTickerProvider
       await _fetchStudents();
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Unable to fetch Hostel ID'), backgroundColor: Colors.red),
+        SnackBar(
+            content: Text('Unable to fetch Hostel ID'),
+            backgroundColor: Colors.red),
       );
     }
   }
@@ -77,7 +82,7 @@ class _LeaveRequestsState extends State<LeaveRequests> with SingleTickerProvider
         Tab(
           child: Text(
             "Pending",
-            style: GoogleFonts.dmSans(), 
+            style: GoogleFonts.dmSans(),
           ),
         ),
         Tab(
@@ -120,7 +125,7 @@ class _LeaveRequestsState extends State<LeaveRequests> with SingleTickerProvider
           .collection('leave_application')
           .doc(requestId)
           .update({'status': status});
-      
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Leave request $status'),
@@ -139,7 +144,7 @@ class _LeaveRequestsState extends State<LeaveRequests> with SingleTickerProvider
 
   Future<void> _fetchStudents() async {
     if (hostelId == null) return;
-    
+
     try {
       QuerySnapshot studentsSnapshot = await FirebaseFirestore.instance
           .collection('users')
@@ -147,8 +152,9 @@ class _LeaveRequestsState extends State<LeaveRequests> with SingleTickerProvider
           .where('role', isEqualTo: 'student')
           .get();
 
-      List<String> studentList = studentsSnapshot.docs.map((doc) => doc.id).toList();
-      
+      List<String> studentList =
+          studentsSnapshot.docs.map((doc) => doc.id).toList();
+
       if (mounted) {
         setState(() {
           studentIds = studentList;
@@ -177,16 +183,16 @@ class _LeaveRequestsState extends State<LeaveRequests> with SingleTickerProvider
         }
 
         var requests = snapshot.data!.docs;
-        
+
         if (requests.isEmpty) {
           return Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                  Image.asset(
-                    'assets/warden/caughtup.png', // Add an appropriate empty state image
-                    height: 200,
-                  ),
+                Image.asset(
+                  'assets/warden/caughtup.png', // Add an appropriate empty state image
+                  height: 200,
+                ),
                 Text(
                   'No Pending Leave Requests',
                   style: GoogleFonts.roboto(
@@ -206,7 +212,10 @@ class _LeaveRequestsState extends State<LeaveRequests> with SingleTickerProvider
             String studentId = request['student_id'];
 
             return FutureBuilder<DocumentSnapshot>(
-              future: FirebaseFirestore.instance.collection('users').doc(studentId).get(),
+              future: FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(studentId)
+                  .get(),
               builder: (context, userSnapshot) {
                 if (!userSnapshot.hasData) {
                   return Center(
@@ -242,14 +251,15 @@ class _LeaveRequestsState extends State<LeaveRequests> with SingleTickerProvider
                               style: GoogleFonts.roboto(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
-                                color:const Color.fromARGB(255, 103, 119, 245),
+                                color: const Color.fromARGB(255, 103, 119, 245),
                               ),
                             ),
                             Row(
                               children: [
                                 IconButton(
                                   icon: Icon(Icons.check, color: Colors.green),
-                                  onPressed: () => _updateLeaveStatus(request.id, 'approved'),
+                                  onPressed: () => _updateLeaveStatus(
+                                      request.id, 'approved'),
                                 ),
                               ],
                             ),
@@ -258,7 +268,8 @@ class _LeaveRequestsState extends State<LeaveRequests> with SingleTickerProvider
                         SizedBox(height: 12),
                         _buildDetailRow('Reason', request['reason']),
                         _buildDetailRow('Type', request['type']),
-                        _buildDetailRow('Duration', '${request['from']} to ${request['to']}'),
+                        _buildDetailRow('Duration',
+                            '${request['from']} to ${request['to']}'),
                       ],
                     ),
                   ),
@@ -293,12 +304,12 @@ class _LeaveRequestsState extends State<LeaveRequests> with SingleTickerProvider
         if (currentlyOnLeave.isEmpty) {
           return Center(
             child: Column(
-               mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                  Image.asset(
-                      'assets/warden/caughtup.png', // Add an appropriate empty state image
-                      height: 200,
-                    ),
+                Image.asset(
+                  'assets/warden/caughtup.png', // Add an appropriate empty state image
+                  height: 200,
+                ),
                 Text(
                   'No Students Currently on Leave',
                   style: GoogleFonts.roboto(
@@ -318,7 +329,10 @@ class _LeaveRequestsState extends State<LeaveRequests> with SingleTickerProvider
             String studentId = request['student_id'];
 
             return FutureBuilder<DocumentSnapshot>(
-              future: FirebaseFirestore.instance.collection('users').doc(studentId).get(),
+              future: FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(studentId)
+                  .get(),
               builder: (context, userSnapshot) {
                 if (!userSnapshot.hasData) {
                   return Center(
@@ -352,10 +366,7 @@ class _LeaveRequestsState extends State<LeaveRequests> with SingleTickerProvider
                     ),
                     subtitle: Text(
                       'Leave from ${request['from']} to ${request['to']}',
-                      style: GoogleFonts.roboto(
-                        
-                        
-                      ),
+                      style: GoogleFonts.roboto(),
                     ),
                   ),
                 );

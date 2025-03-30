@@ -465,7 +465,7 @@ void signout(BuildContext context) {
         child: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [Colors.black, Colors.grey[900]!, Colors.grey[800]!],
+              colors: [Color(0xFF4B4B4B), Color(0xFF1E1E1E)],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -490,6 +490,7 @@ void signout(BuildContext context) {
               ),
               SizedBox(height: 20),
               Row(
+                mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   TextButton(
@@ -497,6 +498,7 @@ void signout(BuildContext context) {
                     child:
                         Text("Cancel", style: TextStyle(color: Colors.white)),
                   ),
+                  SizedBox(width: 10),
                   ElevatedButton(
                     onPressed: () {
                       FirebaseAuth.instance.signOut();
@@ -565,6 +567,12 @@ Future<void> getroommates(BuildContext context, List<String> mates) async {
                     shrinkWrap: true,
                     itemCount: mates.length,
                     itemBuilder: (context, index) {
+                      if (mates[index] == 'lonely') {
+                        return Text(
+                          "Hopefully, your warden will find you a great roommate soon!",
+                          style: GoogleFonts.poppins(),
+                        );
+                      }
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 8.0),
                         child: GestureDetector(

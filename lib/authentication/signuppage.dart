@@ -1,10 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:minipro/boardingpage.dart';
 import 'package:minipro/firebase/firestore_services.dart';
 import 'package:minipro/Theme/appcolors.dart';
 import 'package:minipro/splashscreen.dart';
+import 'package:minipro/student/components/alertwindow.dart';
 import 'package:minipro/student/components/custom_route.dart';
 import 'package:minipro/student/components/emailtextfield.dart';
 import 'package:minipro/student/components/myclipper.dart';
@@ -315,11 +315,12 @@ class _SignupPageState extends State<SignupPage> {
           .createUserWithEmailAndPassword(email: email, password: password);
       //await FirestoreServices().getUserData();
       await _auth.currentUser?.reload();
-      /*if (user != null && !user.emailVerified) {
+      User? user = _auth.currentUser;
+      if (user != null && !user.emailVerified) {
         //_showSnackBar("Verification email sent.Please check your inbox.");
         if (!mounted) return;
         await showEmailVerifictionDialog(context);
-      }*/
+      }
       String uid = userCredential.user!.uid;
       FirebaseMessaging messaging = FirebaseMessaging.instance;
       String? token = await messaging.getToken();

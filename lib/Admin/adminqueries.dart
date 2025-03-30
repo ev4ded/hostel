@@ -1,13 +1,51 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-Stream<List<QueryDocumentSnapshot>> ListingWarden(String hostelId) {
+Map<String, Map<String, dynamic>> cachedWardenDetails = {};
+Map<String, StreamSubscription> userSubscriptions =
+    {}; // Track Firestore listeners
+Stream<List<Map<String, dynamic>>> listingWarden(String hostelId) {
   return FirebaseFirestore.instance
       .collection("hostels")
       .doc(hostelId)
       .collection("warden")
       .snapshots()
-      .map((snapshot) => snapshot.docs);
+      //.map((snapshot) => snapshot.docs);
+      .asyncMap((hostelSnapshot) async {
+    List<Map<String, dynamic>> wardenList = [];
+
+    for (var doc in hostelSnapshot.docs) {
+      var wardenData = doc.data();
+      String docId = doc.id;
+      if (wardenData['userData'] is DocumentReference) {
+        DocumentReference userRef = wardenData['userData'] as DocumentReference;
+
+        // Fetch user data initially
+        DocumentSnapshot userSnapshot = await userRef.get();
+        if (userSnapshot.exists) {
+          wardenData['userData'] = userSnapshot.data() as Map<String, dynamic>;
+        } else {
+          wardenData['userData'] = {};
+        }
+
+        // **Listen for real-time updates on userData**
+        userRef.snapshots().listen((updatedSnapshot) {
+          if (updatedSnapshot.exists) {
+            wardenData['userData'] =
+                updatedSnapshot.data() as Map<String, dynamic>;
+          }
+        });
+      } else {
+        wardenData['userData'] = wardenData['userData'] ?? {};
+      }
+
+      wardenData['docId'] = docId;
+      wardenList.add(wardenData);
+    }
+    return wardenList;
+  });
 }
 
 Stream<List<QueryDocumentSnapshot>> WardenApproval(String hostelId) {

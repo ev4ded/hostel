@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:minipro/firebase/firestore_services.dart';
 
 Stream<List<QueryDocumentSnapshot>> getStudentMaintenance(String uid) {
   return FirebaseFirestore.instance
@@ -113,7 +112,9 @@ Future<List<String>?> getRoomates(String hostelId, String roomno) async {
           }
         }
       }
-      print("mates:$mates");
+      if (mates.isEmpty) {
+        mates.add('lonely');
+      }
       return mates;
     }
     return null;

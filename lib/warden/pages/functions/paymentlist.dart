@@ -4,6 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:minipro/warden/wardenQueries/queries.dart';
 
 class PaidTransactions extends StatefulWidget {
+  const PaidTransactions({super.key});
+
   @override
   _PaidTransactionsState createState() => _PaidTransactionsState();
 }
@@ -45,14 +47,18 @@ class _PaidTransactionsState extends State<PaidTransactions> {
       Map<String, dynamic> data = doc.data();
 
       // Step 2: Fetch user details from 'users' collection
-      var userDoc = await FirebaseFirestore.instance.collection('users').doc(userId).get();
-      String userName = (userDoc.exists && userDoc.data() != null) 
-    ? userDoc.data()!['username'] ?? 'Unknown' 
-    : 'Unknown';
-
+      var userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .get();
+      String userName = (userDoc.exists && userDoc.data() != null)
+          ? userDoc.data()!['username'] ?? 'Unknown'
+          : 'Unknown';
 
       // Step 3: Extract transaction ID (assuming it is stored under a specific key, like 'transaction_id')
-      String transactionId = data.containsKey('transaction_id') ? data['transaction_id'] : 'Unknown';
+      String transactionId = data.containsKey('transaction_id')
+          ? data['transaction_id']
+          : 'Unknown';
 
       // Step 4: Add to the transaction list
       transactionsList.add({
@@ -67,8 +73,14 @@ class _PaidTransactionsState extends State<PaidTransactions> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Paid Transactions",style: GoogleFonts.inter(fontWeight: FontWeight.w600),), backgroundColor: Colors.indigo.shade700,
-        foregroundColor: Colors.white,),
+      appBar: AppBar(
+        title: Text(
+          "Paid Transactions",
+          style: GoogleFonts.inter(fontWeight: FontWeight.w600),
+        ),
+        backgroundColor: Colors.indigo.shade700,
+        foregroundColor: Colors.white,
+      ),
       body: hostelId == null
           ? Center(child: CircularProgressIndicator())
           : FutureBuilder<List<Map<String, dynamic>>>(
@@ -94,7 +106,8 @@ class _PaidTransactionsState extends State<PaidTransactions> {
                       elevation: 3,
                       child: ListTile(
                         title: Text("Paid by: ${transaction['user_name']}"),
-                        subtitle: Text("Transaction ID: ${transaction['transaction_id']}"),
+                        subtitle: Text(
+                            "Transaction ID: ${transaction['transaction_id']}"),
                         leading: Icon(Icons.payment, color: Colors.green),
                       ),
                     );

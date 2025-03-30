@@ -10,8 +10,8 @@ LinearGradient getbadgesColor(String badge) {
       return LinearGradient(colors: [Color(0xFFFF6D00), Color(0xFFFFD600)]);
     case 'Student':
       return LinearGradient(colors: [
-        Color.fromRGBO(95, 44, 130, 1),
-        Color.fromRGBO(73, 160, 157, 1)
+        Color.fromRGBO(255, 88, 88, 1),
+        Color.fromRGBO(255, 200, 200, 1)
       ]);
     default:
       return LinearGradient(

@@ -154,41 +154,41 @@ class _MaintenanceState extends State<MaintenanceRequest> {
       return;
     }
     User? user = FirebaseAuth.instance.currentUser;
+    await user!.reload();
     //_showSnackBar(user.toString());
     //if (user != null) ;
     //print("title:$title\ndesciption:$description\nuser:${user.uid}");*/
     //await FirebaseAuth.instance.currentUser?.getIdToken(true);
-    if (user != null) {
-      //_showSnackBar()
-      try {
-        DocumentReference docRef =
-            FirebaseFirestore.instance.collection("maintenance_request").doc();
-        docRef.set(
-          {
-            'request_id': docRef.id,
-            'student_id': user.uid,
-            'hostel_id': userData!["hostelId"],
-            'title': title,
-            'status': 'pending',
-            'room_no': userData!["room_no"],
-            'description': description,
-            'created_at': FieldValue.serverTimestamp(),
-          },
-        );
-        print("score:${(userData!['score'] ?? 0) + 5}");
-        FirebaseFirestore.instance
-            .collection("users")
-            .doc(user.uid)
-            .update({'score': ((userData!['score'] ?? 0) + 5)});
-        _showSnackBar("request send");
-        Future.delayed(Duration(seconds: 1), () {
-          if (context.mounted) {
-            Navigator.pop(context);
-          }
-        });
-      } catch (e) {
-        _showSnackBar("request failed:$e");
-      }
+    //_showSnackBar()
+    try {
+      DocumentReference docRef =
+          FirebaseFirestore.instance.collection("maintenance_request").doc();
+      docRef.set(
+        {
+          'request_id': docRef.id,
+          'student_id': user.uid,
+          'hostel_id': userData!["hostelId"],
+          'title': title,
+          'status': 'pending',
+          'room_no': userData!["room_no"],
+          'description': description,
+          'created_at': FieldValue.serverTimestamp(),
+        },
+      );
+      print("score:${(userData!['score'] ?? 0) + 5}");
+      int score=((userData!['score'] ?? 0) + 5);
+      FirebaseFirestore.instance
+          .collection("users")
+          .doc(user.uid)
+          .update({'score': score});
+      _showSnackBar("request send");
+      Future.delayed(Duration(seconds: 1), () {
+        if (context.mounted) {
+          Navigator.pop(context);
+        }
+      });
+    } catch (e) {
+      _showSnackBar("request failed:$e");
     }
   }
 
