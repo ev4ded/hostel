@@ -38,42 +38,74 @@ Future<String> getDenialReason(BuildContext context) async {
   TextEditingController reasonController = TextEditingController();
 
   return await showDialog<String>(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text("Deny Request", style: GoogleFonts.inter()),
-            content: TextField(
-              controller: reasonController,
-              decoration: InputDecoration(
-                hintText: "Enter reason for denial",
-                border: OutlineInputBorder(),
+  context: context,
+  builder: (context) {
+    return AlertDialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20), // Rounded corners
+      ),
+      title: Text(
+        "Denial Reason",
+        style: GoogleFonts.inter(fontWeight: FontWeight.w600, fontSize: 18),
+      ),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            "Please enter a reason for denying the request:",
+            style: GoogleFonts.inter(fontSize: 14, color: Colors.grey[700]),
+          ),
+          SizedBox(height: 12),
+          TextField(
+            controller: reasonController,
+            decoration: InputDecoration(
+              hintText: "Enter reason...",
+              hintStyle: GoogleFonts.inter(color: Colors.grey[500]),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12), // Rounded input field
               ),
-              maxLines: 3,
+              contentPadding: EdgeInsets.all(12),
             ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context, ""),
-                child: Text("Cancel", style: GoogleFonts.inter()),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  String reason = reasonController.text.trim();
-                  if (reason.isEmpty) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text("Please enter a reason")),
-                    );
-                    return;
-                  }
-                  Navigator.pop(context, reason);
-                },
-                child: Text("Submit", style: GoogleFonts.inter()),
-              ),
-            ],
-          );
-        },
-      ) ??
-      "";
+            maxLines: 3,
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context, ""),
+          style: TextButton.styleFrom(
+            foregroundColor: Colors.grey[700], // Softer cancel button color
+          ),
+          child: Text("Cancel", style: GoogleFonts.inter(fontWeight: FontWeight.w500)),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            String reason = reasonController.text.trim();
+            if (reason.isEmpty) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text("Please enter a reason", style: GoogleFonts.inter()),
+                  behavior: SnackBarBehavior.floating,
+                  backgroundColor: Colors.redAccent,
+                ),
+              );
+              return;
+            }
+            Navigator.pop(context, reason);
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.redAccent, // Highlight denial button
+            foregroundColor: Colors.white,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          ),
+          child: Text("Submit", style: GoogleFonts.inter(fontWeight: FontWeight.w600)),
+        ),
+      ],
+    );
+  },
+) ?? "";
 }
+
 Future<void> removeStudent(String docId, String hostelId) async {
   var docRef = FirebaseFirestore.instance.collection('users').doc(docId);
   var docSnapshot = await docRef.get();
@@ -96,20 +128,15 @@ Future<void> removeStudent(String docId, String hostelId) async {
     await roomRef.update({
       'occupants': FieldValue.arrayRemove([docId]) // Remove student ID from room
     });
-  }
-
-  // Clear user fields instead of direct deletion
-  //var updates = {for (var key in data.keys) key: FieldValue.delete()};
- // await docRef.update(updates);
-
-  // Mark student as deleted
+  
   await FirebaseFirestore.instance.collection('users').doc(docId).set({
     'deleted': true,
+    'profileUpdated':false,
   }, SetOptions(merge: true)); // Preserve other fields
 
   debugPrint("✅ Student $docId removed successfully.");
 }
-
+}
 
 Future<void> showConfirmationDialog({
   required BuildContext context,

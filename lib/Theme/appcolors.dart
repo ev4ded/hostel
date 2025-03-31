@@ -7,14 +7,20 @@ class AppColors {
   static Color alretWindowColorDark = Color.fromRGBO(85, 85, 85, 1);
   static Color tileColorDark = Color.fromRGBO(78, 68, 64, 1);
   static Color detailsCDark = Color.fromRGBO(180, 195, 210, 1);
-  static Color wardentileDark = const Color.fromARGB(255, 74, 72, 72);
+   static List<Color> wardentileDark =[ Color(0xFF1E293B), Color(0xFF334155)]
+
+
+
+
+;
   //light
   static Color textColorLight = Colors.black;
   static Color alretWindowColorLight = Color.fromRGBO(200, 200, 200, 1);
   static Color containerColorLight = Color.fromRGBO(200, 200, 200, 1);
   static Color tileColorLight = Color.fromRGBO(210, 200, 195, 1);
   static Color detailsCLight = Color.fromRGBO(155, 165, 180, 1);
-  static Color wardentileLight = Color.fromRGBO(112, 124, 232, 1);
+ static List<Color> wardentileGradient =[Color(0xFF6A85B6), Color.fromARGB(255, 154, 187, 244)];
+
   //both
   static Color hintColor = Color.fromRGBO(139, 139, 139, 0.5);
   static Color borderColor = Color.fromRGBO(74, 85, 104, 1);
@@ -50,9 +56,10 @@ class AppColors {
         ? alretWindowColorDark
         : alretWindowColorLight;
   }
-  static Color getWardentile(BuildContext context) {
-    return Theme.of(context).brightness == Brightness.dark
-        ?  wardentileDark
-        :  wardentileLight;
-  }
+  static List<Color> getWardentile(BuildContext context) {
+  return Theme.of(context).brightness == Brightness.dark
+      ? wardentileDark  // Dark mode gradient
+      : wardentileGradient; // Light mode gradient
+}
+
 }

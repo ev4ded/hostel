@@ -38,7 +38,9 @@ class _HomePageState extends State<HomePage> {
                 width: double.infinity,
                 padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 20.0),
                 decoration: BoxDecoration(
-                  color: AppColors.getWardentile(context),
+                  gradient: LinearGradient(
+                  colors: AppColors.getWardentile(context),
+                   ), // Select the first color from the list
                   borderRadius: BorderRadius.circular(10),
                   boxShadow: [
                     BoxShadow(
@@ -113,7 +115,9 @@ class _HomePageState extends State<HomePage> {
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color:AppColors.getWardentile(context),
+           gradient: LinearGradient(
+                  colors: AppColors.getWardentile(context),
+                   ), 
           borderRadius: BorderRadius.circular(10),
           boxShadow: [
             BoxShadow(color: Colors.black.withOpacity(0.2), spreadRadius: 1, blurRadius: 2, offset: Offset(0, 1)),

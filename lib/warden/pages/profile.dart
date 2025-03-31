@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:minipro/firebase/firestore_services.dart';
+//import 'package:minipro/student/components/custom_route.dart';
 import 'package:minipro/student/pages/profile/changepassword.dart';
 import 'package:minipro/student/pages/profile/help.dart';
 import 'package:minipro/student/pages/profile/userguidelines.dart';
 import 'package:minipro/warden/pages/functions/editprofile.dart';
+//import 'package:minipro/warden/pages/homepage.dart';
 
 class MyProfile extends StatefulWidget {
   const MyProfile({super.key});
@@ -53,7 +55,7 @@ await _firestoreService.getUserData();
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        
+       
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
        

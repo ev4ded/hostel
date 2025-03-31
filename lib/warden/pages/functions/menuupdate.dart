@@ -110,11 +110,13 @@ class _UpdateMessMenuState extends State<UpdateMessMenu> {
          
             children: [
               _buildMealCard("breakfast", _breakfastController, Icons.free_breakfast),
+               SizedBox(height: 10),
               _buildMealCard("lunch", _lunchController, Icons.restaurant),
+               SizedBox(height: 10),
               _buildMealCard("snacks", _snacksController, Icons.fastfood),
+               SizedBox(height: 10),
               _buildMealCard("dinner", _dinnerController, Icons.dinner_dining),
-        
-              SizedBox(height: 20),
+               SizedBox(height: 20),
             ],
           ),
         ),
@@ -138,7 +140,7 @@ class _UpdateMessMenuState extends State<UpdateMessMenu> {
         child: Row(
           children: [
             Icon(icon, color: Colors.grey),
-            SizedBox(width: 20),
+            SizedBox(width: 25),
             Expanded(
               child: Mytextfield(
                 hinttext: "Enter $mealType Item",

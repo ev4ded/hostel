@@ -63,7 +63,7 @@ class _StudentListState extends State<StudentList> {
       ),
       builder: (context) {
        return DraggableScrollableSheet(
-        initialChildSize: 0.4,  // Opens at 40% of screen height
+        initialChildSize: 0.55,  // Opens at 40% of screen height
         minChildSize: 0.3,      // Can shrink to 30% of screen height
         maxChildSize: 0.6,      // Can expand to 60% of screen height
         expand: false,          // Prevents full-screen takeover
@@ -91,6 +91,7 @@ class _StudentListState extends State<StudentList> {
               _buildInfoRow(Ionicons.school, 'College', student['college_name']),
               _buildInfoRow(Ionicons.book, 'Course', student['degree']),
               _buildInfoRow(Ionicons.calendar_clear_outline, 'Year', student['year_of_study']),
+              _buildInfoRow(Ionicons.cash_outline,'Fees', student['paid']=='successful'  ? 'Paid' : 'Not Paid'),
               _buildInfoRow(Ionicons.calendar_clear_outline, 'Present', student['present'] == true ? 'Yes' : 'No'),
               SizedBox(height: 10),
              Row(
@@ -106,7 +107,11 @@ class _StudentListState extends State<StudentList> {
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () async { 
-                       
+                       String reason = await getDenialReason(context);
+                        if (reason.isEmpty) return;
+                        await FirebaseFirestore.instance.collection("users").doc(docId).update({       
+                            "reason": reason,
+                          });
                         await removeStudent(docId,hostelId!); // Pass the hostelId here
                         Navigator.pop(context);
                       },
@@ -140,6 +145,17 @@ class _StudentListState extends State<StudentList> {
     await FirebaseFirestore.instance.collection("hostels").doc(hostelId).update({
       "paymentTime": true,
     });
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection("users")
+        .where('role', isEqualTo: 'student')
+        .where('hostelId', isEqualTo: hostelId)
+        .get();
+
+    for (var doc in querySnapshot.docs) {
+      await doc.reference.update({
+        "paid": "",
+      });
+    }
 
     debugPrint("✅ Payment Time set to true.");
     
@@ -241,11 +257,8 @@ class _StudentListState extends State<StudentList> {
                         onTap: () => _showStudentBottomSheet(context, student.data() as Map<String, dynamic>,docId), // Open Bottom Sheet
                         leading: CircleAvatar(
                           radius: 24,
-                          backgroundColor: const Color.fromARGB(255, 47, 240, 92),
-                          foregroundColor: Colors.black,
-                          child: Text(
-                            student['username'][0].toUpperCase(),
-                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                           backgroundImage:AssetImage(
+                            'assets/images/profile/${student['dp']}.jpg'
                           ),
                         ),
                         title: Row(

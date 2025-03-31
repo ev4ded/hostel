@@ -4,6 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:minipro/warden/wardenQueries/queries.dart';
 
 class VacateRequest extends StatefulWidget {
+  const VacateRequest({super.key});
+
   @override
   _VacateRequestState createState() => _VacateRequestState();
 }
@@ -88,9 +90,10 @@ class _VacateRequestState extends State<VacateRequest> {
                  
                   .snapshots(),
               builder: (context, snapshot) {
-                if (!snapshot.hasData) {
-                  return Center(
-            child:
+                  var requests = snapshot.hasData ? snapshot.data!.docs : [];
+                if (requests.isEmpty) {
+                  return Center(child: 
+                  
           Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -101,11 +104,7 @@ class _VacateRequestState extends State<VacateRequest> {
           
            Text("No pending Requests Found")],),
     );
-                }
-
-                var requests = snapshot.data!.docs;
-                if (requests.isEmpty) {
-                  return Center(child: Text("No pending vacate requests."));
+                  
                 }
 
                 return ListView.builder(
@@ -125,7 +124,7 @@ class _VacateRequestState extends State<VacateRequest> {
                            children: [
                             Text('Room: ${requestData['room_no']}'),
                             Text('Reason: ${requestData['reason']}'),
-                            Text('Date: ${requestData['vacatetime']}'),
+                            Text('Date: ${requestData['vacting_date']}'),
                           
                            ],
                            ),

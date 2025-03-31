@@ -8,7 +8,7 @@ import 'package:googleapis_auth/auth_io.dart' as auth;
 
 class FCMService {
   static Future<void> sendNotification({
-     required List<String> fcmToken, 
+    required String fcmToken, 
     required String title,
     required String body,
   }) async {

@@ -113,36 +113,79 @@ class RequestsList extends StatelessWidget {
                 String currentRoom = userData["room_no"] ?? "Not Assigned";
                 
             return Card(
-              margin: EdgeInsets.all(8.0),
-              child: ListTile(
-                 title: Text("$studentName (Room: $currentRoom)", style: GoogleFonts.inter()),
-                    subtitle: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(height: 10),
-                    Text("Request: ${requestData['description']}"),
-                    
-                    ]
-                  ),
-                           
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    ElevatedButton(
-                      onPressed: () => approveRequest( studentId, context),
-                      style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-                      child: Text("Approve", style: GoogleFonts.inter(fontWeight: FontWeight.w500)),
-                    ),
-                    SizedBox(width: 10),
-                    ElevatedButton(
-                      onPressed: () => denyRequest(studentId, context),
-                      style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                      child: Text("Deny", style: GoogleFonts.inter(fontWeight: FontWeight.w500)),
-                    ),
-                  ],
-                ),
+  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+  elevation: 5,
+  shape: RoundedRectangleBorder(
+    borderRadius: BorderRadius.circular(15),
+  ),
+  child: Container(
+    padding: const EdgeInsets.all(12),
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(15),
+      gradient: LinearGradient(
+        colors: [Colors.white, Colors.blue.shade100],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+    ),
+    child: Row(
+      children: [
+        CircleAvatar(
+          radius: 28,
+          backgroundColor: Colors.white,
+          backgroundImage: AssetImage('assets/images/profile/${userData['dp']}.jpg'),
+        ),
+        SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                studentName,
+                style: GoogleFonts.poppins(color: Colors.black,fontSize: 16, fontWeight: FontWeight.bold),
               ),
-            );
+              Text(
+                "Room: $currentRoom",
+                style: GoogleFonts.poppins(fontSize: 14, color: Colors.grey.shade700),
+              ),
+              SizedBox(height: 8),
+              Text(
+                "Request: ${requestData['description']}",
+                style: GoogleFonts.poppins(fontSize: 13, color: Colors.grey.shade800),
+              ),
+            ],
+          ),
+        ),
+        Column(
+          children: [
+            ElevatedButton.icon(
+              onPressed: () => approveRequest(studentId, context),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green.shade600,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              ),
+              icon: Icon(Icons.check, color: Colors.white, size: 18),
+              label: Text("Approve", style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w500)),
+            ),
+            SizedBox(height: 8),
+            ElevatedButton.icon(
+              onPressed: () => denyRequest(studentId, context),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red.shade600,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              ),
+              icon: Icon(Icons.close, color: Colors.white, size: 18),
+              label: Text("Deny", style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w500)),
+            ),
+          ],
+        ),
+      ],
+    ),
+  ),
+);
+
           },
         );
       },
@@ -321,13 +364,11 @@ Future<void> approveRequest(String studentId, BuildContext context) async {
     await batch.commit();
 
     // ✅ Send FCM Notification
-    List<String> fcmToken = (studentDoc["FCM_tokens"] as List<dynamic>?)
-            ?.map((e) => e.toString())
-            .toList() ?? [];
+    final fcmToken = studentDoc["FCM_tokens"] ?? [];
 
-    if (fcmToken.isNotEmpty) {
+    for (var token in fcmToken) {
       await FCMService.sendNotification(
-        fcmToken: fcmToken,
+        fcmToken: token,
         title: "Room Change Approved",
         body: "Your room change request has been approved! Your new room is $newRoom.",
       );
@@ -374,15 +415,12 @@ void denyRequest(String studentId, BuildContext context) async {
     });
 
     // ✅ Send FCM Notification
-    List<String> fcmToken = (studentDoc["FCM_tokens"] as List<dynamic>?)
-            ?.map((e) => e.toString())
-            .toList() ??
-        [];
+    List<String> fcmToken = studentDoc["FCM_tokens"] ?? [];
 
-    if (fcmToken.isNotEmpty) {
+    for (var token in fcmToken) {
       print("✅ Sending FCM Notification...");
       await FCMService.sendNotification(
-        fcmToken: fcmToken,
+        fcmToken: token,
         title: "Room Change Denied",
         body: "Your room change request has been denied. Reason: $reason",
       );

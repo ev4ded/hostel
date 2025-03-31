@@ -1,0 +1,2 @@
+C:/Users/cecil/Documents/FlutterDev/Minipro/hostel/android/app/.cxx/RelWithDebInfo/1w47x3w6/x86/CMakeFiles/edit_cache.dir
+C:/Users/cecil/Documents/FlutterDev/Minipro/hostel/android/app/.cxx/RelWithDebInfo/1w47x3w6/x86/CMakeFiles/rebuild_cache.dir
