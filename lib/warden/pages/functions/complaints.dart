@@ -148,33 +148,44 @@ class RequestsList extends StatelessWidget {
 
             return Card(
               margin: EdgeInsets.all(8.0),
-              child: ListTile(
-                title: Text(requestData["title"] ?? "No Title", style: GoogleFonts.inder(fontWeight: FontWeight.bold)),
-                subtitle: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(height: 10),
-                    Text("Room No: ${requestData["room_no"] ?? "No Room No"}", style:GoogleFonts.inter(fontWeight: FontWeight.w400)),
-                    Text("Description: ${requestData["description"] ?? "No Description"}", style:GoogleFonts.inter(fontWeight: FontWeight.w400)),
-                    Text("Priority: ${requestData["priority"] ?? "No Priority"}", style:GoogleFonts.inter(fontWeight: FontWeight.w400)),
-                  ],
-                ),
-                trailing: status == "Pending"
-                    ? Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          ElevatedButton(
-                            onPressed: () => updateStatus(requestId, "Resolved" ,context,),
-                            style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-                            child: Text("Resolve",style: GoogleFonts.inter(fontWeight: FontWeight.w500),),
-                          ),
-                        ],
-                      )
-                    : Icon(
-                        Ionicons.checkmark_circle_outline,
-                        color: Colors.green,
-                        size: 30,
+              child: Container(
+                padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(15),
+                      gradient: LinearGradient(
+                        colors: [Colors.white, Colors.blue.shade100],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
                       ),
+                    ),
+                child: ListTile(
+                  title: Text(requestData["title"] ?? "No Title", style: GoogleFonts.inder(fontWeight: FontWeight.bold,color: Colors.black)),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: 10),
+                      Text("Room No: ${requestData["room_no"] ?? "No Room No"}", style:GoogleFonts.inter(fontWeight: FontWeight.w400,color:Colors.black54)),
+                      Text("Description: ${requestData["description"] ?? "No Description"}", style:GoogleFonts.inter(fontWeight: FontWeight.w400,color:Colors.black54)),
+                      Text("Priority: ${requestData["priority"] ?? "No Priority"}", style:GoogleFonts.inter(fontWeight: FontWeight.w400,color:Colors.black54)),
+                    ],
+                  ),
+                  trailing: status == "Pending"
+                      ? Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            ElevatedButton(
+                              onPressed: () => updateStatus(requestId, "Resolved" ,context,),
+                              style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+                              child: Text("Resolve",style: GoogleFonts.inter(fontWeight: FontWeight.w500),),
+                            ),
+                          ],
+                        )
+                      : Icon(
+                          Ionicons.checkmark_circle_outline,
+                          color: Colors.green,
+                          size: 30,
+                        ),
+                ),
               ),
             );
           },
@@ -208,15 +219,21 @@ class RequestsList extends StatelessWidget {
       print("❌ Student not found in users collection!");
       return;
     }
+    
 
-    final fcmTokens = studentDoc["FCM_tokens"] ?? [];
+
+    final fcmTokens = studentDoc["FCM_tokens"] ?? [""];
+     ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Status updated to $newStatus")));
     if (fcmTokens.isEmpty) {
+      await complaintRef.update({"status": newStatus.toLowerCase()});
       print("❌ No FCM tokens found for the student!");
       return;
     }
 
-    // ✅ Update Firestore: Mark complaint as Resolved
-    await complaintRef.update({"status": newStatus.toLowerCase()});
+     // ✅ Update Firestore: Mark complaint as Resolved
+     await complaintRef.update({"status": newStatus.toLowerCase()});
+   
 
     // ✅ Send Notification
      for (var token in fcmTokens) {
@@ -226,6 +243,7 @@ class RequestsList extends StatelessWidget {
         body: "Your complaint has been marked as $newStatus.",
       );
     }
+     
 
     // ✅ Show success message
     ScaffoldMessenger.of(context).showSnackBar(

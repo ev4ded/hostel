@@ -364,7 +364,12 @@ Future<void> approveRequest(String studentId, BuildContext context) async {
     await batch.commit();
 
     // ✅ Send FCM Notification
-    final fcmToken = studentDoc["FCM_tokens"] ?? [];
+    final fcmToken = studentDoc["FCM_tokens"] ?? [""];
+    if (fcmToken.isEmpty) {
+      await batch.commit();
+      print("❌ No FCM tokens found for the student!");
+      return;
+    }
 
     for (var token in fcmToken) {
       await FCMService.sendNotification(

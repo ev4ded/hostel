@@ -5,9 +5,11 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:minipro/Theme/appcolors.dart';
 import 'package:minipro/firebase/firestore_services.dart';
+import 'package:minipro/student/components/custom_route.dart';
 import 'package:minipro/student/components/mysnackbar.dart';
 import 'package:minipro/student/components/mytextfield.dart';
 import 'package:minipro/student/components/mydropdownmenu.dart';
+import 'package:minipro/warden/pages/navigation.dart';
 
 class EditWardenProfile extends StatefulWidget {
   const EditWardenProfile({super.key});
@@ -74,7 +76,14 @@ await _firestoreService.getUserData();
         leading: IconButton(
           icon: Icon(LucideIcons.chevronLeft),
           onPressed: () {
-            Navigator.pop(context);
+           Navigator.push(
+                context,
+                myRoute(
+                  MyNavigation(
+                   selectedIndex: 2,
+                  ),
+                ),
+              );
           },
         ),
       ),
@@ -208,7 +217,14 @@ await _firestoreService.getUserData();
           _showSnackBar("Updated successfully");
           Future.delayed(Duration(seconds: 1), () {
             if (context.mounted) {
-              Navigator.pop(context);
+             Navigator.push(
+                context,
+                myRoute(
+                  MyNavigation(
+                   selectedIndex: 2,
+                  ),
+                ),
+              );
             }
           });
         } catch (e) {
