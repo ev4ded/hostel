@@ -212,11 +212,6 @@ class _CregisterState extends State<Cregister> {
         }
         // ignore: use_build_context_synchronously
         FocusScope.of(context).unfocus();
-        FirebaseFirestore.instance
-            .collection("users")
-            .doc(user.uid)
-            .update({'score': ((userData!['score'] ?? 0) + 5)});
-        _showSnackBar("request send");
         Future.delayed(Duration(milliseconds: 500), () {
           if (context.mounted) {
             // ignore: use_build_context_synchronously

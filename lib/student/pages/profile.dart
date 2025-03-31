@@ -50,6 +50,10 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 500),
       vsync: this,
