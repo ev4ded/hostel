@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:minipro/boardingpage.dart';
 import 'package:minipro/firebase/firestore_services.dart';
 import 'package:minipro/Theme/appcolors.dart';
 import 'package:minipro/splashscreen.dart';
@@ -315,8 +316,9 @@ class _SignupPageState extends State<SignupPage> {
           .createUserWithEmailAndPassword(email: email, password: password);
       //await FirestoreServices().getUserData();
       await _auth.currentUser?.reload();
-      /*if (user != null && !user.emailVerified) {
-        //_showSnackBar("Verification email sent.Please check your inbox.");
+      User? user = _auth.currentUser;
+      if (user != null && !user.emailVerified) {
+        _showSnackBar("Verification email sent.Please check your inbox.");
         if (!mounted) return;
         await showEmailVerifictionDialog(context);
       }
@@ -336,11 +338,9 @@ class _SignupPageState extends State<SignupPage> {
           'profileUpdated': false,
           'present': true,
           'boardingPage': false,
-          'badges': ['Student', 'Newbie'],
-          'badgeName': 'Student',
+          'badges': ['Student', 'Newbie']
         },
       );
-      await _firestore.collection('points').doc(uid).set({});
       await FirestoreServices().getUserData();
       if (!mounted) return;
       _showSnackBar("Signup successful!!");
@@ -348,6 +348,7 @@ class _SignupPageState extends State<SignupPage> {
       Navigator.pushReplacement(context, myRoute(Splashscreen()));
     } catch (e) {
       if (!mounted) return;
+      print(e.toString());
       _showSnackBar('Signup failed: ${e.toString()}');
     }
   }
