@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:minipro/firebase/firestore_services.dart';
 
 Stream<List<QueryDocumentSnapshot>> getStudentMaintenance(String uid) {
   return FirebaseFirestore.instance
@@ -83,8 +82,9 @@ Future<String?> getLatestLeaveRequest() async {
   }
 }
 
-Future<List<String>?> getRoomates(String hostelId, String roomno) async {
-  List<String> mates = [];
+Future<List<Map<String, String>>?> getRoomates(
+    String hostelId, String roomno) async {
+  List<Map<String, String>> mates = [];
   try {
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
@@ -105,15 +105,19 @@ Future<List<String>?> getRoomates(String hostelId, String roomno) async {
                 .get();
             if (userDoc.exists) {
               String name = userDoc['username'] ?? 'Unknown';
+              String badgeName = userDoc['badgeName'] ?? 'No Badge';
               //print("name:${userDoc['username']}");
-              mates.add(name);
+              mates.add({'name': name, 'badgeName': badgeName});
             } else {
-              mates.add('Unknown');
+              mates.add({"name": "Lonely"});
             }
           }
         }
+        print("mates:$mates");
       }
-      print("mates:$mates");
+      if (mates.isEmpty) {
+        mates.add({"name": "Loenly"});
+      }
       return mates;
     }
     return null;

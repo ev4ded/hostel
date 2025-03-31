@@ -106,6 +106,7 @@ class _VacateState extends State<Vacate> {
     Color bgColor = AppColors.getContainerColor(context);
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.transparent,
         leading: IconButton(
           onPressed: () {
             Navigator.pop(context);

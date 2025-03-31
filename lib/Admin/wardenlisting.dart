@@ -26,7 +26,14 @@ class _WardenlistingState extends State<Wardenlisting>
   Color mainColor = Colors.blueAccent;
   String hostelID = '123';
   int? expandedIndex;
-  List<Map<String, dynamic>>? wardens;
+  List<Color> colorsList = [
+    Colors.redAccent,
+    Colors.greenAccent,
+    Colors.lightBlue,
+    Colors.teal,
+    Colors.orangeAccent
+  ];
+  List<Map<String, dynamic>> wardens = [];
   bool isloading = true;
 
   @override
@@ -43,12 +50,6 @@ class _WardenlistingState extends State<Wardenlisting>
       setState(() {
         hostelID = id;
       });
-      List<Map<String, dynamic>>? fetchedWardens = await getWardens(hostelID);
-      setState(() {
-        wardens = fetchedWardens;
-        isloading = false;
-      });
-      print(wardens);
     } else {
       setState(() {
         isloading = false; // Prevent infinite loading if `id` is null
@@ -64,7 +65,6 @@ class _WardenlistingState extends State<Wardenlisting>
 
   @override
   Widget build(BuildContext context) {
-    //Color containerColor = AppColors.getContainerColor(context);
     Color tileColor = AppColors.getContainerColor(context);
     return Scaffold(
       appBar: AppBar(
@@ -108,8 +108,8 @@ class _WardenlistingState extends State<Wardenlisting>
       body: TabBarView(
         controller: _tabController,
         children: [
-          StreamBuilder<List<QueryDocumentSnapshot>>(
-            stream: ListingWarden(hostelID),
+          StreamBuilder<List<Map<String, dynamic>>>(
+            stream: listingWarden(hostelID),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return Center(
@@ -126,7 +126,7 @@ class _WardenlistingState extends State<Wardenlisting>
                   child: Text("There are no wardens in your hostel"),
                 );
               }
-              List<QueryDocumentSnapshot> list = snapshot.data!;
+              List<Map<String, dynamic>> list = snapshot.data!;
               return SingleChildScrollView(
                 child: SizedBox(
                   child: ListView.builder(
@@ -134,7 +134,10 @@ class _WardenlistingState extends State<Wardenlisting>
                     physics: AlwaysScrollableScrollPhysics(),
                     itemCount: list.length,
                     itemBuilder: (context, index) {
-                      var warden = list[index].data() as Map<String, dynamic>;
+                      var warden = list[index]['userData'] ?? {};
+                      String letter = (warden['username']?.isNotEmpty ?? false)
+                          ? warden['username'].toString()[0].toUpperCase()
+                          : 'N';
                       return Column(
                         children: [
                           Padding(
@@ -155,13 +158,12 @@ class _WardenlistingState extends State<Wardenlisting>
                                       width: 50,
                                       decoration: BoxDecoration(
                                         shape: BoxShape.circle,
-                                        color: Color(0xFFF8C291),
+                                        color: colorsList[
+                                            getAlphabetPosition(letter)],
                                       ),
                                       child: Center(
                                         child: Text(
-                                          warden['Name']
-                                              .toString()[0]
-                                              .toUpperCase(),
+                                          letter,
                                           style: GoogleFonts.poppins(
                                               fontSize: 16,
                                               fontWeight: FontWeight.w600,
@@ -174,7 +176,7 @@ class _WardenlistingState extends State<Wardenlisting>
                                     ),
                                     Expanded(
                                       child: Text(
-                                        warden['Name'] ?? "Not found",
+                                        warden['username'] ?? "Not found",
                                         style: GoogleFonts.poppins(
                                             fontWeight: FontWeight.w500),
                                       ),
@@ -201,61 +203,55 @@ class _WardenlistingState extends State<Wardenlisting>
                               decoration: BoxDecoration(
                                 border: Border.all(color: Colors.black),
                                 borderRadius: BorderRadius.circular(10),
-                                color: AppColors.getTileColorLight(context),
+                                color: AppColors.getAlertWindowC(context),
                               ),
                               width: MediaQuery.of(context).size.width * 0.9,
                               padding: EdgeInsets.all(8),
-                              child: (isloading)
-                                  ? Center(child: CircularProgressIndicator())
-                                  : Padding(
-                                      padding: const EdgeInsets.only(left: 8.0),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          buildInfoRow("Designation:",
-                                              "${wardens![index]['designation'] ?? ""}"),
-                                          buildInfoRow("Gender:",
-                                              "${wardens![index]['gender'] ?? ""}"),
-                                          buildInfoRow("Phone Number:",
-                                              "${wardens![index]['phone_no'] ?? ""}"),
-                                          buildInfoRow("Email:",
-                                              "${wardens![index]['email'] ?? ""}"),
-                                          Align(
-                                            alignment: Alignment.centerRight,
-                                            child: ElevatedButton(
-                                              onPressed: () {
-                                                customPopup(
-                                                  context,
-                                                  "Are you sure you want to remove \n${wardens![index]['username']}?",
-                                                  () {
-                                                    deleteWarden(
-                                                        wardens![index]
-                                                            ['docId'],
-                                                        wardens![index]
-                                                            ['hostelId']);
-                                                    Navigator.pop(context);
-                                                  },
-                                                );
-                                              },
-                                              style: ButtonStyle(
-                                                backgroundColor:
-                                                    WidgetStatePropertyAll(
-                                                        Colors.red),
-                                              ),
-                                              child: Row(
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [
-                                                  Icon(LucideIcons.trash2),
-                                                  SizedBox(width: 2),
-                                                  Text("Remove")
-                                                ],
-                                              ),
-                                            ),
-                                          )
-                                        ],
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 8.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    buildInfoRow("Designation:",
+                                        "${warden['designation'] ?? ""}"),
+                                    buildInfoRow(
+                                        "Gender:", "${warden['gender'] ?? ""}"),
+                                    buildInfoRow("Phone Number:",
+                                        "${warden['phone_no'] ?? ""}"),
+                                    buildInfoRow(
+                                        "Email:", "${warden['email'] ?? ""}"),
+                                    Align(
+                                      alignment: Alignment.centerRight,
+                                      child: ElevatedButton(
+                                        onPressed: () {
+                                          customPopup(
+                                            context,
+                                            "Are you sure you want to remove \n${warden['username']}?",
+                                            () {
+                                              deleteWarden(list[index]['docId'],
+                                                  warden['hostelId']);
+                                              Navigator.pop(context);
+                                            },
+                                          );
+                                        },
+                                        style: ButtonStyle(
+                                          backgroundColor:
+                                              WidgetStatePropertyAll(
+                                                  Colors.red),
+                                        ),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Icon(LucideIcons.trash2),
+                                            SizedBox(width: 2),
+                                            Text("Remove")
+                                          ],
+                                        ),
                                       ),
-                                    ),
+                                    )
+                                  ],
+                                ),
+                              ),
                             ),
                         ],
                       );
@@ -389,16 +385,8 @@ class _WardenlistingState extends State<Wardenlisting>
                 width: MediaQuery.of(context).size.width * 0.8,
                 padding: EdgeInsets.only(top: 8, bottom: 15, left: 8, right: 8),
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(30),
-                  gradient: LinearGradient(
-                    colors: [
-                      Color(0xFF232526), // Dark Grayish Black
-                      Color(0xFF414345), // Slightly lighter black with depth
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                ),
+                    borderRadius: BorderRadius.circular(30),
+                    color: AppColors.getContainerColor(context)),
                 child: Padding(
                   padding: const EdgeInsets.only(
                       top: 8.0, right: 16, left: 16, bottom: 8),
@@ -415,8 +403,8 @@ class _WardenlistingState extends State<Wardenlisting>
                               "Select an option",
                               style: GoogleFonts.poppins(
                                 fontWeight: FontWeight.w600,
-                                color:
-                                    Colors.white, // Text color for visibility
+                                color: AppColors.getTextColor(
+                                    context), // Text color for visibility
                               ),
                             ),
                           ),
@@ -475,8 +463,9 @@ class _WardenlistingState extends State<Wardenlisting>
           borderRadius: BorderRadius.circular(10),
           gradient: LinearGradient(
             colors: [
-              Colors.white.withOpacity(0.2),
-              Colors.white.withOpacity(0.05)
+              Color(0xFF000000), // Pure Black
+              Color(0xFF222222), // Charcoal Grey
+              Color(0xFF555555)
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -506,14 +495,16 @@ class _WardenlistingState extends State<Wardenlisting>
 
   Future<void> verifyWarden(
       String uid, QueryDocumentSnapshot<Object?> user) async {
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
     try {
+      DocumentReference userRef = firestore.collection('users').doc(uid);
       await FirebaseFirestore.instance
           .collection("hostels")
           .doc(hostelID)
           .collection("warden")
           .doc(uid)
           .set({
-        'Name': user['username'],
+        'userData': userRef,
       });
       await FirebaseFirestore.instance.collection("users").doc(uid).update({
         'isApproved': true,
@@ -545,5 +536,10 @@ class _WardenlistingState extends State<Wardenlisting>
         ),
       ),
     );
+  }
+
+  int getAlphabetPosition(String letter) {
+    int pos = letter.toUpperCase().codeUnitAt(0) - 'A'.codeUnitAt(0) + 1;
+    return (pos % 5);
   }
 }

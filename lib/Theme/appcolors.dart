@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class AppColors {
   //dark
+  static Color bg = Colors.black;
   static Color textColorDark = Colors.white;
   static Color containerColorDark = Color.fromRGBO(40, 40, 40, 1);
   static Color alretWindowColorDark = Color.fromRGBO(85, 85, 85, 1);
@@ -14,6 +15,7 @@ class AppColors {
 
 ;
   //light
+  static Color bgwhite = Colors.white;
   static Color textColorLight = Colors.black;
   static Color alretWindowColorLight = Color.fromRGBO(200, 200, 200, 1);
   static Color containerColorLight = Color.fromRGBO(200, 200, 200, 1);

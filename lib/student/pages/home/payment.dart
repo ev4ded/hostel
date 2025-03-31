@@ -6,8 +6,10 @@ import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:minipro/Theme/appcolors.dart';
 import 'package:minipro/firebase/firestore_services.dart';
+import 'package:minipro/student/components/custom_route.dart';
 import 'package:minipro/student/components/mysnackbar.dart';
 import 'package:minipro/student/components/mytextfield.dart';
+import 'package:minipro/student/pages/home/complaint/complaint.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 class Payment extends StatefulWidget {
@@ -37,6 +39,7 @@ class _PaymentState extends State<Payment> {
   bool paymenttime = false;
   String paid = "";
   bool isloading = true;
+  bool paymentdone = false;
 
   @override
   void initState() {
@@ -91,9 +94,10 @@ class _PaymentState extends State<Payment> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: AppColors.getAlertWindowC(context),
         title: Text(
           "Payment ",
-          style: GoogleFonts.inter(letterSpacing: 2),
+          style: GoogleFonts.inter(letterSpacing: 2, fontSize: 20),
         ),
         leading: IconButton(
           icon: Icon(LucideIcons.chevronLeft),
@@ -112,6 +116,9 @@ class _PaymentState extends State<Payment> {
     double width = MediaQuery.of(context).size.width;
     if (paymenttime) {
       if (paid == "") {
+        setState(() {
+          paymentdone = false;
+        });
         return SingleChildScrollView(
           physics: ClampingScrollPhysics(),
           child: Padding(
@@ -190,7 +197,7 @@ class _PaymentState extends State<Payment> {
                             ),
                           ),
                           Text(
-                            "Room no : 69",
+                            "Room no : ${userData!["room_no"]}",
                             style: GoogleFonts.poppins(
                               color: Colors.black,
                               fontSize: 15,
@@ -355,7 +362,7 @@ class _PaymentState extends State<Payment> {
         );
       } else if (paid == "processing") {
         return Container(
-          color: AppColors.getContainerColor(context),
+          color: AppColors.getAlertWindowC(context),
           child: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -380,9 +387,87 @@ class _PaymentState extends State<Payment> {
             ),
           ),
         );
+      } else if (paid == "failed") {
+        return Container(
+          color: AppColors.getAlertWindowC(context),
+          child: Center(
+            child: SizedBox(
+              width: double.infinity, // Ensures the Column takes full width
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment:
+                    CrossAxisAlignment.center, // Ensure text is centered
+                children: [
+                  SizedBox(
+                    height: 300,
+                    width: 300,
+                    child: Image.asset(
+                      "assets/images/sad.png",
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  Text(
+                    "Payment failed. Please try again or raise a complaint",
+                    textAlign: TextAlign
+                        .center, // Ensures multi-line text stays centered
+                    style: GoogleFonts.poppins(
+                      color: AppColors.getTextColor(context),
+                      fontSize: 16,
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ElevatedButton(
+                        onPressed: () {
+                          setState(() {
+                            paid = "";
+                          });
+                        },
+                        style: ButtonStyle(
+                            backgroundColor:
+                                WidgetStatePropertyAll(AppColors.buttonColor)),
+                        child: Text(
+                          "Pay again",
+                          style: GoogleFonts.inter(
+                              color: AppColors.buttonTextColor,
+                              fontWeight: FontWeight.w600),
+                        ),
+                      ),
+                      SizedBox(width: 10),
+                      ElevatedButton(
+                        onPressed: () {
+                          setState(() {
+                            Navigator.pushReplacement(
+                              context,
+                              myRoute(
+                                Complaint(),
+                              ),
+                            );
+                          });
+                        },
+                        style: ButtonStyle(
+                            backgroundColor:
+                                WidgetStatePropertyAll(Colors.red)),
+                        child: Text(
+                          "Complain",
+                          style: GoogleFonts.inter(
+                              color: AppColors.buttonTextColor,
+                              fontWeight: FontWeight.w500),
+                        ),
+                      )
+                    ],
+                  )
+                ],
+              ),
+            ),
+          ),
+        );
       } else {
         return Container(
-          color: AppColors.getContainerColor(context),
+          color: AppColors.getAlertWindowC(context),
           child: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -406,19 +491,6 @@ class _PaymentState extends State<Payment> {
                 SizedBox(
                   height: 15,
                 ),
-                /*ElevatedButton(
-                    onPressed: () {
-                      done();
-                      Navigator.pop(context);
-                    },
-                    style: ButtonStyle(
-                        backgroundColor:
-                            WidgetStatePropertyAll(AppColors.buttonColor)),
-                    child: Text(
-                      "Done",
-                      style: GoogleFonts.inter(
-                          color: Colors.black, fontWeight: FontWeight.w500),
-                    ))*/
               ],
             ),
           ),
@@ -426,7 +498,7 @@ class _PaymentState extends State<Payment> {
       }
     } else {
       return Container(
-        color: AppColors.getContainerColor(context),
+        color: AppColors.getAlertWindowC(context),
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,

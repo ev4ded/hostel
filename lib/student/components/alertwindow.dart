@@ -410,10 +410,29 @@ Future<String?> badge(BuildContext context, List<dynamic> badges) async {
                               ],
                             ),
                             child: Center(
-                              child: Text(
-                                badges[index],
-                                style: GoogleFonts.inter(
-                                    color: Colors.black, fontSize: 16),
+                              child: SizedBox(
+                                width:
+                                    double.infinity, // Make Row take full width
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      badges[index],
+                                      style: GoogleFonts.inter(
+                                        color: Colors.black,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                        width:
+                                            8), // Add spacing between text and avatar
+                                    CircleAvatar(
+                                      backgroundImage: AssetImage(
+                                          "assets/images/bg${badges[index]}.png"),
+                                      radius: 15,
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
@@ -465,7 +484,7 @@ void signout(BuildContext context) {
         child: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [Colors.black, Colors.grey[900]!, Colors.grey[800]!],
+              colors: [Color(0xFF4B4B4B), Color(0xFF1E1E1E)],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -490,6 +509,7 @@ void signout(BuildContext context) {
               ),
               SizedBox(height: 20),
               Row(
+                mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   TextButton(
@@ -497,6 +517,7 @@ void signout(BuildContext context) {
                     child:
                         Text("Cancel", style: TextStyle(color: Colors.white)),
                   ),
+                  SizedBox(width: 10),
                   ElevatedButton(
                     onPressed: () {
                       FirebaseAuth.instance.signOut();
@@ -525,7 +546,8 @@ void signout(BuildContext context) {
   );
 }
 
-Future<void> getroommates(BuildContext context, List<String> mates) async {
+Future<void> getroommates(
+    BuildContext context, List<Map<String, String>> mates) async {
   return await showDialog(
     context: context,
     barrierDismissible: true,
@@ -565,6 +587,12 @@ Future<void> getroommates(BuildContext context, List<String> mates) async {
                     shrinkWrap: true,
                     itemCount: mates.length,
                     itemBuilder: (context, index) {
+                      if (mates[index] == 'lonely') {
+                        return Text(
+                          "Hopefully, your warden will find you a great roommate soon!",
+                          style: GoogleFonts.poppins(),
+                        );
+                      }
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 8.0),
                         child: GestureDetector(
@@ -589,13 +617,39 @@ Future<void> getroommates(BuildContext context, List<String> mates) async {
                               ],
                             ),
                             child: Center(
-                              child: Text(
+                              child: SizedBox(
+                                width:
+                                    double.infinity, // Make Row take full width
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      mates[index]['name']!
+                                          .toUpperCase(), // Now showing names
+                                      style: GoogleFonts.inter(
+                                          color: Colors.white,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                    SizedBox(
+                                        width:
+                                            8), // Add spacing between text and avatar
+                                    CircleAvatar(
+                                      backgroundImage: AssetImage(
+                                          ("assets/images/bg${mates[index]['badgeName']}.png") ??
+                                              "assets/images/profile/0.png"),
+                                      radius: 20,
+                                      backgroundColor: Colors.transparent,
+                                    ),
+                                  ],
+                                ),
+                              ), /*Text(
                                 mates[index].toUpperCase(), // Now showing names
                                 style: GoogleFonts.inter(
                                     color: Colors.white,
                                     fontSize: 16,
                                     fontWeight: FontWeight.w500),
-                              ),
+                              ),*/
                             ),
                           ),
                         ),

@@ -38,7 +38,9 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
   bool present = true;
   String name = "profile";
   List<dynamic> collectBadges = ["student"];
-  List<String> roommates = ["lonely"];
+  List<Map<String, String>> roommates = [
+    {"name": "lonely", "badgeName": "No Badge"}
+  ];
   static const double allowedRadius = 500;
   late AnimationController _animationController;
   late Animation<double> _animation;
@@ -48,6 +50,10 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 500),
       vsync: this,
@@ -75,19 +81,20 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
         userData = newUserData;
       });
     }
-    List<String>? myMates =
+    List<Map<String, String>>? myMates =
         await getRoomates(userData!['hostelId'], userData!['room_no']);
-    print("my mates:$myMates");
     setState(() {
       present = userData!['present'] ?? true;
       name = userData!["dp"] ?? "profile";
       collectBadges = userData!['badges'] ?? ["student"];
       badgeText = userData!['badgeName'] ?? "Student";
       badgeGradient = getbadgesColor(badgeText!);
-      roommates = myMates ?? ["dead beat"];
+      roommates = myMates ??
+          [
+            {"name": "lonely", "badgeName": "No Badge"}
+          ];
     });
     Map<String, dynamic>? temp = await getHostelDetails(userData!["hostelId"]);
-    print("hostel:$temp");
     if (temp != null) {
       hostel = temp;
     }
@@ -99,8 +106,6 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
     double width = MediaQuery.of(context).size.width;
     Color containerColor = AppColors.getContainerColor(context);
     Color detailsC = AppColors.buttonColor;
-    Color buttonTextC = AppColors.buttonTextColor;
-    print("present/$present");
     return Scaffold(
       body: userData == null
           ? Center(
@@ -152,7 +157,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                                                   "assets/images/profile/$name.jpg")
                                               .image
                                           : Image.asset(
-                                                  "assets/images/profile/profile.png")
+                                                  "assets/images/profile/0.png")
                                               .image,
                                     ),
                                   ),
@@ -179,7 +184,6 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                                             String? selectedBadge = await badge(
                                                 context, collectBadges);
                                             if (selectedBadge != null) {
-                                              print(selectedBadge);
                                               saveBadge(
                                                   selectedBadge); //selectedBadge['gradient']
                                               setState(() {
@@ -187,13 +191,11 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                                                 badgeGradient = getbadgesColor(
                                                     selectedBadge);
                                               });
-                                            } else {
-                                              print('No badge selected');
                                             }
                                           },
                                           child: Container(
                                             height: 38,
-                                            width: 100,
+                                            width: 110,
                                             decoration: BoxDecoration(
                                               borderRadius:
                                                   BorderRadius.circular(20),
@@ -209,10 +211,10 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                                                     userData![
                                                         "role"], // Safely handle null
                                                 style: GoogleFonts.poppins(
-                                                    fontSize: 16,
-                                                    color: buttonTextC,
+                                                    fontSize: 14,
+                                                    color: Colors.black,
                                                     fontWeight:
-                                                        FontWeight.w500),
+                                                        FontWeight.w600),
                                               ),
                                             ),
                                           ),
@@ -232,7 +234,8 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                                                   "Room ID", // Safely handle null
                                               style: GoogleFonts.poppins(
                                                   fontSize: 18,
-                                                  color: buttonTextC),
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.w600),
                                             ),
                                           ),
                                         ),
@@ -421,7 +424,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                                         padding:
                                             const EdgeInsets.only(left: 8.0),
                                         child: Text(
-                                          "change password",
+                                          "Change password?",
                                           style:
                                               GoogleFonts.poppins(fontSize: 18),
                                         ),
@@ -436,42 +439,6 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                                   myRoute(Changepassword()),
                                 );
                                 HapticFeedback.heavyImpact();
-                              },
-                            ),
-                            SizedBox(height: 5),
-                            GestureDetector(
-                              child: Container(
-                                height: 50,
-                                width: width,
-                                decoration: BoxDecoration(
-                                  color: containerColor,
-                                  borderRadius: BorderRadius.circular(5),
-                                ),
-                                child: Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Row(
-                                    children: [
-                                      Padding(
-                                        padding:
-                                            const EdgeInsets.only(left: 12.0),
-                                        child: Icon(LucideIcons.logOut),
-                                      ),
-                                      Padding(
-                                        padding:
-                                            const EdgeInsets.only(left: 8.0),
-                                        child: Text(
-                                          "Sign Out",
-                                          style:
-                                              GoogleFonts.poppins(fontSize: 18),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              onTap: () {
-                                HapticFeedback.heavyImpact();
-                                signout(context);
                               },
                             ),
                             SizedBox(height: 5),
@@ -593,9 +560,44 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                                 ),
                               ),
                               onTap: () {
-                                print(roommates);
                                 getroommates(context, roommates);
                                 HapticFeedback.heavyImpact();
+                              },
+                            ),
+                            SizedBox(height: 5),
+                            GestureDetector(
+                              child: Container(
+                                height: 50,
+                                width: width,
+                                decoration: BoxDecoration(
+                                  color: containerColor,
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Row(
+                                    children: [
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 12.0),
+                                        child: Icon(LucideIcons.logOut),
+                                      ),
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 8.0),
+                                        child: Text(
+                                          "Sign Out",
+                                          style:
+                                              GoogleFonts.poppins(fontSize: 18),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              onTap: () {
+                                HapticFeedback.heavyImpact();
+                                signout(context);
                               },
                             ),
                           ],
@@ -666,7 +668,6 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
   Future<void> updateStudentStatus() async {
     if (isloading) return; // Prevent multiple taps
     setState(() => isloading = true); // Start loading
-    print("status-$present");
     Position? studentPosition = await getCurrentLocation();
     if (studentPosition == null) {
       setState(() => isloading = false);
@@ -678,7 +679,6 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
       setState(() => isloading = false);
       return;
     }
-    print("ddpresent:$present");
     if (!present && !insideHostel) {
       _showSnackBar("You must be inside the hostel to mark 'PRESENT'",
           isError: true);
@@ -687,7 +687,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
       });
       return; //return false;
     } else if (present) {
-      _showCelebrate("Return safely, see you soon!");
+      _showCelebrate("Return safely, ", "see you soon!");
       // && insideHostel
       //print("❌ You must be outside the hostel to mark 'OUT'.");
       _animationController.forward().then((_) {
@@ -697,7 +697,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
         present = !present; // Flip the state
       });
     } else {
-      _showCelebrate("Welcome back! You're now checked in.");
+      _showCelebrate("Welcome back! You're now ", "checked in.");
       _animationController.reverse().then((_) {
         update(present);
       });
@@ -744,14 +744,13 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
     Mysnackbar.show(context, message, isError: isError);
   }
 
-  void _showCelebrate(String message) {
+  void _showCelebrate(String message, special) {
     if (!mounted) return;
-    Mysnackbar.celebrate(context, message);
+    Mysnackbar.celebrate(context, message, special);
   }
 
   void saveBadge(String name) {
     // LinearGradient color
-    print(name);
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       FirebaseFirestore.instance.collection('users').doc(user.uid).update({

@@ -4,6 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:minipro/warden/wardenQueries/queries.dart';
 
 class PaidTransactions extends StatefulWidget {
+  const PaidTransactions({super.key});
+
   @override
   _PaidTransactionsState createState() => _PaidTransactionsState();
 }

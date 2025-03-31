@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:minipro/firebase/firestore_services.dart';
 import 'package:minipro/Theme/appcolors.dart';
+import 'package:minipro/student/components/badges.dart';
 import 'package:minipro/student/components/mydropdownmenu.dart';
 import 'package:minipro/student/components/myparafield.dart';
 import 'package:minipro/student/components/mysnackbar.dart';
@@ -30,6 +31,7 @@ class _CregisterState extends State<Cregister> {
   Map<String, dynamic>? userData;
   List<String> priorityList = ["ciritcal", "high", "moderate", "low"];
   String? priority;
+  Map<String, dynamic>? scores;
 
   @override
   @override
@@ -53,6 +55,7 @@ class _CregisterState extends State<Cregister> {
         userData = newUserData;
       });
     }
+    scores = await getScore();
   }
 
   @override
@@ -196,14 +199,22 @@ class _CregisterState extends State<Cregister> {
             'created_at': FieldValue.serverTimestamp(),
           },
         );
-        print('score:${(userData!['score'] ?? 0) + 5}');
+        int score = ((scores!['score'] ?? 0) + 5);
+        int complaint = ((scores!['complaint'] ?? 0) + 1);
         FirebaseFirestore.instance
-            .collection("users")
+            .collection("points")
             .doc(user.uid)
-            .update({'score': ((userData!['score'] ?? 0) + 5)});
+            .update({'score': score, 'complaint': complaint});
+        String text = getBadges(scores!, 'complaint');
         _showSnackBar("request send");
-        Future.delayed(Duration(seconds: 1), () {
+        if (text != "") {
+          _celebrate("You've unlocked a new badge!", text);
+        }
+        // ignore: use_build_context_synchronously
+        FocusScope.of(context).unfocus();
+        Future.delayed(Duration(milliseconds: 500), () {
           if (context.mounted) {
+            // ignore: use_build_context_synchronously
             Navigator.pop(context);
           }
         });
@@ -216,5 +227,10 @@ class _CregisterState extends State<Cregister> {
   void _showSnackBar(String message, {bool isError = false}) {
     if (!mounted) return;
     Mysnackbar.show(context, message, isError: isError);
+  }
+
+  void _celebrate(String message, String special) {
+    if (!mounted) return;
+    Mysnackbar.celebrate(context, message, special);
   }
 }

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:minipro/firebase/firestore_services.dart';
 import 'package:minipro/Theme/appcolors.dart';
+import 'package:minipro/student/components/badges.dart';
 import 'package:minipro/student/components/myparafield.dart';
 import 'package:minipro/student/components/mysnackbar.dart';
 import 'package:minipro/student/components/mytextfield.dart';
@@ -28,6 +29,7 @@ class _MaintenanceState extends State<MaintenanceRequest> {
   final int year = DateTime.now().year;
   final FirestoreServices _firestoreService = FirestoreServices();
   Map<String, dynamic>? userData;
+  Map<String, dynamic>? scores;
 
   @override
   @override
@@ -51,6 +53,7 @@ class _MaintenanceState extends State<MaintenanceRequest> {
         userData = newUserData;
       });
     }
+    scores = await getScore();
   }
 
   @override
@@ -154,46 +157,58 @@ class _MaintenanceState extends State<MaintenanceRequest> {
       return;
     }
     User? user = FirebaseAuth.instance.currentUser;
+    await user!.reload();
     //_showSnackBar(user.toString());
     //if (user != null) ;
     //print("title:$title\ndesciption:$description\nuser:${user.uid}");*/
     //await FirebaseAuth.instance.currentUser?.getIdToken(true);
-    if (user != null) {
-      //_showSnackBar()
-      try {
-        DocumentReference docRef =
-            FirebaseFirestore.instance.collection("maintenance_request").doc();
-        docRef.set(
-          {
-            'request_id': docRef.id,
-            'student_id': user.uid,
-            'hostel_id': userData!["hostelId"],
-            'title': title,
-            'status': 'pending',
-            'room_no': userData!["room_no"],
-            'description': description,
-            'created_at': FieldValue.serverTimestamp(),
-          },
-        );
-        print("score:${(userData!['score'] ?? 0) + 5}");
-        FirebaseFirestore.instance
-            .collection("users")
-            .doc(user.uid)
-            .update({'score': ((userData!['score'] ?? 0) + 5)});
-        _showSnackBar("request send");
-        Future.delayed(Duration(seconds: 1), () {
-          if (context.mounted) {
-            Navigator.pop(context);
-          }
-        });
-      } catch (e) {
-        _showSnackBar("request failed:$e");
+    //_showSnackBar()
+    try {
+      DocumentReference docRef =
+          FirebaseFirestore.instance.collection("maintenance_request").doc();
+      docRef.set(
+        {
+          'request_id': docRef.id,
+          'student_id': user.uid,
+          'hostel_id': userData!["hostelId"],
+          'title': title,
+          'status': 'pending',
+          'room_no': userData!["room_no"],
+          'description': description,
+          'created_at': FieldValue.serverTimestamp(),
+        },
+      );
+      int score = ((scores!['score'] ?? 0) + 5);
+      int maintenance = ((scores!['maintenance'] ?? 0) + 1);
+      FirebaseFirestore.instance
+          .collection("points")
+          .doc(user.uid)
+          .update({'score': score, 'maintenance': maintenance});
+      String text = getBadges(scores!, 'maintenance');
+      _showSnackBar("request send");
+      if (text != "") {
+        _celebrate("You've unlocked a new badge!", text);
       }
+      // ignore: use_build_context_synchronously
+      FocusScope.of(context).unfocus();
+      Future.delayed(Duration(milliseconds: 500), () {
+        if (context.mounted) {
+          // ignore: use_build_context_synchronously
+          Navigator.pop(context);
+        }
+      });
+    } catch (e) {
+      _showSnackBar("request failed:$e");
     }
   }
 
   void _showSnackBar(String message, {bool isError = false}) {
     if (!mounted) return;
     Mysnackbar.show(context, message, isError: isError);
+  }
+
+  void _celebrate(String message, String special) {
+    if (!mounted) return;
+    Mysnackbar.celebrate(context, message, special);
   }
 }
