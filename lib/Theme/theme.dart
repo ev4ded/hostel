@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:minipro/Theme/appcolors.dart';
 
 class AppThemes {
+  static Color loaderColor = AppColors.buttonColor;
   static final ThemeData lightTheme = ThemeData(
     /*textSelectionTheme: TextSelectionThemeData(
       cursorColor: Colors.blueAccent,
@@ -26,6 +28,14 @@ class AppThemes {
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       ),
     ),
+    progressIndicatorTheme: ProgressIndicatorThemeData(
+      color: loaderColor, // CircularProgressIndicator color
+    ),
+    textSelectionTheme: TextSelectionThemeData(
+      cursorColor: loaderColor, // Text selection cursor color
+      selectionColor: loaderColor.withAlpha(77), // Selected text background
+      selectionHandleColor: loaderColor, // Handle color
+    ),
   );
 
   static final ThemeData darkTheme = ThemeData(
@@ -47,6 +57,14 @@ class AppThemes {
         foregroundColor: Colors.white,
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       ),
+    ),
+    progressIndicatorTheme: ProgressIndicatorThemeData(
+      color: loaderColor, // CircularProgressIndicator color
+    ),
+    textSelectionTheme: TextSelectionThemeData(
+      cursorColor: loaderColor, // Text selection cursor color
+      selectionColor: loaderColor.withAlpha(77), // Selected text background
+      selectionHandleColor: loaderColor, // Handle color
     ),
   );
 }

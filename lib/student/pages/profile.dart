@@ -560,6 +560,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                                 ),
                               ),
                               onTap: () {
+                                print("room mates:$roommates");
                                 getroommates(context, roommates);
                                 HapticFeedback.heavyImpact();
                               },

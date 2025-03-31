@@ -42,134 +42,136 @@ class _MaintenanceState extends State<Maintenance> {
           style: GoogleFonts.inter(fontSize: 22),
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(15.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            GestureDetector(
-              child: Container(
-                height: containerHeight,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              GestureDetector(
+                child: Container(
+                  height: containerHeight,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: borderColor, width: borderWidth),
+                    color: containerColor,
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            "New request",
+                            style: GoogleFonts.inter(fontSize: 20),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(right: 8.0),
+                          child: Icon(LucideIcons.chevronRight),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+                onTap: () {
+                  Navigator.push(context, myRoute(MaintenanceRequest()));
+                },
+              ),
+              SizedBox(
+                height: 30,
+              ),
+              Text(
+                "Past Requests",
+                style: GoogleFonts.inter(fontSize: 20),
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              Container(
+                height: 400,
                 decoration: BoxDecoration(
                   border: Border.all(color: borderColor, width: borderWidth),
                   color: containerColor,
                   borderRadius: BorderRadius.circular(15),
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          "New request",
-                          style: GoogleFonts.inter(fontSize: 20),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 8.0),
-                        child: Icon(LucideIcons.chevronRight),
-                      )
-                    ],
-                  ),
-                ),
-              ),
-              onTap: () {
-                Navigator.push(context, myRoute(MaintenanceRequest()));
-              },
-            ),
-            SizedBox(
-              height: 30,
-            ),
-            Text(
-              "Past Requests",
-              style: GoogleFonts.inter(fontSize: 20),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            Container(
-              height: 400,
-              decoration: BoxDecoration(
-                border: Border.all(color: borderColor, width: borderWidth),
-                color: containerColor,
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: StreamBuilder<List<QueryDocumentSnapshot>>(
-                stream: getStudentMaintenance(
-                    FirebaseAuth.instance.currentUser!.uid),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-                  if (snapshot.hasError) {
-                    return Center(
-                      child: Text("Error:${snapshot.error}"),
-                    );
-                  }
-                  if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return Center(
-                      child: Text("No maintenance requests found"),
-                    );
-                  }
-                  List<QueryDocumentSnapshot> requests = snapshot.data!;
-                  return SingleChildScrollView(
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                          top: 5.0, bottom: 5.0, left: 2.0, right: 2.0),
-                      child: SizedBox(
-                        height: 390,
-                        child: ListView.builder(
-                          shrinkWrap: true,
-                          physics: AlwaysScrollableScrollPhysics(),
-                          itemCount: requests.length,
-                          itemBuilder: (context, index) {
-                            var request =
-                                requests[index].data() as Map<String, dynamic>;
-                            return Card(
-                              color: tileColor,
-                              child: ListTile(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                title: Text(
-                                  request['title'] ?? "No Title",
-                                  style: GoogleFonts.inter(),
-                                ),
-                                subtitle: Text(
-                                  request['description'] ?? "No Description",
-                                  style: GoogleFonts.inter(fontSize: 12),
-                                ),
-                                trailing: Container(
-                                  decoration: BoxDecoration(
-                                    color: status[request['status']],
+                child: StreamBuilder<List<QueryDocumentSnapshot>>(
+                  stream: getStudentMaintenance(
+                      FirebaseAuth.instance.currentUser!.uid),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                    if (snapshot.hasError) {
+                      return Center(
+                        child: Text("Error:${snapshot.error}"),
+                      );
+                    }
+                    if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return Center(
+                        child: Text("No maintenance requests found"),
+                      );
+                    }
+                    List<QueryDocumentSnapshot> requests = snapshot.data!;
+                    return SingleChildScrollView(
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                            top: 5.0, bottom: 5.0, left: 2.0, right: 2.0),
+                        child: SizedBox(
+                          height: 390,
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            physics: AlwaysScrollableScrollPhysics(),
+                            itemCount: requests.length,
+                            itemBuilder: (context, index) {
+                              var request = requests[index].data()
+                                  as Map<String, dynamic>;
+                              return Card(
+                                color: tileColor,
+                                child: ListTile(
+                                  shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(20),
                                   ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(
-                                      request['status'] ?? 'Unknown',
-                                      style: GoogleFonts.poppins(
-                                          fontSize: 14,
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.w500),
+                                  title: Text(
+                                    request['title'] ?? "No Title",
+                                    style: GoogleFonts.inter(),
+                                  ),
+                                  subtitle: Text(
+                                    request['description'] ?? "No Description",
+                                    style: GoogleFonts.inter(fontSize: 12),
+                                  ),
+                                  trailing: Container(
+                                    decoration: BoxDecoration(
+                                      color: status[request['status']],
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Text(
+                                        request['status'] ?? 'Unknown',
+                                        style: GoogleFonts.poppins(
+                                            fontSize: 14,
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.w500),
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            );
-                          },
+                              );
+                            },
+                          ),
                         ),
                       ),
-                    ),
-                  );
-                },
-              ),
-            )
-          ],
+                    );
+                  },
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );

@@ -97,6 +97,7 @@ Future<List<Map<String, String>>?> getRoomates(
       if (doc.exists) {
         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
         List occupants = data['occupants'] ?? [];
+        print(occupants);
         for (var occupant in occupants) {
           if (occupant != user.uid) {
             DocumentSnapshot userDoc = await FirebaseFirestore.instance
@@ -108,6 +109,7 @@ Future<List<Map<String, String>>?> getRoomates(
               String badgeName = userDoc['badgeName'] ?? 'No Badge';
               //print("name:${userDoc['username']}");
               mates.add({'name': name, 'badgeName': badgeName});
+              print(name);
             } else {
               mates.add({"name": "Lonely"});
             }

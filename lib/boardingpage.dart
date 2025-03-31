@@ -151,9 +151,7 @@ class _BoardingpageState extends State<Boardingpage> {
                   FirebaseFirestore.instance
                       .collection('users')
                       .doc(user!.uid)
-                      .update({
-                    'boardingPage': true,
-                  });
+                      .update({'boardingPage': true, 'badgeName': "Student"});
                   FirebaseFirestore.instance
                       .collection('points')
                       .doc(user.uid)

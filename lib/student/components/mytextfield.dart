@@ -34,7 +34,6 @@ class Mytextfield extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextField(
       keyboardType: type,
-      cursorColor: Colors.lightBlueAccent,
       style: GoogleFonts.inter(color: textColor),
       controller: controller,
       obscureText: isHidden,

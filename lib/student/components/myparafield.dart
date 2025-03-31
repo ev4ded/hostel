@@ -30,7 +30,6 @@ class Myparafield extends StatelessWidget {
       maxLines: noOfLine,
       keyboardType: TextInputType.multiline,
       textAlignVertical: TextAlignVertical.top,
-      cursorColor: Colors.white,
       style: GoogleFonts.inter(color: textColor),
       controller: controller,
       decoration: InputDecoration(

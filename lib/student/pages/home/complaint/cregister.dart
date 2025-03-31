@@ -212,11 +212,8 @@ class _CregisterState extends State<Cregister> {
         }
         // ignore: use_build_context_synchronously
         FocusScope.of(context).unfocus();
-        Future.delayed(Duration(milliseconds: 500), () {
-          if (context.mounted) {
-            // ignore: use_build_context_synchronously
-            Navigator.pop(context);
-          }
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          Navigator.pop(context);
         });
       } catch (e) {
         _showSnackBar("request failed");
