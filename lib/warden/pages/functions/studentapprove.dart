@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:minipro/warden/services/FCMservices.dart';
 import 'package:minipro/warden/wardenQueries/queries.dart';
 
 class StudentApproval extends StatefulWidget {
@@ -178,119 +179,140 @@ class StudentRequestsList extends StatelessWidget {
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       margin: const EdgeInsets.symmetric(vertical: 8),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          children: [
-            CircleAvatar(
-              radius: 30,
-              backgroundColor: Colors.indigo.shade100,
-              child: Text(
-                studentName[0].toUpperCase(),
-                style: TextStyle(
-                    color: Colors.indigo.shade700,
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold),
+      child: Container(
+        decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(15),
+      gradient: LinearGradient(
+        colors: [Colors.white, Colors.blue.shade100],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+    ),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              CircleAvatar(
+                radius: 30,
+                backgroundColor: Colors.indigo.shade100,
+                child: Text(
+                  studentName[0].toUpperCase(),
+                  style: TextStyle(
+                      color: Colors.indigo.shade700,
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold),
+                ),
               ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      studentName,
+                      style: GoogleFonts.poppins(
+                          fontSize: 16, fontWeight: FontWeight.w600,color: Colors.black),
+                    ),
+                    Text(
+                      'Pending Approval',
+                      style:
+                          GoogleFonts.poppins(color: Colors.grey, fontSize: 14),
+                    ),
+                  ],
+                ),
+              ),
+              Row(
                 children: [
-                  Text(
-                    studentName,
-                    style: GoogleFonts.poppins(
-                        fontSize: 16, fontWeight: FontWeight.w600),
-                  ),
-                  Text(
-                    'Pending Approval',
-                    style:
-                        GoogleFonts.poppins(color: Colors.grey, fontSize: 14),
-                  ),
+                  _buildActionButton(context, "Approve", Colors.green,
+                      () => approveStudent(studentId, hostelId, context)),
+                  const SizedBox(width: 8),
+                  _buildActionButton(context, "Deny", Colors.red,
+                      () => denyStudent(studentId, context)),
                 ],
               ),
-            ),
-            Row(
-              children: [
-                _buildActionButton(context, "Approve", Colors.green,
-                    () => approveStudent(studentId, hostelId, context)),
-                const SizedBox(width: 8),
-                _buildActionButton(context, "Deny", Colors.red,
-                    () => denyStudent(studentId, context)),
-              ],
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 
-  void approveStudent(
-      String studentId, String hostelId, BuildContext context) async {
-    try {
-      // Show room selection dialog
-      String? selectedRoomNumber =
-          await _showRoomSelectionDialog(context, hostelId);
+  void approveStudent(String studentId, String hostelId, BuildContext context) async {
+  try {
+    String? selectedRoomNumber = await _showRoomSelectionDialog(context, hostelId);
 
-      if (selectedRoomNumber == null) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text("Room selection cancelled")));
-        return;
-      }
+    if (selectedRoomNumber == null) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text("Room selection cancelled")));
+      return;
+    }
 
-      // Reference to the room document (using room number as the document ID)
-      DocumentReference roomRef = _firestore
-          .collection("hostels")
-          .doc(hostelId)
-          .collection("rooms")
-          .doc(selectedRoomNumber); // Using room number as document ID
+    DocumentReference roomRef = _firestore
+        .collection("hostels")
+        .doc(hostelId)
+        .collection("rooms")
+        .doc(selectedRoomNumber);
 
-      // 🔍 Check if the room already exists
-      DocumentSnapshot roomSnapshot = await roomRef.get();
+    DocumentSnapshot roomSnapshot = await roomRef.get();
 
-      if (roomSnapshot.exists) {
-        // If room exists, update occupants list
-        await roomRef.update({
-          "occupants": FieldValue.arrayUnion([studentId])
-        });
-      } else {
-        // If room does not exist, create a new document
-        await roomRef.set({
-          "occupants": [studentId], // Initialize occupants array
-          "room_no": selectedRoomNumber
-        });
-      }
-
-      // Update the student's room number in the users collection
-      await _firestore.collection("users").doc(studentId).update({
-        "room_no": selectedRoomNumber,
-        "isApproved": true,
+    if (roomSnapshot.exists) {
+      await roomRef.update({
+        "occupants": FieldValue.arrayUnion([studentId])
       });
-
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Student Approved & Room Assigned")));
-    } catch (error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Error approving student: $error")));
+    } else {
+      await roomRef.set({
+        "occupants": [studentId],
+        "room_no": selectedRoomNumber
+      });
     }
-  }
 
-  /// ❌ Deny Student & Provide Reason
-  void denyStudent(String studentId, BuildContext context) async {
-    //String reason = await getDenialReason(context);
-    //if (reason.isEmpty) return;
+    await _firestore.collection("users").doc(studentId).update({
+      "room_no": selectedRoomNumber,
+      "isApproved": true,
+    });
 
-    try {
-      await _firestore.collection("users").doc(studentId).delete();
+    DocumentSnapshot studentDoc = await _firestore.collection("users").doc(studentId).get();
+    List<String> fcmTokens = List<String>.from(studentDoc["FCM_tokens"] ?? []);
 
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text("Student Denied!", style: GoogleFonts.poppins())));
-    } catch (error) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text("Error: $error", style: GoogleFonts.poppins())));
+    for (var token in fcmTokens) {
+      await FCMService.sendNotification(
+        fcmToken: token,
+        title: "Approval Notification",
+        body: "Your hostel admission has been approved! Room: $selectedRoomNumber",
+      );
     }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Student Approved & Room Assigned")));
+  } catch (error) {
+    ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error approving student: $error")));
   }
+}
+
+void denyStudent(String studentId, BuildContext context) async {
+  try {
+    DocumentSnapshot studentDoc = await _firestore.collection("users").doc(studentId).get();
+    List<String> fcmTokens = List<String>.from(studentDoc["FCM_tokens"] ?? []);
+
+    await _firestore.collection("users").doc(studentId).delete();
+
+    for (var token in fcmTokens) {
+      await FCMService.sendNotification(
+        fcmToken: token,
+        title: "Denial Notification",
+        body: "Your hostel admission request has been denied.",
+      );
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Student Denied!")));
+  } catch (error) {
+    ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error: $error")));
+  }
+}
+
 
   Widget _buildActionButton(
       BuildContext context, String text, Color color, VoidCallback onPressed) {

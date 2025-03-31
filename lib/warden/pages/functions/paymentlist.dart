@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:minipro/warden/services/FCMservices.dart';
 import 'package:minipro/warden/wardenQueries/queries.dart';
 
 class PaidTransactions extends StatefulWidget {
@@ -107,34 +108,70 @@ class _PaidTransactionsState extends State<PaidTransactions> {
   }
 
   void updatePaymentStatus(String userId, String status) async {
-    try {
-      await FirebaseFirestore.instance.collection('users').doc(userId).update({
-        'paid': status,
-      });
+  try {
+    final userRef = FirebaseFirestore.instance.collection('users').doc(userId);
+    final userSnapshot = await userRef.get();
 
-      setState(() {
-        transactions.removeWhere((transaction) => transaction['user_id'] == userId);
-      });
+    if (!userSnapshot.exists) {
+      print("❌ User not found!");
+      return;
+    }
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Payment marked as ${status == "successful" ? "successful" : "failed"}'),
-          backgroundColor: status == "successful" ? Colors.green : Colors.orange,
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
+    final userData = userSnapshot.data();
+    final fcmTokens = userData?["FCM_tokens"] ?? [""];
+
+    // ✅ Update Firestore payment status
+    await userRef.update({
+      'paid': status,
+    });
+
+    setState(() {
+      transactions.removeWhere((transaction) => transaction['user_id'] == userId);
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Payment marked as ${status == "successful" ? "successful" : "failed"}'),
+        backgroundColor: status == "successful" ? Colors.green : Colors.orange,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
         ),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Failed to update payment status'),
-          backgroundColor: Colors.red,
-        ),
+      ),
+    );
+
+    if (fcmTokens.isEmpty) {
+       await userRef.update({
+      'paid': status,
+    });
+      print("❌ No FCM tokens found for the user!");
+      return;
+    }
+
+    // ✅ Send Notification
+    String notificationBody =
+        "Your payment${status == "successful" ? "was Successful" : "has been Failed"}.";
+
+    for (var token in fcmTokens) {
+      await FCMService.sendNotification(
+        fcmToken: token,
+        title: "Payment Status Update",
+        body: notificationBody,
       );
     }
+
+    print("✅ Payment status updated and notification sent.");
+  } catch (e) {
+    print("❌ Failed to update payment status: $e");
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Failed to update payment status'),
+        backgroundColor: Colors.red,
+      ),
+    );
   }
+}
+
 
   @override
   Widget build(BuildContext context) {

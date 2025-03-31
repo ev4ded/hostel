@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:ionicons/ionicons.dart';
+import 'package:minipro/warden/services/FCMservices.dart';
 import 'package:minipro/warden/wardenQueries/queries.dart';
 
 class LeaveRequests extends StatefulWidget {
@@ -121,10 +123,52 @@ class _LeaveRequestsState extends State<LeaveRequests>
 
   Future<void> _updateLeaveStatus(String requestId, String status) async {
     try {
-      await FirebaseFirestore.instance
+      final leaveRef = FirebaseFirestore.instance
           .collection('leave_application')
-          .doc(requestId)
-          .update({'status': status});
+          .doc(requestId);
+      
+      final leaveSnapshot = await leaveRef.get();
+      if (!leaveSnapshot.exists) {
+        print("❌ Leave request not found!");
+        return;
+      }
+
+      final leaveData = leaveSnapshot.data();
+      final studentUid = leaveData?["student_id"];
+      if (studentUid == null) {
+        print("❌ Student ID not found in leave data!");
+        return;
+      }
+
+      final studentDoc = await FirebaseFirestore.instance
+          .collection("users")
+          .doc(studentUid)
+          .get();
+
+      if (!studentDoc.exists) {
+        print("❌ Student not found in users collection!");
+        return;
+      }
+
+      final fcmTokens = studentDoc["FCM_tokens"] ?? [""];
+      if (fcmTokens.isEmpty) {
+        await leaveRef.update({'status': status});
+        print("❌ No FCM tokens found for the student!");
+        return;
+      }
+
+      // ✅ Update Firestore: Mark leave request as updated
+      await leaveRef.update({'status': status});
+
+      // ✅ Send Notification
+      String notificationBody = "Your leave request has been $status.";
+      for (var token in fcmTokens) {
+        await FCMService.sendNotification(
+          fcmToken: token,
+          title: "Leave Request Update",
+          body: notificationBody,
+        );
+      }
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -238,39 +282,55 @@ class _LeaveRequestsState extends State<LeaveRequests>
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Padding(
-                    padding: EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              username,
-                              style: GoogleFonts.roboto(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: const Color.fromARGB(255, 103, 119, 245),
+                  child: Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(15),
+                      gradient: LinearGradient(
+                        colors: [Colors.white, Colors.blue.shade100],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                    ),
+                    child: Padding(
+                      padding: EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                               CircleAvatar(
+                                radius: 28,
+                                backgroundColor: Colors.white,
+                                backgroundImage: AssetImage('assets/images/profile/${user['dp']}.jpg'),
                               ),
-                            ),
-                            Row(
-                              children: [
-                                IconButton(
-                                  icon: Icon(Icons.check, color: Colors.green),
-                                  onPressed: () => _updateLeaveStatus(
-                                      request.id, 'approved'),
+                              Text(
+                                username,
+                                style: GoogleFonts.roboto(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: const Color.fromARGB(255, 103, 119, 245),
                                 ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 12),
-                        _buildDetailRow('Reason', request['reason']),
-                        _buildDetailRow('Type', request['type']),
-                        _buildDetailRow('Duration',
-                            '${request['from']} to ${request['to']}'),
-                      ],
+                              ),
+                              Row(
+                                children: [
+                                  IconButton(
+                                    icon: Icon(Ionicons.checkmark_circle_sharp, color: Colors.green,size: 35,),
+                                    onPressed: () => _updateLeaveStatus(
+                                        request.id, 'approved'),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 12),
+                          _buildDetailRow('Reason', request['reason']),
+                          _buildDetailRow('Type', request['type']),
+                          _buildDetailRow('Duration',
+                              '${request['from']} to ${request['to']}'),
+                        ],
+                      ),
                     ),
                   ),
                 );
@@ -327,7 +387,7 @@ class _LeaveRequestsState extends State<LeaveRequests>
           itemBuilder: (context, index) {
             var request = currentlyOnLeave[index];
             String studentId = request['student_id'];
-
+          
             return FutureBuilder<DocumentSnapshot>(
               future: FirebaseFirestore.instance
                   .collection('users')
@@ -355,18 +415,34 @@ class _LeaveRequestsState extends State<LeaveRequests>
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: ListTile(
-                    title: Text(
-                      username,
-                      style: GoogleFonts.roboto(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: const Color.fromARGB(255, 103, 119, 245),
+                  child: Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(15),
+                      gradient: LinearGradient(
+                        colors: [Colors.white, Colors.blue.shade100],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
                       ),
                     ),
-                    subtitle: Text(
-                      'Leave from ${request['from']} to ${request['to']}',
-                      style: GoogleFonts.roboto(),
+                    child: ListTile(
+                      leading: CircleAvatar(
+                                radius: 28,
+                                backgroundColor: Colors.white,
+                                backgroundImage: AssetImage('assets/images/profile/${user['dp']}.jpg'),
+                              ),
+                      title: Text(
+                        username,
+                        style: GoogleFonts.roboto(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: const Color.fromARGB(255, 103, 119, 245),
+                        ),
+                      ),
+                      subtitle: Text(
+                        'Leave from ${request['from']} to ${request['to']}',
+                        style: GoogleFonts.roboto(color: Colors.black),
+                      ),
                     ),
                   ),
                 );
@@ -387,11 +463,12 @@ class _LeaveRequestsState extends State<LeaveRequests>
             '$label: ',
             style: GoogleFonts.roboto(
               fontWeight: FontWeight.bold,
+              color: Colors.black54
             ),
           ),
           Text(
             value,
-            style: GoogleFonts.roboto(),
+            style: GoogleFonts.roboto(color: Colors.black54),
           ),
         ],
       ),

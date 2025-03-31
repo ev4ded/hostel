@@ -8,7 +8,10 @@ import 'homepage.dart';
 
 
 class MyNavigation extends StatefulWidget {
-  const MyNavigation({super.key});
+ final int selectedIndex ;
+  const MyNavigation({super.key,
+    this.selectedIndex = 0,
+  });
 
   @override
   State<MyNavigation> createState() => _MyNavigationState();
@@ -22,7 +25,13 @@ class _MyNavigationState extends State<MyNavigation> {
     MyProfile(),
   
   ];
-
+  
+  @override
+  void initState() {
+    
+    super.initState();
+    _selectedIndex = widget.selectedIndex;
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(

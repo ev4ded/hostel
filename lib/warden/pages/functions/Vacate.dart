@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:minipro/warden/services/FCMservices.dart';
 import 'package:minipro/warden/wardenQueries/queries.dart';
 
 class VacateRequest extends StatefulWidget {
@@ -46,7 +47,7 @@ class _VacateRequestState extends State<VacateRequest> {
   }
 
   // Update request status (approve/deny)
-  void _updateRequestStatus(
+    void _updateRequestStatus(
       String requestId, String newStatus, String studentId) async {
     try {
       showDialog(
@@ -61,12 +62,38 @@ class _VacateRequestState extends State<VacateRequest> {
           .update({"status": newStatus});
 
       if (newStatus == "approved") {
-        // Remove student from hostel and room
         await removeStudent(studentId, hostelId!);
         await FirebaseFirestore.instance
             .collection('vacate')
             .doc(requestId)
             .delete();
+      }
+
+      final studentDoc = await FirebaseFirestore.instance.collection("users").doc(studentId).get();
+      final fcmTokens = studentDoc["FCM_tokens"] ?? [""];
+      if (fcmTokens.isEmpty) {
+         String notificationBody = "Your vacate request has been $newStatus.";
+       
+        for (var token in fcmTokens) {
+          await FCMService.sendNotification(
+            fcmToken: token,
+            title: "Vacate Request Update",
+            body: notificationBody,
+          );
+        }
+         print("❌ No FCM tokens found for the student!");
+        return;
+      }
+
+      if (fcmTokens.isNotEmpty) {
+        String notificationBody = "Your vacate request has been updated to $newStatus.";
+        for (var token in fcmTokens) {
+          await FCMService.sendNotification(
+            fcmToken: token,
+            title: "Vacate Request Update",
+            body: notificationBody,
+          );
+        }
       }
 
       if (mounted) Navigator.pop(context);
@@ -85,6 +112,7 @@ class _VacateRequestState extends State<VacateRequest> {
       );
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -136,34 +164,45 @@ class _VacateRequestState extends State<VacateRequest> {
                       elevation: 2,
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12)),
-                      child: ListTile(
-                        title: Text(requestData['name'],
-                            style: TextStyle(fontWeight: FontWeight.bold)),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Room: ${requestData['room_no']}'),
-                            Text('Reason: ${requestData['reason']}'),
-                            Text('Date: ${requestData['vacatetime']}'),
-                          
-                           ],
-                           ),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            ElevatedButton.icon(
-                              onPressed: () => _showConfirmationDialog(
-                                request.id,
-                                "approved",
-                                requestData['student_id'] ?? "",
-                                requestData['name'] ?? "",
+                      child: Container(
+                        padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(15),
+                      gradient: LinearGradient(
+                        colors: [Colors.white, Colors.blue.shade100],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                    ),
+                        child: ListTile(
+                          title: Text(requestData['name'],
+                              style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black)),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('Room: ${requestData['room_no']}',style:GoogleFonts.inter(color:  Colors.black) ,),
+                              Text('Reason: ${requestData['reason']}',style:GoogleFonts.inter(color:  Colors.black)),
+                              Text('Date: ${requestData['vacting_date']}',style:GoogleFonts.inter(color:  Colors.black)),
+                            
+                             ],
+                             ),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              ElevatedButton.icon(
+                                onPressed: () => _showConfirmationDialog(
+                                  request.id,
+                                  "approved",
+                                  requestData['student_id'] ?? "",
+                                  requestData['name'] ?? "",
+                                ),
+                                icon: Icon(Icons.check),
+                                label: Text("Approve"),
+                                style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.green),
                               ),
-                              icon: Icon(Icons.check),
-                              label: Text("Approve"),
-                              style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.green),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     );
