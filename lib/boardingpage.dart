@@ -50,6 +50,12 @@ class _BoardingpageState extends State<Boardingpage> {
           "Apply for leave, report maintenance, and track payments seamlessly."
     },
     {
+      "image": "assets/images/star.png",
+      "title": "Unlock Your Achievements!!",
+      "description":
+          "Collect badges, flex your wins, and make your mark in the hostel!."
+    },
+    {
       "image": "assets/images/joinus.png",
       "title": "Join Us Today!",
       "description": "Log in now and experience a smarter hostel life!"
@@ -147,6 +153,15 @@ class _BoardingpageState extends State<Boardingpage> {
                       .doc(user!.uid)
                       .update({
                     'boardingPage': true,
+                  });
+                  FirebaseFirestore.instance
+                      .collection('points')
+                      .doc(user.uid)
+                      .set({
+                    'complaint': 0,
+                    'leave': 0,
+                    'maintenance': 0,
+                    'score': 0
                   });
                   Navigator.pushReplacement(
                       context, myRoute(page)); // Replace with your login page

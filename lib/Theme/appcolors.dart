@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class AppColors {
   //dark
+  static Color bg = Colors.black;
   static Color textColorDark = Colors.white;
   static Color containerColorDark = Color.fromRGBO(40, 40, 40, 1);
   static Color alretWindowColorDark = Color.fromRGBO(85, 85, 85, 1);
@@ -9,6 +10,7 @@ class AppColors {
   static Color detailsCDark = Color.fromRGBO(180, 195, 210, 1);
   static Color wardentileDark = const Color.fromARGB(255, 74, 72, 72);
   //light
+  static Color bgwhite = Colors.white;
   static Color textColorLight = Colors.black;
   static Color alretWindowColorLight = Color.fromRGBO(200, 200, 200, 1);
   static Color containerColorLight = Color.fromRGBO(200, 200, 200, 1);
@@ -50,9 +52,14 @@ class AppColors {
         ? alretWindowColorDark
         : alretWindowColorLight;
   }
+
   static Color getWardentile(BuildContext context) {
     return Theme.of(context).brightness == Brightness.dark
-        ?  wardentileDark
-        :  wardentileLight;
+        ? wardentileDark
+        : wardentileLight;
+  }
+
+  static Color getbg(BuildContext context) {
+    return Theme.of(context).brightness == Brightness.dark ? bg : bgwhite;
   }
 }

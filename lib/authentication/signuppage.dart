@@ -337,7 +337,8 @@ class _SignupPageState extends State<SignupPage> {
           'profileUpdated': false,
           'present': true,
           'boardingPage': false,
-          'badges': ['Student', 'Newbie']
+          'badges': ['Student', 'Newbie'],
+          'badgeName': 'Student',
         },
       );
       await _firestore.collection('points').doc(uid).set({});

@@ -38,7 +38,9 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
   bool present = true;
   String name = "profile";
   List<dynamic> collectBadges = ["student"];
-  List<String> roommates = ["lonely"];
+  List<Map<String, String>> roommates = [
+    {"name": "lonely", "badgeName": "No Badge"}
+  ];
   static const double allowedRadius = 500;
   late AnimationController _animationController;
   late Animation<double> _animation;
@@ -75,7 +77,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
         userData = newUserData;
       });
     }
-    List<String>? myMates =
+    List<Map<String, String>>? myMates =
         await getRoomates(userData!['hostelId'], userData!['room_no']);
     setState(() {
       present = userData!['present'] ?? true;
@@ -83,7 +85,10 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
       collectBadges = userData!['badges'] ?? ["student"];
       badgeText = userData!['badgeName'] ?? "Student";
       badgeGradient = getbadgesColor(badgeText!);
-      roommates = myMates ?? ["dead beat"];
+      roommates = myMates ??
+          [
+            {"name": "lonely", "badgeName": "No Badge"}
+          ];
     });
     Map<String, dynamic>? temp = await getHostelDetails(userData!["hostelId"]);
     if (temp != null) {
@@ -97,7 +102,6 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
     double width = MediaQuery.of(context).size.width;
     Color containerColor = AppColors.getContainerColor(context);
     Color detailsC = AppColors.buttonColor;
-    Color buttonTextC = AppColors.buttonTextColor;
     return Scaffold(
       body: userData == null
           ? Center(
@@ -149,7 +153,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                                                   "assets/images/profile/$name.jpg")
                                               .image
                                           : Image.asset(
-                                                  "assets/images/profile/profile.png")
+                                                  "assets/images/profile/0.png")
                                               .image,
                                     ),
                                   ),

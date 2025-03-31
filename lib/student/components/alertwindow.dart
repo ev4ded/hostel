@@ -410,10 +410,29 @@ Future<String?> badge(BuildContext context, List<dynamic> badges) async {
                               ],
                             ),
                             child: Center(
-                              child: Text(
-                                badges[index],
-                                style: GoogleFonts.inter(
-                                    color: Colors.black, fontSize: 16),
+                              child: SizedBox(
+                                width:
+                                    double.infinity, // Make Row take full width
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      badges[index],
+                                      style: GoogleFonts.inter(
+                                        color: Colors.black,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                        width:
+                                            8), // Add spacing between text and avatar
+                                    CircleAvatar(
+                                      backgroundImage: AssetImage(
+                                          "assets/images/bg${badges[index]}.png"),
+                                      radius: 15,
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
@@ -527,7 +546,8 @@ void signout(BuildContext context) {
   );
 }
 
-Future<void> getroommates(BuildContext context, List<String> mates) async {
+Future<void> getroommates(
+    BuildContext context, List<Map<String, String>> mates) async {
   return await showDialog(
     context: context,
     barrierDismissible: true,
@@ -597,13 +617,39 @@ Future<void> getroommates(BuildContext context, List<String> mates) async {
                               ],
                             ),
                             child: Center(
-                              child: Text(
+                              child: SizedBox(
+                                width:
+                                    double.infinity, // Make Row take full width
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      mates[index]['name']!
+                                          .toUpperCase(), // Now showing names
+                                      style: GoogleFonts.inter(
+                                          color: Colors.white,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                    SizedBox(
+                                        width:
+                                            8), // Add spacing between text and avatar
+                                    CircleAvatar(
+                                      backgroundImage: AssetImage(
+                                          ("assets/images/bg${mates[index]['badgeName']}.png") ??
+                                              "assets/images/profile/0.png"),
+                                      radius: 20,
+                                      backgroundColor: Colors.transparent,
+                                    ),
+                                  ],
+                                ),
+                              ), /*Text(
                                 mates[index].toUpperCase(), // Now showing names
                                 style: GoogleFonts.inter(
                                     color: Colors.white,
                                     fontSize: 16,
                                     fontWeight: FontWeight.w500),
-                              ),
+                              ),*/
                             ),
                           ),
                         ),

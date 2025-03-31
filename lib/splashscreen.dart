@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:minipro/Admin/wardenlisting.dart';
+import 'package:minipro/Theme/appcolors.dart';
 import 'package:minipro/boardingpage.dart';
 import 'package:minipro/deleted.dart';
 import 'package:minipro/student/components/custom_route.dart';
@@ -63,6 +66,55 @@ class _SplashscreenState extends State<Splashscreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Scaffold(
+      backgroundColor: AppColors.getbg(context),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Expanded(
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  SizedBox(
+                    width: 200, // Outer ring size
+                    height: 200,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 4,
+                      color: AppColors.getTextColor(
+                          context), // Adjust color as needed
+                    ),
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    child: ClipRRect(
+                      borderRadius:
+                          BorderRadius.circular(30), // Apply border radius
+                      child: Image.asset(
+                        "assets/icons/logo.png",
+                        width: 150, // Logo size
+                        height: 130,
+                        fit: BoxFit
+                            .cover, // Ensures it covers the space properly
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 20),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Text(
+                "Created by Group 8",
+                style: GoogleFonts.inter(),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
