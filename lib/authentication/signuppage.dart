@@ -315,7 +315,7 @@ class _SignupPageState extends State<SignupPage> {
           .createUserWithEmailAndPassword(email: email, password: password);
       //await FirestoreServices().getUserData();
       await _auth.currentUser?.reload();
-      /*if (user != null && !user.emailVerified) {
+      if (_auth.currentUser != null && _auth.currentUser!.emailVerified) {
         //_showSnackBar("Verification email sent.Please check your inbox.");
         if (!mounted) return;
         await showEmailVerifictionDialog(context);
