@@ -157,7 +157,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                                                   "assets/images/profile/$name.jpg")
                                               .image
                                           : Image.asset(
-                                                  "assets/images/profile/0.png")
+                                                  "assets/images/profile/1.jpg")
                                               .image,
                                     ),
                                   ),
