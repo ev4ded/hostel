@@ -334,7 +334,7 @@ class _SignupPageState extends State<SignupPage> {
           'hostelId': hostelId,
           'room_no': '',
           'isApproved': false,
-          'FCM_tokens': token,
+          'FCM_tokens': [token],
           'profileUpdated': false,
           'present': true,
           'boardingPage': false,
