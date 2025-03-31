@@ -150,7 +150,7 @@ class _PaidTransactionsState extends State<PaidTransactions> {
 
     // ✅ Send Notification
     String notificationBody =
-        "Your payment${status == "successful" ? "was Successful" : "has been Failed"}.";
+        " ${status == "successful" ? "Your payment was Successful" :"Your payment has been Failed"}.";
 
     for (var token in fcmTokens) {
       await FCMService.sendNotification(
