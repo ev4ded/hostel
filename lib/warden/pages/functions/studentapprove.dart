@@ -272,8 +272,15 @@ class StudentRequestsList extends StatelessWidget {
     });
 
     DocumentSnapshot studentDoc = await _firestore.collection("users").doc(studentId).get();
-    List<String> fcmTokens = List<String>.from(studentDoc["FCM_tokens"] ?? []);
-
+    List<String> fcmTokens = List<String>.from(studentDoc["FCM_tokens"] ?? [""]);
+     if (fcmTokens.isEmpty) {
+      await _firestore.collection("users").doc(studentId).update({
+      "room_no": selectedRoomNumber,
+      "isApproved": true,
+    });
+      print("❌ No FCM tokens found for the student!");
+      return;
+    }
     for (var token in fcmTokens) {
       await FCMService.sendNotification(
         fcmToken: token,
@@ -293,7 +300,12 @@ class StudentRequestsList extends StatelessWidget {
 void denyStudent(String studentId, BuildContext context) async {
   try {
     DocumentSnapshot studentDoc = await _firestore.collection("users").doc(studentId).get();
-    List<String> fcmTokens = List<String>.from(studentDoc["FCM_tokens"] ?? []);
+    List<String> fcmTokens = List<String>.from(studentDoc["FCM_tokens"] ?? [""]);
+    if (fcmTokens.isEmpty) {
+        await _firestore.collection("users").doc(studentId).delete();
+      print("❌ No FCM tokens found for the student!");
+      return;
+    }
 
     await _firestore.collection("users").doc(studentId).delete();
 
