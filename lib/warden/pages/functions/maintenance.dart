@@ -233,12 +233,13 @@ class RequestsList extends StatelessWidget {
                                   );
                                   return;
                                 }
-                                String formattedDateTime =
-                                    "${selectedDate.year}-${selectedDate.month}-${selectedDate.day} "
+                                String formattedDate =
+                                    "${selectedDate.year}-${selectedDate.month}-${selectedDate.day} ";
+                                    String formattedTime=
                                     "${selectedTime.hour}:${selectedTime.minute}:00";
                 
                                 updateStatus(requestId, "Approved",
-                                    formattedDateTime, context);
+                                    formattedDate,formattedTime, context);
                               },
                               style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.green),
@@ -249,7 +250,7 @@ class RequestsList extends StatelessWidget {
                             SizedBox(width: 10),
                             ElevatedButton(
                               onPressed: () => updateStatus(requestId, "Denied",
-                                  "approvedDateTime", context),
+                                  "approvedDate","approvedTime", context),
                               style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.red),
                               child: Text(
@@ -277,7 +278,7 @@ class RequestsList extends StatelessWidget {
   }
 
   void updateStatus(String requestId, String newStatus,
-      String formattedDateTime, BuildContext context) async {
+      String formattedDate,String formattedTime, BuildContext context) async {
     try {
       final maintenanceRef =
           _firestore.collection("maintenance_request").doc(requestId);
@@ -321,9 +322,9 @@ class RequestsList extends StatelessWidget {
       });
       String notificationBody;
       if (newStatus.toLowerCase() == "approved") {
-        await maintenanceRef.update({"approvedDateTime": formattedDateTime});
+        await maintenanceRef.update({"approvedDate": formattedDate,"approvedTime": formattedTime});
         notificationBody =
-            "Your maintenance request has been approved and scheduled for $formattedDateTime.";
+            "Your maintenance request has been approved and scheduled for $formattedDate,$formattedTime.";
       } else {
         notificationBody =
             "Your maintenance request status has been  $newStatus.";

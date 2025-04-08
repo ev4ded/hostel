@@ -4,6 +4,7 @@ import 'package:ionicons/ionicons.dart';
 import 'package:minipro/Theme/appcolors.dart';
 import 'package:minipro/warden/components/my_drawer.dart';
 import 'package:minipro/warden/pages/functions/Vacate.dart';
+import 'package:minipro/warden/pages/functions/attedence.dart';
 import 'package:minipro/warden/pages/functions/complaints.dart';
 import 'package:minipro/warden/pages/functions/leave.dart';
 import 'package:minipro/warden/pages/functions/maintenance.dart';
@@ -94,9 +95,9 @@ class _HomePageState extends State<HomePage> {
                   _buildMenuItem(Ionicons.people_circle_outline, "Student Approval", () => _navigateTo(context, StudentApproval())),
                   _buildMenuItem(Ionicons.bed_outline, "Room Change", () => _navigateTo(context, RoomChange())),
                   _buildMenuItem(Ionicons.cash_outline, "Payment", () => _navigateTo(context,PaidTransactions())),
-                 // _buildMenuItem(Ionicons.man_outline, "Student List", () => _navigateTo(context, StudentList())),
+                  _buildMenuItem(Ionicons.man_outline, "Attedence", () => _navigateTo(context, WardenAttendanceDashboard())),
                   _buildMenuItem(Ionicons.exit_outline, "Vacate Requests", () => _navigateTo(context, VacateRequest())),
-                   _buildMenuItem(Ionicons.today_outline, "Leave Request", () => _navigateTo(context, LeaveRequests())),
+                  _buildMenuItem(Ionicons.today_outline, "Leave Request", () => _navigateTo(context, LeaveRequests())),
                 ],
               ),
             ],
