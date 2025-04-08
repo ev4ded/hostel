@@ -105,11 +105,14 @@ class _SplashscreenState extends State<Splashscreen> {
               ),
             ),
             SizedBox(height: 20),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Text(
-                "Created by Group 8",
-                style: GoogleFonts.inter(),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 16.0),
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: Text(
+                  "Created by Group 8",
+                  style: GoogleFonts.inter(),
+                ),
               ),
             ),
           ],

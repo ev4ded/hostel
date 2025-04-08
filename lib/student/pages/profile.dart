@@ -1,11 +1,11 @@
 import 'dart:math';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:minipro/Admin/adminqueries.dart';
 import 'package:minipro/firebase/firestore_services.dart';
@@ -38,9 +38,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
   bool present = true;
   String name = "profile";
   List<dynamic> collectBadges = ["student"];
-  List<Map<String, String>> roommates = [
-    {"name": "lonely", "badgeName": "No Badge"}
-  ];
+  List<Map<String, String>>? roommates;
   static const double allowedRadius = 500;
   late AnimationController _animationController;
   late Animation<double> _animation;
@@ -89,10 +87,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
       collectBadges = userData!['badges'] ?? ["student"];
       badgeText = userData!['badgeName'] ?? "Student";
       badgeGradient = getbadgesColor(badgeText!);
-      roommates = myMates ??
-          [
-            {"name": "lonely", "badgeName": "No Badge"}
-          ];
+      roommates = myMates;
     });
     Map<String, dynamic>? temp = await getHostelDetails(userData!["hostelId"]);
     if (temp != null) {
@@ -560,7 +555,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                                 ),
                               ),
                               onTap: () {
-                                print("room mates:$roommates");
+                                //print("room mates:$roommates");
                                 getroommates(context, roommates);
                                 HapticFeedback.heavyImpact();
                               },
@@ -717,6 +712,27 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
           .collection('users')
           .doc(user!.uid)
           .update({'present': p});
+      (p)
+          ? FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .collection('attendance')
+              .doc(DateFormat('yyyy-MM-dd').format(DateTime.now()))
+              .update({
+              'month': DateTime.now().month,
+              'present': p,
+              'markedIN': DateFormat('HH:mm').format(DateTime.now()),
+            })
+          : FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .collection('attendance')
+              .doc(DateFormat('yyyy-MM-dd').format(DateTime.now()))
+              .update({
+              'month': DateTime.now().month,
+              'present': p,
+              'markedOUT': DateFormat('HH:mm').format(DateTime.now()),
+            });
     } catch (e) {
       print("errors:$e");
     }

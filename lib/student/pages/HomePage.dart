@@ -10,7 +10,7 @@ import 'package:minipro/student/pages/home/complaint/complaint.dart';
 import 'package:minipro/student/pages/home/maintenance/maintenance.dart';
 import 'package:minipro/student/pages/home/leaveApplication.dart';
 import 'package:minipro/student/pages/home/payment.dart';
-import 'package:minipro/student/pages/home/vacate.dart';
+import 'package:minipro/student/pages/home/vacate/vacate.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
@@ -85,7 +85,7 @@ class _HomepageState extends State<Homepage> {
             },
             child: Mycontainer(
               height: cheight,
-              color: containerColor,
+              gradient: AppColors.containergradientDark,
               child: Row(
                 children: [
                   Icon(Ionicons.construct_outline),
@@ -105,8 +105,8 @@ class _HomepageState extends State<Homepage> {
               Navigator.push(context, myRoute(Leaveapplication()));
             },
             child: Mycontainer(
+              gradient: AppColors.containergradientDark,
               height: cheight,
-              color: containerColor,
               child: Row(
                 children: [
                   Icon(Ionicons.calendar_outline),
@@ -127,7 +127,7 @@ class _HomepageState extends State<Homepage> {
             },
             child: Mycontainer(
               height: cheight,
-              color: containerColor,
+              gradient: AppColors.containergradientDark,
               child: Row(
                 children: [
                   Icon(Ionicons.card_outline),
@@ -145,7 +145,7 @@ class _HomepageState extends State<Homepage> {
           GestureDetector(
             child: Mycontainer(
               height: cheight,
-              color: containerColor,
+              gradient: AppColors.containergradientDark,
               child: Row(
                 children: [
                   Icon(Ionicons.flag_outline),
@@ -169,7 +169,7 @@ class _HomepageState extends State<Homepage> {
             },
             child: Mycontainer(
               height: cheight,
-              color: containerColor,
+              gradient: AppColors.containergradientDark,
               child: Row(
                 children: [
                   Icon(Icons.luggage),

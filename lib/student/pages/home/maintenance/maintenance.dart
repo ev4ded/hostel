@@ -132,33 +132,104 @@ class _MaintenanceState extends State<Maintenance> {
                                   as Map<String, dynamic>;
                               return Card(
                                 color: tileColor,
-                                child: ListTile(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  title: Text(
-                                    request['title'] ?? "No Title",
-                                    style: GoogleFonts.inter(),
-                                  ),
-                                  subtitle: Text(
-                                    request['description'] ?? "No Description",
-                                    style: GoogleFonts.inter(fontSize: 12),
-                                  ),
-                                  trailing: Container(
-                                    decoration: BoxDecoration(
-                                      color: status[request['status']],
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Text(
-                                        request['status'] ?? 'Unknown',
-                                        style: GoogleFonts.poppins(
-                                            fontSize: 14,
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.w500),
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                      top: 8.0, left: 15, right: 10, bottom: 8),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                request['title'] ?? "No Title",
+                                                style: GoogleFonts.inter(
+                                                    fontSize: 19,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                              Text(
+                                                request['description'] ??
+                                                    "No Description",
+                                                style: GoogleFonts.inter(),
+                                              ),
+                                            ],
+                                          ),
+                                          Container(
+                                            decoration: BoxDecoration(
+                                              color: status[request['status']],
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                            ),
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: Text(
+                                                request['status'] ?? 'Unknown',
+                                                style: GoogleFonts.poppins(
+                                                    fontSize: 14,
+                                                    color: Colors.black,
+                                                    fontWeight:
+                                                        FontWeight.w500),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                    ),
+                                      SizedBox(height: 5),
+                                      if (request['status'] == 'approved')
+                                        Row(
+                                          children: [
+                                            Icon(
+                                              LucideIcons.calendarCheck2,
+                                              size: 13,
+                                            ),
+                                            Text(
+                                              " Date:  ",
+                                              style: GoogleFonts.inter(
+                                                  fontSize: 13,
+                                                  fontWeight: FontWeight.w400),
+                                            ),
+                                            Text(
+                                              request['approvedDate'],
+                                              style: GoogleFonts.inter(
+                                                  fontSize: 13,
+                                                  fontWeight: FontWeight.w400),
+                                            ),
+                                          ],
+                                        ),
+                                      if (request['status'] == 'approved')
+                                        Row(
+                                          children: [
+                                            Icon(
+                                              LucideIcons.clock6,
+                                              size: 13,
+                                            ),
+                                            Text(
+                                              " Time:  ",
+                                              style: GoogleFonts.inter(
+                                                  fontSize: 13,
+                                                  fontWeight: FontWeight.w400),
+                                            ),
+                                            Text(
+                                              request['approvedTime'].substring(
+                                                  0,
+                                                  request['approvedTime']
+                                                          .length -
+                                                      3),
+                                              style: GoogleFonts.inter(
+                                                  fontSize: 13,
+                                                  fontWeight: FontWeight.w400),
+                                            ),
+                                          ],
+                                        ),
+                                    ],
                                   ),
                                 ),
                               );

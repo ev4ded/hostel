@@ -9,10 +9,12 @@ class Mycontainer extends StatelessWidget {
   final EdgeInsetsGeometry padding;
   final EdgeInsetsGeometry margin;
   final BoxShadow? boxShadow;
+  final LinearGradient? gradient;
 
   const Mycontainer({
     super.key,
     this.width = double.infinity,
+    this.gradient,
     this.height = 100,
     this.color = Colors.lightBlueAccent,
     this.child,
@@ -30,6 +32,7 @@ class Mycontainer extends StatelessWidget {
       padding: padding,
       margin: margin,
       decoration: BoxDecoration(
+        gradient: gradient,
         color: color,
         borderRadius: BorderRadius.circular(borderRadius),
         boxShadow: boxShadow != null ? [boxShadow!] : [],

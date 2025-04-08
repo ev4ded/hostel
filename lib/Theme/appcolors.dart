@@ -2,9 +2,19 @@ import 'package:flutter/material.dart';
 
 class AppColors {
   //dark
+  static LinearGradient containergradientDark = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [
+      Color(0xFF1E2A38), // Dark blue-grey
+      Color(0xFF3C4A57), // Muted steel blue
+    ],
+  );
+
   static Color bg = Colors.black;
   static Color textColorDark = Colors.white;
-  static Color containerColorDark = Color.fromRGBO(40, 40, 40, 1);
+  static Color containerColorDark =
+      Color.fromRGBO(40, 40, 40, 1); //(40,40,40,1)
   static Color alretWindowColorDark = Color.fromRGBO(85, 85, 85, 1);
   static Color tileColorDark = Color.fromRGBO(78, 68, 64, 1);
   static Color detailsCDark = Color.fromRGBO(180, 195, 210, 1);

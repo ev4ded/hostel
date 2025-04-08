@@ -41,6 +41,7 @@ class _AdminState extends State<AdminProfile> {
   double capacity = 1.0;
   String? hostelID;
   bool updated = false;
+  String option = 'Monthly basis';
 
   @override
   @override
@@ -58,7 +59,6 @@ class _AdminState extends State<AdminProfile> {
     });
     if (hostelID != null) {
       Map<String, dynamic>? temp = await getHostelDetails(hostelID!);
-      print(temp);
       setState(() {
         nameController.text = temp!['Admin_name'] ?? "";
         locationController.text = temp["address"] ?? "";
@@ -73,6 +73,7 @@ class _AdminState extends State<AdminProfile> {
         capacity = (temp['no_of_room'] ?? 1.0).toDouble();
         updated = temp['DetailsUpdated'] ?? false;
         isloading = false;
+        option = temp['payment_mode'];
       });
     }
   }
@@ -82,13 +83,26 @@ class _AdminState extends State<AdminProfile> {
     Color bgColor = AppColors.getContainerColor(context);
     Color textColor = AppColors.getTextColor(context);
     return Scaffold(
+        floatingActionButton: ElevatedButton(
+          onPressed: () {
+            submit();
+          },
+          style:
+              ButtonStyle(backgroundColor: WidgetStatePropertyAll(buttonColor)),
+          child: Text(
+            "UPDATE",
+            style: GoogleFonts.poppins(
+                color: buttonTextColor, fontWeight: FontWeight.w600),
+          ),
+        ),
         appBar: AppBar(
           leading: (updated)
               ? IconButton(
                   onPressed: () {
-                    Navigator.push(
+                    Navigator.pushAndRemoveUntil(
                       context,
                       myRoute(Wardenlisting()),
+                      (route) => false,
                     );
                   },
                   icon: Icon(LucideIcons.chevronLeft),
@@ -159,8 +173,52 @@ class _AdminState extends State<AdminProfile> {
                           hintColor: hintColor,
                         ),
                         SizedBox(height: 20),
+                        Text("fees payment method", style: GoogleFonts.inter()),
+                        SizedBox(height: 20),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: ListTile(
+                                title: Text('Monthly basis',
+                                    style: GoogleFonts.inter()),
+                                leading: Radio<String>(
+                                  fillColor: WidgetStatePropertyAll(
+                                      AppColors.buttonColor),
+                                  value: 'Monthly basis',
+                                  groupValue: option,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      option = value!;
+                                    });
+                                  },
+                                  activeColor:
+                                      Colors.blueGrey, // Customize color
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: ListTile(
+                                title: Text('Daily basis',
+                                    style: GoogleFonts.inter()),
+                                leading: Radio<String>(
+                                  fillColor: WidgetStatePropertyAll(
+                                      AppColors.buttonColor),
+                                  value: 'Daily basis',
+                                  groupValue: option,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      option = value!;
+                                    });
+                                  },
+                                  activeColor: Colors.blueGrey,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 20),
                         Text(
-                          "Fees Details",
+                          "Fees Details(per day)",
                           style: GoogleFonts.poppins(),
                         ),
                         SizedBox(height: 10),
@@ -270,27 +328,6 @@ class _AdminState extends State<AdminProfile> {
                             });
                           },
                         ),
-                        SizedBox(height: 15),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: Padding(
-                            padding: const EdgeInsets.only(right: 8.0),
-                            child: ElevatedButton(
-                              onPressed: () {
-                                submit();
-                              },
-                              style: ButtonStyle(
-                                  backgroundColor:
-                                      WidgetStatePropertyAll(buttonColor)),
-                              child: Text(
-                                "Submit",
-                                style: GoogleFonts.poppins(
-                                    color: buttonTextColor,
-                                    fontWeight: FontWeight.w600),
-                              ),
-                            ),
-                          ),
-                        )
                       ],
                     ),
                   ),
@@ -344,7 +381,8 @@ class _AdminState extends State<AdminProfile> {
         'paymentTime': false,
         'no_of_room': numerOfrooms,
         'capacity': cap,
-        'DetailsUpdated': true
+        'DetailsUpdated': true,
+        'payment_mode': option
       });
       _showSnackBar("details updated");
       Future.delayed(Duration(seconds: 1), () {

@@ -547,7 +547,7 @@ void signout(BuildContext context) {
 }
 
 Future<void> getroommates(
-    BuildContext context, List<Map<String, String>> mates) async {
+    BuildContext context, List<Map<String, String>>? mates) async {
   return await showDialog(
     context: context,
     barrierDismissible: true,
@@ -583,79 +583,87 @@ Future<void> getroommates(
                     ],
                   ),
                   SizedBox(height: 15),
-                  ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: mates.length,
-                    itemBuilder: (context, index) {
-                      if (mates[index] == 'lonely') {
-                        return Text(
-                          "Hopefully, your warden will find you a great roommate soon!",
-                          style: GoogleFonts.poppins(),
-                        );
-                      }
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 8.0),
-                        child: GestureDetector(
-                          onTap: () {
-                            Navigator.pop(context);
-                          },
-                          child: Container(
-                            height: 50,
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.black),
-                              gradient: LinearGradient(
-                                colors: [Color(0xFF3A3A3A), Color(0xFFB0B0B0)],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                              ),
-                              borderRadius: BorderRadius.circular(12),
-                              boxShadow: [
-                                BoxShadow(
-                                    color: Colors.black26,
-                                    blurRadius: 4,
-                                    spreadRadius: 2),
-                              ],
-                            ),
-                            child: Center(
-                              child: SizedBox(
-                                width:
-                                    double.infinity, // Make Row take full width
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      mates[index]['name']!
-                                          .toUpperCase(), // Now showing names
-                                      style: GoogleFonts.inter(
-                                          color: Colors.white,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w500),
+                  (mates!.isEmpty)
+                      ? Padding(
+                          padding:
+                              const EdgeInsets.only(top: 16.0, bottom: 16.0),
+                          child: Text(
+                            "Its so quite around here",
+                            style:
+                                GoogleFonts.inter(fontStyle: FontStyle.italic),
+                          ),
+                        )
+                      : ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: mates.length,
+                          itemBuilder: (context, index) {
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 8.0),
+                              child: GestureDetector(
+                                onTap: () {
+                                  Navigator.pop(context);
+                                },
+                                child: Container(
+                                  height: 50,
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.black),
+                                    gradient: LinearGradient(
+                                      colors: [
+                                        Color(0xFF3A3A3A),
+                                        Color(0xFFB0B0B0)
+                                      ],
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
                                     ),
-                                    SizedBox(
-                                        width:
-                                            8), // Add spacing between text and avatar
-                                    CircleAvatar(
-                                      backgroundImage: AssetImage(
-                                          ("assets/images/bg${mates[index]['badgeName']}.png") ??
-                                              "assets/images/profile/0.png"),
-                                      radius: 20,
-                                      backgroundColor: Colors.transparent,
-                                    ),
-                                  ],
-                                ),
-                              ), /*Text(
+                                    borderRadius: BorderRadius.circular(12),
+                                    boxShadow: [
+                                      BoxShadow(
+                                          color: Colors.black26,
+                                          blurRadius: 4,
+                                          spreadRadius: 2),
+                                    ],
+                                  ),
+                                  child: Center(
+                                    child: SizedBox(
+                                      width: double
+                                          .infinity, // Make Row take full width
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            mates[index]['name']!
+                                                .toUpperCase(), // Now showing names
+                                            style: GoogleFonts.inter(
+                                                color: Colors.white,
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w500),
+                                          ),
+                                          SizedBox(
+                                              width:
+                                                  8), // Add spacing between text and avatar
+                                          CircleAvatar(
+                                            backgroundImage: AssetImage(
+                                                ("assets/images/bg${mates[index]['badgeName']}.png") ??
+                                                    "assets/images/profile/0.png"),
+                                            radius: 20,
+                                            backgroundColor: Colors.transparent,
+                                          ),
+                                        ],
+                                      ),
+                                    ), /*Text(
                                 mates[index].toUpperCase(), // Now showing names
                                 style: GoogleFonts.inter(
                                     color: Colors.white,
                                     fontSize: 16,
                                     fontWeight: FontWeight.w500),
                               ),*/
-                            ),
-                          ),
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
                         ),
-                      );
-                    },
-                  ),
                   SizedBox(height: 15),
                   Align(
                     alignment: Alignment.centerRight,
