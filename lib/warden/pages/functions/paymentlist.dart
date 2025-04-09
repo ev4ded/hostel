@@ -53,6 +53,9 @@ class _PaidTransactionsState extends State<PaidTransactions> {
         Map<String, dynamic> data = doc.data();
 
         var userDoc = await FirebaseFirestore.instance.collection('users').doc(userId).get();
+        if (!userDoc.exists || userDoc.data() == null) {
+          continue; // 🔁 Skip if user doesn't exist
+        }
         var userData = userDoc.data()!;
         String dp=userData.containsKey('dp')?userData['dp']:'default';
       
@@ -124,6 +127,13 @@ class _PaidTransactionsState extends State<PaidTransactions> {
     await userRef.update({
       'paid': status,
     });
+
+    await FirebaseFirestore.instance
+        .collection('hostels')
+        .doc(hostelId)
+        .collection('paid')
+        .doc(userId)
+        .delete();
 
     setState(() {
       transactions.removeWhere((transaction) => transaction['user_id'] == userId);

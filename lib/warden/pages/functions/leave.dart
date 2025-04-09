@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:lottie/lottie.dart';
 import 'package:minipro/warden/services/FCMservices.dart';
 import 'package:minipro/warden/wardenQueries/queries.dart';
 
@@ -59,8 +60,10 @@ class _LeaveRequestsState extends State<LeaveRequests>
       ),
       body: hostelId == null
           ? Center(
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.indigo),
+              child:Lottie.asset(
+        'assets/warden/Main Scene.json',
+        width: 100, 
+        height: 100,
               ),
             )
           : TabBarView(
@@ -220,8 +223,10 @@ class _LeaveRequestsState extends State<LeaveRequests>
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return Center(
-            child: CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(Colors.indigo),
+            child:Lottie.asset(
+        'assets/warden/Main Scene.json',
+        width: 100, 
+        height: 100,
             ),
           );
         }
@@ -263,8 +268,10 @@ class _LeaveRequestsState extends State<LeaveRequests>
               builder: (context, userSnapshot) {
                 if (!userSnapshot.hasData) {
                   return Center(
-                    child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.indigo),
+                    child:Lottie.asset(
+        'assets/warden/Main Scene.json',
+        width: 100, 
+        height: 100,
                     ),
                   );
                 }
@@ -348,8 +355,11 @@ class _LeaveRequestsState extends State<LeaveRequests>
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return Center(
-            child: CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(Colors.indigo),
+            child:Lottie.asset(
+        'assets/warden/Main Scene.json',
+        width: 100, 
+        height: 100,
+              
             ),
           );
         }
@@ -396,8 +406,10 @@ class _LeaveRequestsState extends State<LeaveRequests>
               builder: (context, userSnapshot) {
                 if (!userSnapshot.hasData) {
                   return Center(
-                    child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.indigo),
+                    child:Lottie.asset(
+        'assets/warden/Main Scene.json',
+        width: 100, 
+        height: 100,
                     ),
                   );
                 }
