@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 class StudentMonthlyAttendance extends StatefulWidget {
   final String studentId;
 
-  const StudentMonthlyAttendance({required this.studentId, Key? key})
-      : super(key: key);
+  const StudentMonthlyAttendance({required this.studentId, super.key});
 
   @override
   _StudentMonthlyAttendanceState createState() =>
@@ -31,54 +31,54 @@ class _StudentMonthlyAttendanceState extends State<StudentMonthlyAttendance> {
   }
 
   Future<void> _fetchAttendance() async {
-    setState(() => _loading = true);
-    
-    final firstDay = DateTime(_today.year, _today.month, 1);
-    final lastDay = DateTime(_today.year, _today.month + 1, 0); // Last day of month
-    final dateFormat = DateFormat('yyyy-MM-dd');
+  setState(() => _loading = true);
+  
+  final firstDay = DateTime(_today.year, _today.month, 1);
+  final today = DateTime.now();
+  final dateFormat = DateFormat('yyyy-MM-dd');
 
-    final collectionRef = FirebaseFirestore.instance
-        .collection('users')
-        .doc(widget.studentId)
-        .collection('attendance');
+  final collectionRef = FirebaseFirestore.instance
+      .collection('users')
+      .doc(widget.studentId)
+      .collection('attendance');
 
-    final querySnapshot = await collectionRef.get();
+  final querySnapshot = await collectionRef.get();
 
-    for (var doc in querySnapshot.docs) {
-      try {
-        final entryDate = dateFormat.parse(doc.id);
-        if (entryDate.isAfter(firstDay.subtract(const Duration(days: 1))) &&
-            entryDate.isBefore(lastDay.add(const Duration(days: 1)))) {
-          final isPresent = (doc.data())['present'] == true;
-          _attendanceMap[doc.id] = isPresent;
-          if (isPresent) {
-            _presentDays++;
-          }
-        }
-      } catch (e) {
-        // Skip if the date format is wrong
-      }
+  // Create a map from fetched docs for quick lookup
+  final fetchedDocs = {
+    for (var doc in querySnapshot.docs)
+      doc.id: doc.data()
+  };
+
+  for (int i = 0; i <= today.difference(firstDay).inDays; i++) {
+    final currentDate = firstDay.add(Duration(days: i));
+    final formattedDate = dateFormat.format(currentDate);
+
+    if (fetchedDocs.containsKey(formattedDate)) {
+      final isPresent = fetchedDocs[formattedDate]?['present'] == true;
+      _attendanceMap[formattedDate] = isPresent;
+      if (isPresent) _presentDays++;
+    } else {
+      // No entry = Absent
+      _attendanceMap[formattedDate] = false;
     }
-
-    _totalDays = _attendanceMap.length;
-    _attendancePercentage = _totalDays > 0 ? (_presentDays / _totalDays) * 100 : 0;
-
-    setState(() {
-      _loading = false;
-    });
   }
+
+  _totalDays = _attendanceMap.length;
+  _attendancePercentage = _totalDays > 0 ? (_presentDays / _totalDays) * 100 : 0;
+
+  setState(() {
+    _loading = false;
+  });
+}
 
   @override
   Widget build(BuildContext context) {
-    final dateFormat = DateFormat('yyyy-MM-dd');
-    final displayFormat = DateFormat('dd MMM (EEE)');
-    final sortedDates = _attendanceMap.keys.toList()
-      ..sort((a, b) => dateFormat.parse(a).compareTo(dateFormat.parse(b)));
 
     return Scaffold(
       
       appBar: AppBar(
-        title: const Text("Monthly Attendance"),
+        title:  Text("Monthly Attendance",style: GoogleFonts.inter(fontWeight: FontWeight.w600)),
         elevation: 0,
         backgroundColor: Colors.indigo,
       ),
@@ -277,104 +277,7 @@ class _StudentMonthlyAttendanceState extends State<StudentMonthlyAttendance> {
                             _buildCalendarGrid(),
                           ],
                         ),
-                      ),
-                      
-                      const SizedBox(height: 24),
-                      
-                      // Attendance List
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                        child: Text(
-                          "Attendance Record",
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            //color: Colors.grey.shade800,
-                          ),
-                        ),
-                      ),
-                      
-                      const SizedBox(height: 8),
-                      
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(16),
-                         boxShadow: [
-                            BoxShadow(
-                              color: const Color.fromARGB(255, 2, 9, 14).withOpacity(0.5),
-                              blurRadius: 10,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
-                        ),
-                        child: ListView.separated(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: sortedDates.length,
-                          separatorBuilder: (context, index) => Divider(
-                            height: 1,
-                            thickness: 1,
-                            color: Colors.grey.shade100,
-                          ),
-                          itemBuilder: (context, index) {
-                            final dateStr = sortedDates[index];
-                            final isPresent = _attendanceMap[dateStr] ?? false;
-                            final date = dateFormat.parse(dateStr);
-                            final formattedDate = displayFormat.format(date);
-
-                            return ListTile(
-                              leading: Container(
-                                width: 40,
-                                height: 40,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: isPresent
-                                      ? Colors.green.shade50
-                                      : Colors.red.shade50,
-                                ),
-                                child: Center(
-                                  child: Icon(
-                                    isPresent ? Icons.check : Icons.close,
-                                    color: isPresent
-                                        ? Colors.green.shade700
-                                        : Colors.red.shade700,
-                                    size: 20,
-                                  ),
-                                ),
-                              ),
-                              title: Text(
-                                formattedDate,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                              trailing: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 6,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: isPresent
-                                      ? Colors.green.shade50
-                                      : Colors.red.shade50,
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: Text(
-                                  isPresent ? 'Present' : 'Absent',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold,
-                                    color: isPresent
-                                        ? Colors.green.shade700
-                                        : Colors.red.shade700,
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
+                      ),      
                     ],
                   ),
                 ),

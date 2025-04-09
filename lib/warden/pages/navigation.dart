@@ -41,7 +41,7 @@ class _MyNavigationState extends State<MyNavigation> {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 20),
           child: GNav(
-            curve: Curves.easeInOutQuint,
+            curve: Curves.easeOutExpo,
             duration: Duration(milliseconds: 200),
             backgroundColor: Colors.black,
             color:  Colors.white,
@@ -50,17 +50,17 @@ class _MyNavigationState extends State<MyNavigation> {
             tabBackgroundColor: const Color.fromARGB(255, 74, 72, 72),
             padding: EdgeInsets.all(16),
             gap: 7,
-            tabs: const [
+            tabs:  [
               GButton(
-                icon: Ionicons.home_outline,
+                icon: _selectedIndex == 0 ? Ionicons.home : Ionicons.home_outline,
                 text: 'Home',
               ),
               GButton(
-                icon: Ionicons.man_outline,
+                icon: _selectedIndex==1? Ionicons.man : Ionicons.man_outline,
                 text: 'Student List',
               ),
               GButton(
-                icon: Ionicons.person_outline,
+                icon: _selectedIndex==2? Ionicons.person : Ionicons.person_outline,
                 text: 'Profile',
               ),
               
