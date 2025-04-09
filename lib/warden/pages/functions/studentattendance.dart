@@ -33,6 +33,24 @@ class _StudentMonthlyAttendanceState extends State<StudentMonthlyAttendance> {
  Future<void> _fetchAttendance() async {
   setState(() => _loading = true);
 
+  final userDoc = await FirebaseFirestore.instance
+      .collection('users')
+      .doc(widget.studentId)
+      .get();
+
+  // Check if the user is approved
+  if (!userDoc.exists || userDoc.data()?['isApproved'] != true) {
+    // You can handle unapproved user case here
+    setState(() {
+      _loading = false;
+      _attendanceMap.clear();
+      _presentDays = 0;
+      _totalDays = 0;
+      _attendancePercentage = 0;
+    });
+    return;
+  }
+
   final dateFormat = DateFormat('yyyy-MM-dd');
   final today = DateTime.now();
   final lastDay = DateTime(today.year, today.month + 1, 0);

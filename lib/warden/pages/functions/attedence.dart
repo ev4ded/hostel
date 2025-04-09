@@ -53,9 +53,17 @@ class _WardenAttendanceDashboardState extends State<WardenAttendanceDashboard> {
 
     final studentsSnapshot = await FirebaseFirestore.instance
         .collection('users')
-        .where('role', isEqualTo: 'student')
         .where('hostelId', isEqualTo:hostelId)
+        .where('role', isEqualTo: 'student')
+        .where('isApproved', isEqualTo: true)
         .get();
+
+    if (studentsSnapshot.docs.isEmpty) {
+      setState(() {
+        isLoading = false;
+        return;
+      });
+    }
 
     totalStudents = studentsSnapshot.docs.length;
     List<Map<String, dynamic>> tempData = [];
@@ -93,6 +101,7 @@ class _WardenAttendanceDashboardState extends State<WardenAttendanceDashboard> {
         .collection('users')
         .where('role', isEqualTo: 'student')
         .where('hostelId', isEqualTo: hostelId)
+        .where('isApproved', isEqualTo: true)
         .get();
 
     final studentIds = studentsSnapshot.docs.map((e) => e.id).toList();
@@ -220,7 +229,7 @@ print('Weekly Data: $weeklyData');
                     sideTitles: SideTitles(
                       showTitles: true,
                       reservedSize: 40,
-                      interval: (totalStudents / 4).ceilToDouble(),
+                     interval: (totalStudents == 0 ? 1 : (totalStudents / 4).ceilToDouble()),
                       getTitlesWidget: (value, meta) {
                         return Text(
                           value.toInt().toString(),
@@ -236,7 +245,7 @@ print('Weekly Data: $weeklyData');
                 gridData: FlGridData(
                   show: true,
                   drawVerticalLine: false,
-                  horizontalInterval: (totalStudents / 4).ceilToDouble(),
+                 horizontalInterval: (totalStudents == 0 ? 1 : (totalStudents / 4).ceilToDouble()),
                   getDrawingHorizontalLine: (value) => FlLine(
                     color:const Color(0xffe7e8ec),
                     strokeWidth: 1,

@@ -134,23 +134,24 @@ class _VacateRequestState extends State<VacateRequest> {
                   .snapshots(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
-                  return Center(
-            child:
-          Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Image.asset(
-            'assets/warden/caughtup.png', // Add an appropriate empty state image
-            height: 200,
-          ),
-          
-           Text("No pending Requests Found")],),
-    );
+                  return Center(child: CircularProgressIndicator());
                 }
 
                 var requests = snapshot.data!.docs;
                 if (requests.isEmpty) {
-                  return Center(child: Text("No pending vacate requests."));
+                 
+                    return Center(
+                        child:
+                      Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(
+                        'assets/warden/caughtup.png', // Add an appropriate empty state image
+                        height: 200,
+                      ),
+                      
+                      Text("No pending Requests Found")],),
+                );
                 }
 
                 return ListView.builder(
