@@ -29,7 +29,7 @@ class _CregisterState extends State<Cregister> {
   final int year = DateTime.now().year;
   final FirestoreServices _firestoreService = FirestoreServices();
   Map<String, dynamic>? userData;
-  List<String> priorityList = ["ciritcal", "high", "moderate", "low"];
+  List<String> priorityList = ["critical", "high", "moderate", "low"];
   String? priority;
   Map<String, dynamic>? scores;
 

@@ -12,13 +12,15 @@ import 'package:minipro/student/components/custom_route.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Studentnotverfied extends StatefulWidget {
-  const Studentnotverfied({super.key});
+  final String? role;
+  const Studentnotverfied({super.key, this.role});
 
   @override
   State<Studentnotverfied> createState() => _StudentnotverfiedState();
 }
 
 class _StudentnotverfiedState extends State<Studentnotverfied> {
+  Map get = {'student': 'warden', 'warden': 'Admin'};
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,7 +41,7 @@ class _StudentnotverfiedState extends State<Studentnotverfied> {
             height: 10,
           ),
           Text(
-            "Please contact the warden",
+            "Please contact the ${get[widget.role]}",
             style: GoogleFonts.poppins(
                 color: Colors.black, fontSize: 16, fontWeight: FontWeight.w400),
           ),

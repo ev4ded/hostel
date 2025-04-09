@@ -63,12 +63,12 @@ class _AdminState extends State<AdminProfile> {
         nameController.text = temp!['Admin_name'] ?? "";
         locationController.text = temp["address"] ?? "";
         upiController.text = temp['upi'] ?? "";
-        rentController.text = temp["hostel_rent"]??"";
-        latefineController.text = temp["late_fine"]??"";
+        rentController.text = temp["hostel_rent"].toString();
+        latefineController.text = temp["late_fine"].toString();
         maintenanceChargeController.text =
-            temp["maintenance_charge"]??"";
-        messfeesController.text = temp["mess_fees"]??"";
-        otherchargesController.text = temp["other_charges"]??"";
+            temp["maintenance_charge"].toString();
+        messfeesController.text = temp["mess_fees"].toString();
+        otherchargesController.text = temp["other_charges"].toString();
         numberOfRooms = (temp['no_of_room'] ?? 1.0).toDouble();
         capacity = (temp['no_of_room'] ?? 1.0).toDouble();
         updated = temp['DetailsUpdated'] ?? false;
