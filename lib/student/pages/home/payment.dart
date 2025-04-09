@@ -43,6 +43,7 @@ class _PaymentState extends State<Payment> {
   bool paymentdone = false;
   int month = DateTime.now().month - 1;
   String? mode;
+  int finecount = 0;
   DateTime now = DateTime.now();
 
   @override
@@ -72,12 +73,14 @@ class _PaymentState extends State<Payment> {
         fine = hostelDetails?["late_fine"] ?? 0;
         otherfees = hostelDetails?["other_charges"] ?? 0;
         amount = total.toString();
+        paid = userDetails?["paid"] ?? "";
         upiId = hostelDetails?["upi"];
         paymenttime = hostelDetails?["paymentTime"] ?? false;
-        paid = userDetails?["paid"] ?? "";
-
         mode = hostelDetails?["payment_mode"];
-
+        if (DateTime.now().day > 7 && paid == "") {
+          finecount = DateTime.now().day - 7;
+        }
+        fine = fine * finecount;
         if (mode == 'Daily basis') {
           rent = rent * count;
           messfees = messfees * count;
@@ -85,6 +88,7 @@ class _PaymentState extends State<Payment> {
         total = rent + messfees + maintenancefees + fine + otherfees;
         isloading = false;
       });
+      print("fine count:$finecount");
     }
   }
 
@@ -323,7 +327,7 @@ class _PaymentState extends State<Payment> {
                         ),
                       ),
                       Text(
-                        "● Last day to pay fees without fine is on 10th of ${DateFormat('MMMM').format(now).toUpperCase()}.",
+                        "● Last day to pay fees without fine is on 7th of ${DateFormat('MMMM').format(now).toUpperCase()}.",
                         softWrap: true,
                         style: GoogleFonts.poppins(
                           color: Colors.black,
@@ -512,6 +516,11 @@ class _PaymentState extends State<Payment> {
         );
       }
     } else {
+      var useruid = FirebaseAuth.instance.currentUser!.uid;
+      FirebaseFirestore.instance
+          .collection("users")
+          .doc(useruid)
+          .update({'paid': ""});
       return Container(
         color: AppColors.getAlertWindowC(context),
         child: Center(
