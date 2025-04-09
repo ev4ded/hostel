@@ -195,6 +195,10 @@ await _firestoreService.getUserData();
     String phone = _phoneController.text;
     String email = _emailController.text;
     String hostel = _hostelController.text;
+    if(phone.length != 10){
+      _showSnackBar("Phone number must be 10 digits", isError: true);
+      return;
+    }
 
     if (name.isEmpty || phone.isEmpty || email.isEmpty || hostel.isEmpty || designation.isEmpty || gender.isEmpty) {
       _showSnackBar("Please fill in all fields", isError: true);

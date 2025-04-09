@@ -6,10 +6,6 @@ import 'package:minipro/authentication/loginpage.dart';
 import 'package:minipro/student/components/custom_route.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../pages/settingspage.dart';
-
-
-
 class DrawerTiles extends StatelessWidget {
   
 
@@ -19,24 +15,6 @@ class DrawerTiles extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        ListTile(
-          title:Text("settings",style:GoogleFonts.mooli ( fontSize: 18.0)),
-            
-            leading: Icon(Ionicons.settings_outline),
-            onTap: () {
-              Navigator.pop(
-                context
-                );
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => SettingsPage(),
-                  ),
-                );
-              
-            },
-        
-              ),
                ListTile(
           title:Text("logout",style:GoogleFonts.mooli ( fontSize: 18.0)),
            onTap:  () {
