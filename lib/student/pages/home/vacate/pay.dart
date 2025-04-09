@@ -7,8 +7,10 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:minipro/Theme/appcolors.dart';
 import 'package:minipro/firebase/firestore_services.dart';
 import 'package:minipro/student/Student_queries/queries.dart';
+import 'package:minipro/student/components/custom_route.dart';
 import 'package:minipro/student/components/mysnackbar.dart';
 import 'package:minipro/student/components/mytextfield.dart';
+import 'package:minipro/student/pages/home/vacate/vacating.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 class Pay extends StatefulWidget {
@@ -42,6 +44,7 @@ class _PayState extends State<Pay> {
   int month = DateTime.now().month;
   String? mode;
   DateTime now = DateTime.now();
+  var lastDay = DateTime(DateTime.now().year, DateTime.now().month + 1, 0);
 
   @override
   void initState() {
@@ -68,12 +71,14 @@ class _PayState extends State<Pay> {
         upiId = hostelDetails?["upi"];
         paymenttime = hostelDetails?["paymentTime"] ?? false;
         paid = userDetails?["paid"] ?? "";
-
         mode = hostelDetails?["payment_mode"];
 
         if (mode == 'Daily basis') {
           rent = rent * count;
           messfees = messfees * count;
+        } else {
+          rent = (rent * (count / lastDay.day)).toInt();
+          messfees = (messfees * (count / lastDay.day)).toInt();
         }
         total = rent + messfees + maintenancefees + fine + otherfees;
         isloading = false;
@@ -100,262 +105,385 @@ class _PayState extends State<Pay> {
 
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        title: Text(
-          "Clearance Payment",
-          style: GoogleFonts.inter(letterSpacing: 2, fontSize: 20),
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          title: Text(
+            "Clearance Payment",
+            style: GoogleFonts.inter(letterSpacing: 2, fontSize: 20),
+          ),
         ),
-      ),
-      body: (isloading)
-          ? Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-              physics: ClampingScrollPhysics(),
+        body: (isloading)
+            ? Center(child: CircularProgressIndicator())
+            : getWidget() /**/
+        );
+  }
+
+  Widget getWidget() {
+    double width = MediaQuery.of(context).size.width;
+
+    if (paid == "") {
+      setState(() {
+        paymentdone = false;
+      });
+      return SingleChildScrollView(
+        physics: ClampingScrollPhysics(),
+        child: Padding(
+          padding:
+              const EdgeInsets.only(left: 20.0, right: 20, top: 40, bottom: 40),
+          child: Center(
+            child: Container(
+              width: width * 0.9,
+              decoration: BoxDecoration(
+                color: const Color.fromRGBO(215, 210, 195, 1),
+                borderRadius: BorderRadius.circular(30),
+              ),
               child: Padding(
                 padding: const EdgeInsets.only(
-                    left: 20.0, right: 20, top: 40, bottom: 40),
-                child: Center(
-                  child: Container(
-                    width: width * 0.9,
-                    decoration: BoxDecoration(
-                      color: const Color.fromRGBO(215, 210, 195, 1),
-                      borderRadius: BorderRadius.circular(30),
+                    top: 8.0, bottom: 8, left: 12, right: 12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      height: 20,
                     ),
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                          top: 8.0, bottom: 8, left: 12, right: 12),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(
-                            height: 20,
-                          ),
-                          Center(
-                            child: Text(
-                              "Final Payment on Vacating",
-                              style: GoogleFonts.poppins(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 20,
-                                  letterSpacing: 2),
-                            ),
-                          ),
-                          SizedBox(
-                            height: 5,
-                          ),
-                          Center(
-                            child: Container(
-                              color: Colors.black,
-                              width: width * 0.75,
-                              height: 2,
-                            ),
-                          ),
-                          SizedBox(
-                            height: 15,
-                          ),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Text(
-                                "Name : ${userData!["username"]}",
-                                overflow: TextOverflow.clip,
-                                softWrap: true,
-                                style: GoogleFonts.poppins(
-                                  color: Colors.black,
-                                  fontSize: 15,
-                                ),
-                              ),
-                              Text(
-                                "degree : ${userData!["degree"]}",
-                                style: GoogleFonts.poppins(
-                                  color: Colors.black,
-                                  fontSize: 15,
-                                ),
-                              ),
-                            ],
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Year : ${userData!["year_of_study"]}",
-                                style: GoogleFonts.poppins(
-                                  color: Colors.black,
-                                  fontSize: 15,
-                                ),
-                              ),
-                              Text(
-                                "Room no : ${userData!["room_no"]}",
-                                style: GoogleFonts.poppins(
-                                  color: Colors.black,
-                                  fontSize: 15,
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 5,
-                          ),
-                          SizedBox(
-                            height: 5,
-                          ),
-                          Container(
+                    Center(
+                      child: Text(
+                        "Final Payment on Vacating",
+                        style: GoogleFonts.poppins(
                             color: Colors.black,
-                            width: width * 0.9,
-                            height: 1,
-                          ),
-                          SizedBox(
-                            height: 15,
-                          ),
-                          Center(
-                            child: Text(
-                              "BILL DETAILS",
-                              style: GoogleFonts.poppins(
-                                color: Colors.black,
-                                fontWeight: FontWeight.w500,
-                                fontSize: 20,
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Text(
-                            "Hostel Rent: $rent",
-                            style: GoogleFonts.poppins(
-                              color: Colors.black,
-                              fontSize: 14,
-                            ),
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Text(
-                            "Mess Fees: $messfees",
-                            style: GoogleFonts.poppins(
-                              color: Colors.black,
-                              fontSize: 14,
-                            ),
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Text(
-                            "Maintenace Charges: $maintenancefees",
-                            style: GoogleFonts.poppins(
-                              color: Colors.black,
-                              fontSize: 14,
-                            ),
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Text(
-                            "Late Payment Charges: $fine",
-                            style: GoogleFonts.poppins(
-                              color: Colors.black,
-                              fontSize: 14,
-                            ),
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Text(
-                            "Other Charges: $otherfees",
-                            style: GoogleFonts.poppins(
-                              color: Colors.black,
-                              fontSize: 14,
-                            ),
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Text(
-                            "Total Amount: $total",
-                            style: GoogleFonts.poppins(
-                              color: Colors.black,
-                              fontSize: 14,
-                            ),
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          Container(
-                            color: Colors.black,
-                            width: width * 0.9,
-                            height: 1,
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Text(
-                            "Note:",
-                            style: GoogleFonts.poppins(
-                              color: Colors.black,
-                              fontSize: 14,
-                            ),
-                          ),
-                          SizedBox(
-                            height: 5,
-                          ),
-                          Text(
-                            "● This amount covers your final dues before vacating the hostel.",
-                            softWrap: true,
-                            style: GoogleFonts.poppins(
-                              color: Colors.black,
-                              fontSize: 12,
-                            ),
-                          ),
-                          Text(
-                            "●After completing the payment, transaction ID must be uploaded for verification. Failure to provide valid proof may result in payment being considered incomplete. Any attempts of fraud or misrepresentation will be taken seriously and may lead to disciplinary action.",
-                            softWrap: true,
-                            style: GoogleFonts.poppins(
-                              color: Colors.black,
-                              fontSize: 12,
-                            ),
-                          ),
-                          SizedBox(
-                            height: 15,
-                          ),
-                          Row(
-                            children: [
-                              ElevatedButton(
-                                onPressed: () {
-                                  showQRCode(context);
-                                },
-                                style: ButtonStyle(
-                                    backgroundColor:
-                                        WidgetStatePropertyAll(buttonColor)),
-                                child: Text(
-                                  "Pay now",
-                                  style: GoogleFonts.poppins(
-                                      color: buttonTextColor,
-                                      fontWeight: FontWeight.w500),
-                                ),
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                child: Text(
-                                  "cancel",
-                                  style: GoogleFonts.poppins(color: Colors.red),
-                                ),
-                              )
-                            ],
-                          )
-                        ],
+                            fontWeight: FontWeight.w700,
+                            fontSize: 20,
+                            letterSpacing: 2),
                       ),
                     ),
-                  ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    Center(
+                      child: Container(
+                        color: Colors.black,
+                        width: width * 0.75,
+                        height: 2,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Text(
+                          "Name : ${userData!["username"]}",
+                          overflow: TextOverflow.clip,
+                          softWrap: true,
+                          style: GoogleFonts.poppins(
+                            color: Colors.black,
+                            fontSize: 15,
+                          ),
+                        ),
+                        Text(
+                          "degree : ${userData!["degree"]}",
+                          style: GoogleFonts.poppins(
+                            color: Colors.black,
+                            fontSize: 15,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Year : ${userData!["year_of_study"]}",
+                          style: GoogleFonts.poppins(
+                            color: Colors.black,
+                            fontSize: 15,
+                          ),
+                        ),
+                        Text(
+                          "Room no : ${userData!["room_no"]}",
+                          style: GoogleFonts.poppins(
+                            color: Colors.black,
+                            fontSize: 15,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    Container(
+                      color: Colors.black,
+                      width: width * 0.9,
+                      height: 1,
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Center(
+                      child: Text(
+                        "BILL DETAILS",
+                        style: GoogleFonts.poppins(
+                          color: Colors.black,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 20,
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Text(
+                      "Hostel Rent: $rent",
+                      style: GoogleFonts.poppins(
+                        color: Colors.black,
+                        fontSize: 14,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Text(
+                      "Mess Fees: $messfees",
+                      style: GoogleFonts.poppins(
+                        color: Colors.black,
+                        fontSize: 14,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Text(
+                      "Maintenace Charges: $maintenancefees",
+                      style: GoogleFonts.poppins(
+                        color: Colors.black,
+                        fontSize: 14,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Text(
+                      "Late Payment Charges: $fine",
+                      style: GoogleFonts.poppins(
+                        color: Colors.black,
+                        fontSize: 14,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Text(
+                      "Other Charges: $otherfees",
+                      style: GoogleFonts.poppins(
+                        color: Colors.black,
+                        fontSize: 14,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Text(
+                      "Total Amount: $total",
+                      style: GoogleFonts.poppins(
+                        color: Colors.black,
+                        fontSize: 14,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Container(
+                      color: Colors.black,
+                      width: width * 0.9,
+                      height: 1,
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Text(
+                      "Note:",
+                      style: GoogleFonts.poppins(
+                        color: Colors.black,
+                        fontSize: 14,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    Text(
+                      "● This amount covers your final dues before vacating the hostel.",
+                      softWrap: true,
+                      style: GoogleFonts.poppins(
+                        color: Colors.black,
+                        fontSize: 12,
+                      ),
+                    ),
+                    Text(
+                      "●After completing the payment, transaction ID must be uploaded for verification. Failure to provide valid proof may result in payment being considered incomplete. Any attempts of fraud or misrepresentation will be taken seriously and may lead to disciplinary action.",
+                      softWrap: true,
+                      style: GoogleFonts.poppins(
+                        color: Colors.black,
+                        fontSize: 12,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Row(
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {
+                            showQRCode(context);
+                          },
+                          style: ButtonStyle(
+                              backgroundColor:
+                                  WidgetStatePropertyAll(buttonColor)),
+                          child: Text(
+                            "Pay now",
+                            style: GoogleFonts.poppins(
+                                color: buttonTextColor,
+                                fontWeight: FontWeight.w500),
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: Text(
+                            "cancel",
+                            style: GoogleFonts.poppins(color: Colors.red),
+                          ),
+                        )
+                      ],
+                    )
+                  ],
                 ),
               ),
             ),
-    );
+          ),
+        ),
+      );
+    } else if (paid == "processing") {
+      return Container(
+        color: AppColors.getAlertWindowC(context),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                height: 350, // Set the desired height
+                width: 350,
+                child: Image.asset(
+                  "assets/images/searching.png",
+                  fit: BoxFit.contain,
+                ),
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              Text(
+                "Payment is being processed..",
+                style: GoogleFonts.poppins(
+                    color: AppColors.getTextColor(context), fontSize: 18),
+              )
+            ],
+          ),
+        ),
+      );
+    } else if (paid == "failed") {
+      return Container(
+        color: AppColors.getAlertWindowC(context),
+        child: Center(
+          child: SizedBox(
+            width: double.infinity, // Ensures the Column takes full width
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment:
+                  CrossAxisAlignment.center, // Ensure text is centered
+              children: [
+                SizedBox(
+                  height: 300,
+                  width: 300,
+                  child: Image.asset(
+                    "assets/images/sad.png",
+                    fit: BoxFit.contain,
+                  ),
+                ),
+                SizedBox(height: 20),
+                Text(
+                  "Payment failed. Please try again or raise a complaint",
+                  textAlign: TextAlign
+                      .center, // Ensures multi-line text stays centered
+                  style: GoogleFonts.poppins(
+                    color: AppColors.getTextColor(context),
+                    fontSize: 16,
+                  ),
+                ),
+                SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          paid = "";
+                        });
+                      },
+                      style: ButtonStyle(
+                          backgroundColor:
+                              WidgetStatePropertyAll(AppColors.buttonColor)),
+                      child: Text(
+                        "Pay again",
+                        style: GoogleFonts.inter(
+                            color: AppColors.buttonTextColor,
+                            fontWeight: FontWeight.w600),
+                      ),
+                    ),
+                  ],
+                )
+              ],
+            ),
+          ),
+        ),
+      );
+    } else {
+      return Container(
+        color: AppColors.getAlertWindowC(context),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                height: 350, // Set the desired height
+                width: 350,
+                child: Image.asset(
+                  "assets/images/paid.png",
+                  fit: BoxFit.contain,
+                ),
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              Text(
+                "Payment is successfull!!!",
+                style: GoogleFonts.poppins(
+                    color: AppColors.getTextColor(context), fontSize: 18),
+              ),
+              SizedBox(
+                height: 15,
+              ),
+            ],
+          ),
+        ),
+      );
+    }
   }
 
   String getUpiUrl() {
@@ -486,7 +614,8 @@ class _PayState extends State<Pay> {
         FirebaseFirestore.instance.collection("users").doc(tuser.uid).update({
           'paid': 'processing',
         });
-        Navigator.of(context).pop();
+        Navigator.pushAndRemoveUntil(
+            context, myRoute(Vacating()), (route) => false);
         _showSnackBar("Fess payment processing began..");
       } catch (e) {
         print(e.toString());

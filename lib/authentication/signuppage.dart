@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:minipro/boardingpage.dart';
 import 'package:minipro/firebase/firestore_services.dart';
 import 'package:minipro/Theme/appcolors.dart';
@@ -341,6 +342,16 @@ class _SignupPageState extends State<SignupPage> {
           'badges': ['Student', 'Newbie']
         },
       );
+      FirebaseFirestore.instance
+          .collection('users')
+          .doc(uid)
+          .collection('attendance')
+          .doc(DateFormat('yyyy-MM-dd').format(DateTime.now()))
+          .update({
+        'month': DateTime.now().month,
+        'present': true,
+        'markedOUT': DateFormat('HH:mm').format(DateTime.now()),
+      });
       await FirestoreServices().getUserData();
       if (!mounted) return;
       _showSnackBar("Signup successful!!");

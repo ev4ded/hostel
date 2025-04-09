@@ -11,7 +11,7 @@ import 'package:minipro/student/components/mydropdownmenu.dart';
 import 'package:minipro/student/components/myparafield.dart';
 import 'package:minipro/student/components/mysnackbar.dart';
 import 'package:minipro/firebase/firestore_services.dart';
-import 'package:minipro/student/pages/home/vacate/pay.dart';
+import 'package:minipro/student/pages/home/vacate/vacating.dart';
 import 'package:slide_to_act/slide_to_act.dart';
 
 class Vacate extends StatefulWidget {
@@ -176,38 +176,40 @@ class _VacateState extends State<Vacate> {
                       height: height * 0.05,
                     ),
                     Center(
-                        child: (isComplete)
-                            ? Center(
-                                child: Container(
-                                  height: 65,
-                                  width: 65,
-                                  decoration: BoxDecoration(
-                                      shape: BoxShape.circle, color: bgColor),
-                                  child: Icon(LucideIcons.check),
+                      child: (isComplete)
+                          ? Center(
+                              child: Container(
+                                height: 65,
+                                width: 65,
+                                decoration: BoxDecoration(
+                                    shape: BoxShape.circle, color: bgColor),
+                                child: Icon(LucideIcons.check),
+                              ),
+                            )
+                          : Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: SlideAction(
+                                key: _slidekey,
+                                sliderButtonIcon: Icon(
+                                  LucideIcons.chevronRight,
+                                  color: Colors.black,
                                 ),
-                              )
-                            : Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: SlideAction(
-                                  key: _slidekey,
-                                  sliderButtonIcon: Icon(
-                                    LucideIcons.chevronRight,
-                                    color: Colors.black,
-                                  ),
-                                  outerColor: bgColor,
-                                  innerColor: buttonColor,
-                                  text: "Slide to Confirm",
-                                  textStyle: GoogleFonts.inter(
-                                      fontSize: 22, color: hintColor),
-                                  onSubmit: () {
-                                    setState(() {
-                                      isComplete = false;
-                                    });
-                                    submit();
-                                    return null;
-                                  },
-                                ),
-                              )),
+                                outerColor: bgColor,
+                                innerColor: buttonColor,
+                                text: "Slide to Confirm",
+                                textStyle: GoogleFonts.inter(
+                                    fontSize: 22, color: hintColor),
+                                onSubmit: () {
+                                  FocusScope.of(context).unfocus();
+                                  setState(() {
+                                    isComplete = false;
+                                  });
+                                  submit();
+                                  return null;
+                                },
+                              ),
+                            ),
+                    ),
                   ],
                 ),
               ),
@@ -247,14 +249,14 @@ class _VacateState extends State<Vacate> {
             'room_no': userData!["room_no"],
           },
         );
-        FirebaseFirestore.instance.collection("users").doc(user.uid).set(
+        FirebaseFirestore.instance.collection("users").doc(user.uid).update(
           {'vacating': true, 'paid': ""},
         );
         _showSnackBar("vacate request send");
         Future.delayed(Duration(seconds: 1), () {
           if (context.mounted) {
             Navigator.pushAndRemoveUntil(
-                context, myRoute(Pay()), (route) => false);
+                context, myRoute(Vacating()), (route) => false);
           }
         });
         return true;
@@ -314,6 +316,7 @@ class _VacateState extends State<Vacate> {
         );
       },
     );
+    FocusScope.of(context).unfocus();
     return status;
   }
 }

@@ -67,63 +67,65 @@ Future<String?> customImageSuggest(BuildContext context) async {
     context: context,
     builder: (context) => Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Container(
-        width: width,
-        height: height * 0.5, // Slightly adjusted for better spacing
-        //: EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                "Select Profile Image",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 10),
-              // First Row
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  profileOption(context, "1"),
-                  profileOption(context, "2"),
-                  profileOption(context, "3"),
-                ],
-              ),
-              SizedBox(height: 10),
-              // Second Row
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  profileOption(context, "4"),
-                  profileOption(context, "5"),
-                  profileOption(context, "6"),
-                ],
-              ),
-              SizedBox(height: 10),
-              // Third Row
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  profileOption(context, "7"), // Fixed incorrect names
-                  profileOption(context, "8"), // Fixed incorrect names
-                  profileOption(context, "9"),
-                ],
-              ),
-              SizedBox(height: 10),
-              // Third Row
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  profileOption(context, "10"), // Fixed incorrect names
-                  profileOption(context, "11"), // Fixed incorrect names
-                  profileOption(context, "12"),
-                ],
-              ),
-            ],
+      child: SingleChildScrollView(
+        child: Container(
+          width: width,
+          height: height * 0.5, // Slightly adjusted for better spacing
+          //: EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  "Select Profile Image",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 10),
+                // First Row
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    profileOption(context, "1"),
+                    profileOption(context, "2"),
+                    profileOption(context, "3"),
+                  ],
+                ),
+                SizedBox(height: 10),
+                // Second Row
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    profileOption(context, "4"),
+                    profileOption(context, "5"),
+                    profileOption(context, "6"),
+                  ],
+                ),
+                SizedBox(height: 10),
+                // Third Row
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    profileOption(context, "7"), // Fixed incorrect names
+                    profileOption(context, "8"), // Fixed incorrect names
+                    profileOption(context, "9"),
+                  ],
+                ),
+                SizedBox(height: 10),
+                // Third Row
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    profileOption(context, "10"), // Fixed incorrect names
+                    profileOption(context, "11"), // Fixed incorrect names
+                    profileOption(context, "12"),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -132,11 +134,12 @@ Future<String?> customImageSuggest(BuildContext context) async {
 }
 
 Widget profileOption(BuildContext context, String imageName) {
+  double width = MediaQuery.of(context).size.width;
   return GestureDetector(
     child: Padding(
       padding: EdgeInsets.only(left: 5),
       child: CircleAvatar(
-        radius: 40,
+        radius: width * 0.1,
         backgroundImage: AssetImage("assets/images/profile/$imageName.jpg"),
       ),
     ),

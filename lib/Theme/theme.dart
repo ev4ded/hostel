@@ -13,7 +13,7 @@ class AppThemes {
     primarySwatch: Colors.teal,
     scaffoldBackgroundColor: Color.fromRGBO(225, 227, 230, 1),
     appBarTheme: AppBarTheme(
-      backgroundColor: const Color(0xFF5D4037),
+      backgroundColor: Color(0xFFE0F7FA),
       titleTextStyle: TextStyle(color: Colors.black, fontSize: 20),
       iconTheme: IconThemeData(color: Colors.black),
     ),
@@ -43,7 +43,7 @@ class AppThemes {
     primarySwatch: Colors.blueGrey,
     scaffoldBackgroundColor: Color.fromRGBO(18, 18, 18, 1),
     appBarTheme: AppBarTheme(
-      backgroundColor: Colors.blueGrey[900],
+      backgroundColor: Color(0xFF1F2A3C),
       titleTextStyle: TextStyle(color: Colors.white, fontSize: 20),
       iconTheme: IconThemeData(color: Colors.white),
     ),

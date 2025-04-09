@@ -7,6 +7,7 @@ import 'package:minipro/boardingpage.dart';
 import 'package:minipro/deleted.dart';
 import 'package:minipro/student/components/custom_route.dart';
 import 'package:minipro/notverfied.dart';
+import 'package:minipro/student/pages/home/vacate/vacating.dart';
 import 'package:minipro/student/pages/navigator.dart';
 import 'package:minipro/warden/pages/navigation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -36,15 +37,17 @@ class _SplashscreenState extends State<Splashscreen> {
     bool isVerified = roleandVerified[1];
     bool deleted = roleandVerified[2];
     bool shown = roleandVerified[3];
+    bool vacate = roleandVerified[4];
+    print("vacating:$vacate");
     //await Future.delayed(Duration(seconds: 2));
-    print("$isVerified");
     if (!mounted) return;
     Widget page;
     //print("deleted:$deleted");
     if (deleted) {
       page = Deleted();
+    } else if (vacate) {
+      page = Vacating();
     } else if (isLoggedIn && role == "admin") {
-      print("shown:$shown");
       (shown) ? (page = Wardenlisting()) : (page = Boardingpage(role: role));
     } else if (isLoggedIn && !isVerified) {
       page = Studentnotverfied();

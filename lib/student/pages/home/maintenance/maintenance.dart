@@ -26,7 +26,7 @@ class _MaintenanceState extends State<Maintenance> {
   };
   @override
   Widget build(BuildContext context) {
-    Color containerColor = AppColors.getContainerColor(context);
+    LinearGradient containerColor = AppColors.getcontainerGradient(context);
     Color tileColor = AppColors.getTileColorLight(context);
     return Scaffold(
       appBar: AppBar(
@@ -53,7 +53,7 @@ class _MaintenanceState extends State<Maintenance> {
                   height: containerHeight,
                   decoration: BoxDecoration(
                     border: Border.all(color: borderColor, width: borderWidth),
-                    color: containerColor,
+                    gradient: containerColor,
                     borderRadius: BorderRadius.circular(15),
                   ),
                   child: Padding(
@@ -94,7 +94,7 @@ class _MaintenanceState extends State<Maintenance> {
                 height: 400,
                 decoration: BoxDecoration(
                   border: Border.all(color: borderColor, width: borderWidth),
-                  color: containerColor,
+                  gradient: containerColor,
                   borderRadius: BorderRadius.circular(15),
                 ),
                 child: StreamBuilder<List<QueryDocumentSnapshot>>(

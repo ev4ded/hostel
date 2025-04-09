@@ -6,8 +6,18 @@ class AppColors {
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
     colors: [
-      Color(0xFF1E2A38), // Dark blue-grey
-      Color(0xFF3C4A57), // Muted steel blue
+      Color(0xFF1A1C2C), // deep blue-black
+      Color(0xFF2C3E50), // midnight blue
+      Color(0xFF3C4A57), // steel finish
+      Color(0xFF4E5D6C), // hint of silver steel (glow effect)
+    ],
+  );
+  static LinearGradient containergradientLight = LinearGradient(
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    colors: [
+      Color(0xFFEAF6FF), // light sky blue
+      Color(0xFFFFFFFF), // white
     ],
   );
 
@@ -73,5 +83,11 @@ class AppColors {
 
   static Color getbg(BuildContext context) {
     return Theme.of(context).brightness == Brightness.dark ? bg : bgwhite;
+  }
+
+  static LinearGradient getcontainerGradient(BuildContext context) {
+    return Theme.of(context).brightness == Brightness.dark
+        ? containergradientDark
+        : containergradientLight;
   }
 }
