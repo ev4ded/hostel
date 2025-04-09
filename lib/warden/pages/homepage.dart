@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:minipro/Theme/appcolors.dart';
-import 'package:minipro/warden/components/my_drawer.dart';
+//import 'package:minipro/warden/components/my_drawer.dart';
 import 'package:minipro/warden/pages/functions/Vacate.dart';
 import 'package:minipro/warden/pages/functions/attedence.dart';
 import 'package:minipro/warden/pages/functions/complaints.dart';
@@ -27,7 +27,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(title: Text('Home',  style: GoogleFonts.inter(fontWeight: FontWeight.w600))),
       backgroundColor: Theme.of(context).colorScheme.surface,
-      drawer: MyDrawer(),
+
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.all(15.0),

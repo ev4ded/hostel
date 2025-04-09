@@ -1,12 +1,16 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:minipro/authentication/loginpage.dart';
 import 'package:minipro/firebase/firestore_services.dart';
+import 'package:minipro/student/components/custom_route.dart';
 //import 'package:minipro/student/components/custom_route.dart';
 import 'package:minipro/student/pages/profile/changepassword.dart';
 import 'package:minipro/student/pages/profile/help.dart';
 import 'package:minipro/student/pages/profile/userguidelines.dart';
 import 'package:minipro/warden/pages/functions/editprofile.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 //import 'package:minipro/warden/pages/homepage.dart';
 
 class MyProfile extends StatefulWidget {
@@ -214,6 +218,22 @@ await _firestoreService.getUserData();
                               );
                               },
                             ),
+                             _buildSettingsButton(
+                              "Logout",
+                              Ionicons.log_out_outline,
+                              
+                              "Logout from your account",
+                             () {
+                            FirebaseAuth.instance.signOut();
+                            saveLoginState(false);
+                            Navigator.pushReplacement(
+                              context,
+                              myRoute(
+                                LoginPage(),
+                              ),
+                            );
+                          },
+                            ),
                           
                           ],
                         ),
@@ -225,6 +245,10 @@ await _firestoreService.getUserData();
                   ),
                 ),
     );
+  }
+  Future<void> saveLoginState(bool isLoggedIn) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isLoggedIn', isLoggedIn);
   }
 
  String _getInitials(String name) {
@@ -244,6 +268,7 @@ await _firestoreService.getUserData();
       ),
     );
   }
+   
 
   Widget _profileInfoCard() {
     return Card(

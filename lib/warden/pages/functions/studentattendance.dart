@@ -30,47 +30,75 @@ class _StudentMonthlyAttendanceState extends State<StudentMonthlyAttendance> {
     _fetchAttendance();
   }
 
-  Future<void> _fetchAttendance() async {
+ Future<void> _fetchAttendance() async {
   setState(() => _loading = true);
-  
-  final firstDay = DateTime(_today.year, _today.month, 1);
-  final today = DateTime.now();
+
   final dateFormat = DateFormat('yyyy-MM-dd');
+  final today = DateTime.now();
+  final lastDay = DateTime(today.year, today.month + 1, 0);
 
   final collectionRef = FirebaseFirestore.instance
       .collection('users')
       .doc(widget.studentId)
       .collection('attendance');
 
+      
+
   final querySnapshot = await collectionRef.get();
 
-  // Create a map from fetched docs for quick lookup
-  final fetchedDocs = {
-    for (var doc in querySnapshot.docs)
-      doc.id: doc.data()
-  };
+  final firestoreAttendance = <String, bool>{};
+  DateTime? firstAttendanceDate;
 
-  for (int i = 0; i <= today.difference(firstDay).inDays; i++) {
-    final currentDate = firstDay.add(Duration(days: i));
-    final formattedDate = dateFormat.format(currentDate);
+  for (var doc in querySnapshot.docs) {
+    try {
+      final entryDate = dateFormat.parse(doc.id);
 
-    if (fetchedDocs.containsKey(formattedDate)) {
-      final isPresent = fetchedDocs[formattedDate]?['present'] == true;
-      _attendanceMap[formattedDate] = isPresent;
+      // Track earliest attendance date
+      if (firstAttendanceDate == null || entryDate.isBefore(firstAttendanceDate)) {
+        firstAttendanceDate = entryDate;
+      }
+
+      final isPresent = (doc.data())['present'] == true;
+      firestoreAttendance[doc.id] = isPresent;
+    } catch (e) {
+      // Skip if format issue
+    }
+  }
+
+  // If no attendance at all, default to today to avoid false absents
+  firstAttendanceDate ??= today;
+
+  final firstDayOfMonth = DateTime(today.year, today.month, 1);
+  final attendanceStartDate = firstAttendanceDate.isAfter(firstDayOfMonth)
+      ? firstAttendanceDate
+      : firstDayOfMonth;
+
+  _attendanceMap.clear();
+  _presentDays = 0;
+
+  for (int day = 1; day <= lastDay.day; day++) {
+    final date = DateTime(today.year, today.month, day);
+    final formatted = dateFormat.format(date);
+
+    if (date.isBefore(attendanceStartDate) || date.isAfter(today)) continue;
+
+    if (firestoreAttendance.containsKey(formatted)) {
+      final isPresent = firestoreAttendance[formatted]!;
+      _attendanceMap[formatted] = isPresent;
       if (isPresent) _presentDays++;
     } else {
-      // No entry = Absent
-      _attendanceMap[formattedDate] = false;
+      _attendanceMap[formatted] = false; // Mark as absent
     }
   }
 
   _totalDays = _attendanceMap.length;
-  _attendancePercentage = _totalDays > 0 ? (_presentDays / _totalDays) * 100 : 0;
+  _attendancePercentage = _totalDays > 0
+      ? (_presentDays / _totalDays) * 100
+      : 0;
 
-  setState(() {
-    _loading = false;
-  });
+  setState(() => _loading = false);
 }
+
 
   @override
   Widget build(BuildContext context) {

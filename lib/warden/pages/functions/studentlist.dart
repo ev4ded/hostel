@@ -41,6 +41,7 @@ class _StudentListState extends State<StudentList> {
   void initState() {
     super.initState();
    someFunction();
+   checkAndSetPaymentTime();
   }
   void someFunction() async {
   String? fetchedHostelId = await fetchHostelId();
@@ -132,7 +133,29 @@ class _StudentListState extends State<StudentList> {
    } );
   
   }
-  
+  void checkAndSetPaymentTime() async {
+  final now = DateTime.now();
+  final day = now.day;
+
+  if (day >= 1 && day <= 15) {
+    String? hostelId = await fetchHostelId();
+    if (hostelId != null) {
+      await FirebaseFirestore.instance.collection("hostels").doc(hostelId).update({
+        "paymentTime": true,
+      });
+      debugPrint("✅ Payment window is OPEN (1st to 15th).");
+    }
+  } else {
+    String? hostelId = await fetchHostelId();
+    if (hostelId != null) {
+      await FirebaseFirestore.instance.collection("hostels").doc(hostelId).update({
+        "paymentTime": false,
+      });
+      debugPrint("🚫 Payment window is CLOSED (after 15th).");
+    }
+  }
+}
+
 
   Future<void> updatePayment() async {
   try {
@@ -142,9 +165,6 @@ class _StudentListState extends State<StudentList> {
       return;
     }
 
-    await FirebaseFirestore.instance.collection("hostels").doc(hostelId).update({
-      "paymentTime": true,
-    });
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection("users")
         .where('role', isEqualTo: 'student')
@@ -287,15 +307,7 @@ class _StudentListState extends State<StudentList> {
         ],
       ),
 
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () async {
-    await updatePayment();
-  },
- 
-        label: Text("Ask Payment"),
-        icon: Icon(Ionicons.save),
-        backgroundColor: Colors.green,
-      ),
+      
     );
     
   }
