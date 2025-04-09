@@ -50,7 +50,9 @@ class _SplashscreenState extends State<Splashscreen> {
     } else if (isLoggedIn && role == "admin") {
       (shown) ? (page = Wardenlisting()) : (page = Boardingpage(role: role));
     } else if (isLoggedIn && !isVerified) {
-      page = Studentnotverfied();
+      page = Studentnotverfied(
+        role: role,
+      );
     } else if (isLoggedIn && !shown) {
       page = Boardingpage(role: role);
     } else if (isLoggedIn && role == "warden") {

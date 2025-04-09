@@ -247,6 +247,7 @@ class _VacateState extends State<Vacate> {
             'address': address,
             'reason': reason,
             'room_no': userData!["room_no"],
+            'paid': false,
           },
         );
         FirebaseFirestore.instance.collection("users").doc(user.uid).update(

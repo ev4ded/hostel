@@ -608,6 +608,9 @@ class _PayState extends State<Pay> {
             .set({
           'transaction_id': transcationID.text.trim(),
         });
+        FirebaseFirestore.instance.collection("vacate").doc(tuser.uid).update({
+          'paid': true,
+        });
         Navigator.of(context).pop();
         FirebaseFirestore.instance.collection("users").doc(tuser.uid).update({
           'paid': 'processing',
