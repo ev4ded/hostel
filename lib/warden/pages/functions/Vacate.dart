@@ -184,7 +184,13 @@ class _VacateRequestState extends State<VacateRequest> {
                               Text('Room: ${requestData['room_no']}',style:GoogleFonts.inter(color:  Colors.black) ,),
                               Text('Reason: ${requestData['reason']}',style:GoogleFonts.inter(color:  Colors.black)),
                               Text('Date: ${requestData['vacting_date']}',style:GoogleFonts.inter(color:  Colors.black)),
-                            
+                             Text(
+                                  requestData['paid'] == true ? 'Fee: Paid' : 'Fee: Not Paid',
+                                  style: GoogleFonts.inter(
+                                    color: requestData['paid'] == true ? Colors.green : Colors.red,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
                              ],
                              ),
                           trailing: Row(
