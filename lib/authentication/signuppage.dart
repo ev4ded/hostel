@@ -348,7 +348,7 @@ class _SignupPageState extends State<SignupPage> {
           .doc(uid)
           .collection('attendance')
           .doc(DateFormat('yyyy-MM-dd').format(DateTime.now()))
-          .update({
+          .set({
         'month': DateTime.now().month,
         'present': true,
         'markedOUT': DateFormat('HH:mm').format(DateTime.now()),
