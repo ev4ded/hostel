@@ -28,21 +28,33 @@ class Deleted extends StatelessWidget {
             onPressed: () async {
               User? user = FirebaseAuth.instance.currentUser;
               if (user != null) {
-                await FirebaseFirestore.instance
-                    .collection('users')
-                    .doc(FirebaseAuth.instance.currentUser!.uid)
-                    .delete();
-                await user.delete();
-                FirebaseAuth.instance.signOut();
-                saveLoginState(false);
-                removeFCMToken(user.uid);
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  myRoute(
-                    LoginPage(),
-                  ),
-                  (route) => false,
-                );
+                try {
+                  await FirebaseFirestore.instance
+                      .collection('users')
+                      .doc(user.uid)
+                      .delete();
+
+                  await user.delete(); // May throw error if session is old
+
+                  await FirebaseAuth.instance.signOut();
+                  await saveLoginState(false);
+                  removeFCMToken(user.uid);
+
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    myRoute(LoginPage()),
+                    (route) => false,
+                  );
+                } on FirebaseAuthException catch (e) {
+                  if (e.code == 'requires-recent-login') {
+                    // You could redirect them to re-authenticate first
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                          content:
+                              Text('Please re-login to delete your account.')),
+                    );
+                  }
+                }
               }
             },
             style: ButtonStyle(
