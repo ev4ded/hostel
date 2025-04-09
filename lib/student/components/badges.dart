@@ -35,14 +35,12 @@ LinearGradient getbadgesColor(String badge) {
     //the best
     case 'The Best':
       return LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
         colors: [
-          Color(0xFF6A0DAD), // Cosmic Purple (Otherworldly Aura)
-          Color(0xFF1E90FF), // Galactic Blue (Infinity Power)
-          Color(0xFFFF4500), // Supernova Orange (Explosive Brilliance)
-          Color(0xFFFFFFFF), // Pure White (Transcendent Glow)
+          Color(0xFF2C3E50), // Deep blue
+          Color(0xFF6C757D), // Neutral grey smoke
         ],
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
       );
     //special
     case 'Bug Buster':

@@ -1,11 +1,11 @@
 import 'dart:math';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:minipro/Admin/adminqueries.dart';
 import 'package:minipro/firebase/firestore_services.dart';
@@ -38,13 +38,12 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
   bool present = true;
   String name = "profile";
   List<dynamic> collectBadges = ["student"];
-  List<Map<String, String>> roommates = [
-    {"name": "lonely", "badgeName": "No Badge"}
-  ];
+  List<Map<String, String>>? roommates;
   static const double allowedRadius = 500;
   late AnimationController _animationController;
   late Animation<double> _animation;
   bool isloading = false;
+  bool isDataReady = false;
   String? badgeText;
   LinearGradient? badgeGradient;
   @override
@@ -62,8 +61,40 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
     _animation = Tween<double>(begin: 0, end: pi).animate(
         CurvedAnimation(parent: _animationController, curve: Curves.easeInOut));
     fetchUserData();
-    _loadProfileImage();
     listenToUserUpdates();
+    loadCachedThenRefresh();
+  }
+
+  void loadCachedThenRefresh() async {
+    // 🔹 Step 1: Load from cache instantly
+    Map<String, dynamic>? cachedUserData =
+        await _firestoreService.getCachedUserData();
+    if (cachedUserData != null) {
+      setState(() {
+        userData = cachedUserData;
+        name = userData!["dp"];
+        collectBadges = userData!['badges'];
+        badgeText = userData!['badgeName'];
+        badgeGradient = getbadgesColor(badgeText!);
+        present = userData!['present'];
+        isDataReady = true; // ✅ show instantly
+      });
+    }
+
+    // 🔹 Step 2: Refresh in the background (optional: delay for smoothness)
+    await _firestoreService.getUserData(); // fetches fresh & updates cache
+    Map<String, dynamic>? updatedUserData =
+        await _firestoreService.getCachedUserData();
+    if (updatedUserData != null) {
+      setState(() {
+        userData = updatedUserData;
+        name = userData!["dp"];
+        collectBadges = userData!['badges'];
+        badgeText = userData!['badgeName'];
+        badgeGradient = getbadgesColor(badgeText!);
+        present = userData!['present'];
+      });
+    }
   }
 
   void fetchUserData() async {
@@ -89,10 +120,8 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
       collectBadges = userData!['badges'] ?? ["student"];
       badgeText = userData!['badgeName'] ?? "Student";
       badgeGradient = getbadgesColor(badgeText!);
-      roommates = myMates ??
-          [
-            {"name": "lonely", "badgeName": "No Badge"}
-          ];
+      roommates = myMates;
+      isDataReady = true;
     });
     Map<String, dynamic>? temp = await getHostelDetails(userData!["hostelId"]);
     if (temp != null) {
@@ -104,10 +133,10 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
-    Color containerColor = AppColors.getContainerColor(context);
+    LinearGradient containerColor = AppColors.getcontainerGradient(context);
     Color detailsC = AppColors.buttonColor;
     return Scaffold(
-      body: userData == null
+      body: !isDataReady
           ? Center(
               child:
                   CircularProgressIndicator()) // Loading indicator in the center
@@ -144,7 +173,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
                                       border: Border.all(
-                                          color: AppColors.textColorLight,
+                                          color: AppColors.buttonColor,
                                           width: 2), // Border color & width
                                     ),
                                     child: CircleAvatar(
@@ -178,7 +207,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                                     ),
                                     Row(
                                       children: [
-                                        // Role
+                                        // badge
                                         GestureDetector(
                                           onTap: () async {
                                             String? selectedBadge = await badge(
@@ -268,6 +297,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                                             : Color.fromRGBO(197, 168, 136, 1),
                                         borderRadius: BorderRadius.circular(10),
                                       ),
+                                      //attendace part
                                       child: (isloading)
                                           ? Center(
                                               child:
@@ -325,7 +355,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                                 height: 50,
                                 width: width,
                                 decoration: BoxDecoration(
-                                  color: containerColor,
+                                  gradient: containerColor,
                                   borderRadius: BorderRadius.circular(5),
                                 ),
                                 child: Align(
@@ -366,7 +396,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                                 height: 50,
                                 width: width,
                                 decoration: BoxDecoration(
-                                  color: containerColor,
+                                  gradient: containerColor,
                                   borderRadius: BorderRadius.circular(5),
                                 ),
                                 child: Align(
@@ -408,7 +438,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                                 height: 50,
                                 width: width,
                                 decoration: BoxDecoration(
-                                  color: containerColor,
+                                  gradient: containerColor,
                                   borderRadius: BorderRadius.circular(5),
                                 ),
                                 child: Align(
@@ -447,7 +477,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                                 height: 50,
                                 width: width,
                                 decoration: BoxDecoration(
-                                  color: containerColor,
+                                  gradient: containerColor,
                                   borderRadius: BorderRadius.circular(5),
                                 ),
                                 child: Align(
@@ -491,7 +521,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                                 height: 50,
                                 width: width,
                                 decoration: BoxDecoration(
-                                  color: containerColor,
+                                  gradient: containerColor,
                                   borderRadius: BorderRadius.circular(5),
                                 ),
                                 child: Align(
@@ -534,7 +564,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                                 height: 50,
                                 width: width,
                                 decoration: BoxDecoration(
-                                  color: containerColor,
+                                  gradient: containerColor,
                                   borderRadius: BorderRadius.circular(5),
                                 ),
                                 child: Align(
@@ -560,7 +590,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                                 ),
                               ),
                               onTap: () {
-                                print("room mates:$roommates");
+                                //print("room mates:$roommates");
                                 getroommates(context, roommates);
                                 HapticFeedback.heavyImpact();
                               },
@@ -571,7 +601,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                                 height: 50,
                                 width: width,
                                 decoration: BoxDecoration(
-                                  color: containerColor,
+                                  gradient: containerColor,
                                   borderRadius: BorderRadius.circular(5),
                                 ),
                                 child: Align(
@@ -620,11 +650,6 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
   Future<void> _saveProfileImage(String name) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('profile', name);
-  }
-
-  Future<void> _loadProfileImage() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    name = prefs.getString('profile') ?? "profile";
   }
 
   bool isStudentInsideHostel(Position studentPosition) {
@@ -710,15 +735,33 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
     setState(() => isloading = false);
   }
 
-  void update(bool p) {
+  void update(bool p) async {
     User? user = FirebaseAuth.instance.currentUser;
     try {
-      FirebaseFirestore.instance
-          .collection('users')
-          .doc(user!.uid)
-          .update({'present': p});
+      final userDoc =
+          FirebaseFirestore.instance.collection('users').doc(user!.uid);
+      final attendanceDoc = userDoc
+          .collection('attendance')
+          .doc(DateFormat('yyyy-MM-dd').format(DateTime.now()));
+      await userDoc.update({'present': p});
+      final snapshot = await attendanceDoc.get();
+      if (snapshot.exists) {
+        await attendanceDoc.update({
+          'month': DateTime.now().month,
+          'present': p,
+          p ? 'markedIN' : 'markedOUT':
+              DateFormat('HH:mm').format(DateTime.now()),
+        });
+      } else {
+        await attendanceDoc.set({
+          'month': DateTime.now().month,
+          'present': p,
+          p ? 'markedIN' : 'markedOUT':
+              DateFormat('HH:mm').format(DateTime.now()),
+        });
+      }
     } catch (e) {
-      print("errors:$e");
+      print("Error: $e");
     }
   }
 

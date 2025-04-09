@@ -2,9 +2,29 @@ import 'package:flutter/material.dart';
 
 class AppColors {
   //dark
+  static LinearGradient containergradientDark = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [
+      Color(0xFF1A1C2C), // deep blue-black
+      Color(0xFF2C3E50), // midnight blue
+      Color(0xFF3C4A57), // steel finish
+      Color(0xFF4E5D6C), // hint of silver steel (glow effect)
+    ],
+  );
+  static LinearGradient containergradientLight = LinearGradient(
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    colors: [
+      Color(0xFFEAF6FF), // light sky blue
+      Color(0xFFFFFFFF), // white
+    ],
+  );
+
   static Color bg = Colors.black;
   static Color textColorDark = Colors.white;
-  static Color containerColorDark = Color.fromRGBO(40, 40, 40, 1);
+  static Color containerColorDark =
+      Color.fromRGBO(40, 40, 40, 1); //(40,40,40,1)
   static Color alretWindowColorDark = Color.fromRGBO(85, 85, 85, 1);
   static Color tileColorDark = Color.fromRGBO(78, 68, 64, 1);
   static Color detailsCDark = Color.fromRGBO(180, 195, 210, 1);
@@ -63,5 +83,11 @@ class AppColors {
 
   static Color getbg(BuildContext context) {
     return Theme.of(context).brightness == Brightness.dark ? bg : bgwhite;
+  }
+
+  static LinearGradient getcontainerGradient(BuildContext context) {
+    return Theme.of(context).brightness == Brightness.dark
+        ? containergradientDark
+        : containergradientLight;
   }
 }

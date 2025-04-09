@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
@@ -59,13 +60,14 @@ class FirestoreServices {
     bool isVerified = false;
     bool deleted = false;
     bool shown = false;
+    bool vacate = false;
     try {
       if (user != null) {
         role = user["role"] ?? "";
         isVerified = user["isApproved"] ?? false;
         deleted = user["deleted"] ?? false;
         shown = user["boardingPage"] ?? false;
-        print("boarding page:$user");
+        vacate = user['vacating'] ?? false;
       } else {
         await getUserData();
         user = await getCachedUserData();
@@ -73,12 +75,13 @@ class FirestoreServices {
         isVerified = user["isApproved"] ?? false;
         deleted = user["deleted"] ?? false;
         shown = user["boardingPage"] ?? false;
-        print("boarding page:::${user["boardingPage"]}");
+        print("isvacating:$user['vacating']");
+        vacate = user['vacating'] ?? false;
       }
     } catch (e) {
-      print("error :$e");
+      debugPrint("error :$e");
     }
-    return [role, isVerified, deleted, shown];
+    return [role, isVerified, deleted, shown, vacate];
   }
 
   Future<Map<String, dynamic>?> getUserDetails() async {
@@ -116,7 +119,7 @@ class FirestoreServices {
       }
       return [""];
     } catch (e) {
-      print("error:${e.toString()}");
+      debugPrint("error:${e.toString()}");
     }
     return [""];
   }

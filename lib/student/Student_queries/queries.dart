@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 
 Stream<List<QueryDocumentSnapshot>> getStudentMaintenance(String uid) {
   return FirebaseFirestore.instance
@@ -36,27 +37,11 @@ Future<Map<String, String>> getMenu(String hostelId) async {
         "snacks": data["snacks"] ?? "",
       };
     } else {
-      print("No menu found");
       return {};
     }
   } catch (e) {
-    print("error:$e");
+    debugPrint("error:$e");
     return {};
-  }
-}
-
-Future<bool> appliedForVacate() async {
-  User? user = FirebaseAuth.instance.currentUser;
-  if (user == null) return false;
-  try {
-    DocumentSnapshot doc = await FirebaseFirestore.instance
-        .collection('vacate')
-        .doc(user.uid) // Replace with actual student ID  user.uid
-        .get();
-    return doc.exists;
-  } catch (e) {
-    print("error:$e");
-    return false;
   }
 }
 
@@ -97,7 +82,7 @@ Future<List<Map<String, String>>?> getRoomates(
       if (doc.exists) {
         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
         List occupants = data['occupants'] ?? [];
-        print(occupants);
+        //print(occupants);
         for (var occupant in occupants) {
           if (occupant != user.uid) {
             DocumentSnapshot userDoc = await FirebaseFirestore.instance
@@ -109,22 +94,32 @@ Future<List<Map<String, String>>?> getRoomates(
               String badgeName = userDoc['badgeName'] ?? 'No Badge';
               //print("name:${userDoc['username']}");
               mates.add({'name': name, 'badgeName': badgeName});
-              print(name);
-            } else {
-              mates.add({"name": "Lonely"});
+              //print(name);
             }
           }
         }
-        print("mates:$mates");
-      }
-      if (mates.isEmpty) {
-        mates.add({"name": "Loenly"});
+        //print("mates:$mates");
       }
       return mates;
     }
     return null;
   } catch (e) {
-    print("Error fetching roommates: $e");
+    debugPrint("Error fetching roommates: $e");
     return null;
   }
+}
+
+Future<int> countDays(int month) async {
+  User? user = FirebaseAuth.instance.currentUser;
+  if (user == null) {
+    print("null");
+    return 0;
+  }
+  final snapshot = await FirebaseFirestore.instance
+      .collection('users')
+      .doc(user.uid)
+      .collection('attendance')
+      .where('month', isEqualTo: month)
+      .get();
+  return snapshot.docs.length;
 }

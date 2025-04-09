@@ -29,12 +29,19 @@ class _UserguidelinesState extends State<Userguidelines> {
       body: Center(
         child: Center(
           child: Container(
-            padding:EdgeInsets.only(
-                    top: 8.0, bottom: 8, left: 8, right: 8),
+            padding: EdgeInsets.only(top: 8.0, bottom: 8, left: 8, right: 8),
             height: height * 0.85,
             width: width * 0.95,
             decoration: BoxDecoration(
-                color: Colors.grey, borderRadius: BorderRadius.circular(15)),
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Color(0xFFE0E7FF), // light indigo tint
+                    Color(0xFFF8F9FF), // faint white with bluish tone
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(15)),
             child: SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.only(

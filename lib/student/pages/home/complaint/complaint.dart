@@ -24,7 +24,7 @@ class _ComplaintState extends State<Complaint> {
   };
   @override
   Widget build(BuildContext context) {
-    Color containerColor = AppColors.getContainerColor(context);
+    LinearGradient containerColor = AppColors.getcontainerGradient(context);
     Color tileColor = AppColors.getTileColorLight(context);
     return Scaffold(
       appBar: AppBar(
@@ -51,7 +51,7 @@ class _ComplaintState extends State<Complaint> {
                   height: containerHeight,
                   decoration: BoxDecoration(
                     border: Border.all(color: borderColor, width: 0.5),
-                    color: containerColor,
+                    gradient: containerColor,
                     borderRadius: BorderRadius.circular(15),
                   ),
                   child: Padding(
@@ -92,7 +92,7 @@ class _ComplaintState extends State<Complaint> {
                 height: 400,
                 decoration: BoxDecoration(
                   border: Border.all(color: borderColor),
-                  color: containerColor,
+                  gradient: containerColor,
                   borderRadius: BorderRadius.circular(15),
                 ),
                 child: StreamBuilder<List<QueryDocumentSnapshot>>(

@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:minipro/Theme/appcolors.dart';
 import 'package:minipro/firebase/firestore_services.dart';
+import 'package:minipro/student/Student_queries/queries.dart';
 import 'package:minipro/student/components/custom_route.dart';
 import 'package:minipro/student/components/mysnackbar.dart';
 import 'package:minipro/student/components/mytextfield.dart';
@@ -40,6 +41,9 @@ class _PaymentState extends State<Payment> {
   String paid = "";
   bool isloading = true;
   bool paymentdone = false;
+  int month = DateTime.now().month - 1;
+  String? mode;
+  DateTime now = DateTime.now();
 
   @override
   void initState() {
@@ -53,8 +57,12 @@ class _PaymentState extends State<Payment> {
         await _firestoreService.getUserDetails();
     Map<String, dynamic>? hostelDetails =
         await _firestoreService.getHostelDetails(user?["hostelId"]);
-    //print(hostelDetails?["hostel_rent"]);
-    print("user:$userDetails");
+    if (month == 0) {
+      setState(() {
+        month = 12;
+      });
+    }
+    int count = await countDays(month);
     if (mounted) {
       setState(() {
         userData = userDetails;
@@ -63,11 +71,18 @@ class _PaymentState extends State<Payment> {
         maintenancefees = hostelDetails?["maintenance_charge"] ?? 0;
         fine = hostelDetails?["late_fine"] ?? 0;
         otherfees = hostelDetails?["other_charges"] ?? 0;
-        total = rent + messfees + maintenancefees + fine + otherfees;
         amount = total.toString();
         upiId = hostelDetails?["upi"];
         paymenttime = hostelDetails?["paymentTime"] ?? false;
         paid = userDetails?["paid"] ?? "";
+
+        mode = hostelDetails?["payment_mode"];
+
+        if (mode == 'Daily basis') {
+          rent = rent * count;
+          messfees = messfees * count;
+        }
+        total = rent + messfees + maintenancefees + fine + otherfees;
         isloading = false;
       });
     }
@@ -94,7 +109,7 @@ class _PaymentState extends State<Payment> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: AppColors.getAlertWindowC(context),
+        backgroundColor: Colors.transparent,
         title: Text(
           "Payment ",
           style: GoogleFonts.inter(letterSpacing: 2, fontSize: 20),
@@ -142,7 +157,7 @@ class _PaymentState extends State<Payment> {
                       ),
                       Center(
                         child: Text(
-                          "Bill for ${DateFormat('MMMM').format(DateTime.now()).toUpperCase()} month",
+                          "Bill for ${DateFormat('MMMM').format(DateTime(now.year, now.month - 1)).toUpperCase()} month",
                           style: GoogleFonts.poppins(
                               color: Colors.black,
                               fontWeight: FontWeight.w700,
@@ -308,7 +323,7 @@ class _PaymentState extends State<Payment> {
                         ),
                       ),
                       Text(
-                        "● Last day to pay fees without fine is on 31th February.",
+                        "● Last day to pay fees without fine is on 10th of ${DateFormat('MMMM').format(now).toUpperCase()}.",
                         softWrap: true,
                         style: GoogleFonts.poppins(
                           color: Colors.black,

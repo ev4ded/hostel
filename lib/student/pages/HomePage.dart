@@ -10,7 +10,7 @@ import 'package:minipro/student/pages/home/complaint/complaint.dart';
 import 'package:minipro/student/pages/home/maintenance/maintenance.dart';
 import 'package:minipro/student/pages/home/leaveApplication.dart';
 import 'package:minipro/student/pages/home/payment.dart';
-import 'package:minipro/student/pages/home/vacate.dart';
+import 'package:minipro/student/pages/home/vacate/vacate.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
@@ -22,7 +22,7 @@ class Homepage extends StatefulWidget {
 class _HomepageState extends State<Homepage> {
   @override
   Widget build(BuildContext context) {
-    Color containerColor = AppColors.getContainerColor(context);
+    LinearGradient containerGradient = AppColors.getcontainerGradient(context);
     //double height = MediaQuery.of(context).size.height;
     double cheight = 65;
     String wish;
@@ -67,124 +67,128 @@ class _HomepageState extends State<Homepage> {
         ),
         automaticallyImplyLeading: false,
       ),
-      body: ListView(
-        padding: EdgeInsets.all(8),
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(bottom: 30, top: 20),
-            child: Text(
-              wish,
-              style: GoogleFonts.nunito(
-                textStyle: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+      body: ScrollConfiguration(
+        behavior: NoGlowScrollBehavior(),
+        child: ListView(
+          padding: EdgeInsets.all(8),
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(bottom: 30, top: 20),
+              child: Text(
+                wish,
+                style: GoogleFonts.nunito(
+                  textStyle:
+                      TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+                ),
               ),
             ),
-          ),
-          GestureDetector(
-            onTap: () {
-              Navigator.push(context, myRoute(Maintenance()));
-            },
-            child: Mycontainer(
-              height: cheight,
-              color: containerColor,
-              child: Row(
-                children: [
-                  Icon(Ionicons.construct_outline),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 20),
-                    child: Text(
-                      "Maintenance Request",
-                      style: AppFonts.body,
+            GestureDetector(
+              onTap: () {
+                Navigator.push(context, myRoute(Maintenance()));
+              },
+              child: Mycontainer(
+                height: cheight,
+                gradient: containerGradient,
+                child: Row(
+                  children: [
+                    Icon(Ionicons.construct_outline),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 20),
+                      child: Text(
+                        "Maintenance Request",
+                        style: AppFonts.body,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-          GestureDetector(
-            onTap: () {
-              Navigator.push(context, myRoute(Leaveapplication()));
-            },
-            child: Mycontainer(
-              height: cheight,
-              color: containerColor,
-              child: Row(
-                children: [
-                  Icon(Ionicons.calendar_outline),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 20),
-                    child: Text(
-                      "Leave Application",
-                      style: AppFonts.body,
+            GestureDetector(
+              onTap: () {
+                Navigator.push(context, myRoute(Leaveapplication()));
+              },
+              child: Mycontainer(
+                gradient: containerGradient,
+                height: cheight,
+                child: Row(
+                  children: [
+                    Icon(Ionicons.calendar_outline),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 20),
+                      child: Text(
+                        "Leave Application",
+                        style: AppFonts.body,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-          GestureDetector(
-            onTap: () {
-              Navigator.push(context, myRoute(Payment()));
-            },
-            child: Mycontainer(
-              height: cheight,
-              color: containerColor,
-              child: Row(
-                children: [
-                  Icon(Ionicons.card_outline),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 20),
-                    child: Text(
-                      "Payment",
-                      style: AppFonts.body,
+            GestureDetector(
+              onTap: () {
+                Navigator.push(context, myRoute(Payment()));
+              },
+              child: Mycontainer(
+                height: cheight,
+                gradient: containerGradient,
+                child: Row(
+                  children: [
+                    Icon(Ionicons.card_outline),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 20),
+                      child: Text(
+                        "Payment",
+                        style: AppFonts.body,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-          GestureDetector(
-            child: Mycontainer(
-              height: cheight,
-              color: containerColor,
-              child: Row(
-                children: [
-                  Icon(Ionicons.flag_outline),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 20),
-                    child: Text(
-                      "Complaint registration",
-                      style: AppFonts.body,
+            GestureDetector(
+              child: Mycontainer(
+                height: cheight,
+                gradient: containerGradient,
+                child: Row(
+                  children: [
+                    Icon(Ionicons.flag_outline),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 20),
+                      child: Text(
+                        "Complaint registration",
+                        style: AppFonts.body,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
+              onTap: () {
+                Navigator.push(context, myRoute(Complaint()));
+              },
             ),
-            onTap: () {
-              Navigator.push(context, myRoute(Complaint()));
-            },
-          ),
-          GestureDetector(
-            onTap: () {
-              Navigator.push(context, myRoute(Vacate()));
-            },
-            child: Mycontainer(
-              height: cheight,
-              color: containerColor,
-              child: Row(
-                children: [
-                  Icon(Icons.luggage),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 20),
-                    child: Text(
-                      "Vacate",
-                      style: AppFonts.body,
+            GestureDetector(
+              onTap: () {
+                Navigator.push(context, myRoute(Vacate()));
+              },
+              child: Mycontainer(
+                height: cheight,
+                gradient: containerGradient,
+                child: Row(
+                  children: [
+                    Icon(Icons.luggage),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 20),
+                      child: Text(
+                        "Vacate",
+                        style: AppFonts.body,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          )
-        ],
+            )
+          ],
+        ),
       ),
     );
   }
@@ -193,5 +197,13 @@ class _HomepageState extends State<Homepage> {
     Random random = Random();
     int randomNumber = random.nextInt(5);
     return randomNumber;
+  }
+}
+
+class NoGlowScrollBehavior extends ScrollBehavior {
+  @override
+  Widget buildViewportChrome(
+      BuildContext context, Widget child, AxisDirection axisDirection) {
+    return child;
   }
 }

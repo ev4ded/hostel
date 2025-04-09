@@ -80,7 +80,7 @@ class _WardenlistingState extends State<Wardenlisting>
               },
               icon: Icon(
                 LucideIcons.userCircle2,
-                color: Colors.blueGrey,
+                color: AppColors.buttonColor,
                 size: 35,
               ))
         ],
@@ -423,7 +423,7 @@ class _WardenlistingState extends State<Wardenlisting>
                       SizedBox(height: 5),
                       _optionButton(
                         context,
-                        "Profile",
+                        "Hostel Details",
                         LucideIcons.chevronRight,
                         () => Navigator.push(context, myRoute(AdminProfile())),
                       ),
