@@ -38,12 +38,13 @@ class _SplashscreenState extends State<Splashscreen> {
     bool deleted = roleandVerified[2];
     bool shown = roleandVerified[3];
     bool vacate = roleandVerified[4];
+    print("isdeleted:$deleted");
     print("vacating:$vacate");
     //await Future.delayed(Duration(seconds: 2));
     if (!mounted) return;
     Widget page;
     //print("deleted:$deleted");
-    if (deleted) {
+    if (isLoggedIn && deleted) {
       page = Deleted();
     } else if (vacate) {
       page = Vacating();
